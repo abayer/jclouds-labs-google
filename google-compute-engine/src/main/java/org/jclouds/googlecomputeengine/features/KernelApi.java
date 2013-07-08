@@ -47,7 +47,7 @@ import org.jclouds.rest.annotations.Transform;
  * Provides access to Kernels via their REST API.
  *
  * @author David Alves
- * @see <a href="https://developers.google.com/compute/docs/reference/v1beta13/kernels"/>
+ * @see <a href="https://developers.google.com/compute/docs/reference/v1beta15/kernels"/>
  */
 @SkipEncoding({'/', '='})
 @RequestFilters(OAuthAuthenticator.class)

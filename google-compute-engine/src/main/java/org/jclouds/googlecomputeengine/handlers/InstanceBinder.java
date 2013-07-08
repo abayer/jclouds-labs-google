@@ -41,10 +41,6 @@ public class InstanceBinder implements MapBinder {
    @Named("machineTypes")
    Function<String, URI> machineTypesToURI;
 
-   @Inject
-   @Named("zones")
-   Function<String, URI> zonesToURI;
-
    /**
     * {@inheritDoc}
     */
@@ -52,12 +48,10 @@ public class InstanceBinder implements MapBinder {
    public <R extends HttpRequest> R bindToRequest(R request, Map<String, Object> postParams) {
       InstanceTemplate template = (InstanceTemplate) checkNotNull(postParams.get("template"), "template");
       template.name(checkNotNull(postParams.get("name"), "name").toString());
-      template.zone(zonesToURI.apply((String) checkNotNull(postParams.get("zone"), "zone")));
 
       if (template.getMachineTypeName() != null) {
          template.machineType(machineTypesToURI.apply(template.getMachineTypeName()));
       }
-      template.zone((String) null);
       template.machineType((String) null);
       return bindToRequest(request, template);
    }

@@ -51,7 +51,7 @@ import org.jclouds.rest.annotations.Transform;
  * <p/>
  *
  * @author David Alves
- * @see <a href="https://developers.google.com/compute/docs/reference/v1beta13/images"/>
+ * @see <a href="https://developers.google.com/compute/docs/reference/v1beta15/images"/>
  */
 @SkipEncoding({'/', '='})
 @RequestFilters(OAuthAuthenticator.class)
@@ -65,7 +65,7 @@ public interface ImageApi {
    @Named("Images:get")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
-   @Path("/images/{image}")
+   @Path("/global/images/{image}")
    @OAuthScopes(COMPUTE_READONLY_SCOPE)
    @Fallback(NullOnNotFoundOr404.class)
    @Nullable
@@ -81,7 +81,7 @@ public interface ImageApi {
    @Named("Images:delete")
    @DELETE
    @Consumes(MediaType.APPLICATION_JSON)
-   @Path("/images/{image}")
+   @Path("/global/images/{image}")
    @OAuthScopes(COMPUTE_SCOPE)
    @Fallback(NullOnNotFoundOr404.class)
    @Nullable
@@ -93,7 +93,7 @@ public interface ImageApi {
    @Named("Images:list")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
-   @Path("/images")
+   @Path("/global/images")
    @OAuthScopes(COMPUTE_READONLY_SCOPE)
    @ResponseParser(ParseImages.class)
    @Fallback(EmptyIterableWithMarkerOnNotFoundOr404.class)
@@ -105,7 +105,7 @@ public interface ImageApi {
    @Named("Images:list")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
-   @Path("/images")
+   @Path("/global/images")
    @OAuthScopes(COMPUTE_READONLY_SCOPE)
    @ResponseParser(ParseImages.class)
    @Fallback(EmptyIterableWithMarkerOnNotFoundOr404.class)
@@ -126,7 +126,7 @@ public interface ImageApi {
    @Named("Images:list")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
-   @Path("/images")
+   @Path("/global/images")
    @OAuthScopes(COMPUTE_READONLY_SCOPE)
    @ResponseParser(ParseImages.class)
    @Fallback(EmptyIterableWithMarkerOnNotFoundOr404.class)
@@ -142,7 +142,7 @@ public interface ImageApi {
    @Named("Images:list")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
-   @Path("/images")
+   @Path("/global/images")
    @OAuthScopes(COMPUTE_READONLY_SCOPE)
    @ResponseParser(ParseImages.class)
    @Transform(ParseImages.ToPagedIterable.class)
@@ -159,7 +159,7 @@ public interface ImageApi {
    @Named("Images:list")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
-   @Path("/images")
+   @Path("/global/images")
    @OAuthScopes(COMPUTE_READONLY_SCOPE)
    @ResponseParser(ParseImages.class)
    @Transform(ParseImages.ToPagedIterable.class)

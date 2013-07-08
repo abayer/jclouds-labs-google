@@ -36,7 +36,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Describes an operation being executed on some Resource
  *
  * @author David Alves
- * @see <a href="https://developers.google.com/compute/docs/reference/v1beta13/operations"/>
+ * @see <a href="https://developers.google.com/compute/docs/reference/v1beta15/operations"/>
  */
 @Beta
 public class Operation extends Resource {

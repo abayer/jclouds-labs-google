@@ -37,7 +37,7 @@ import static org.testng.Assert.assertNull;
 @Test(groups = "unit")
 public class ProjectApiExpectTest extends BaseGoogleComputeEngineApiExpectTest {
 
-   public static final String PROJECTS_URL_PREFIX = "https://www.googleapis.com/compute/v1beta13/projects";
+   public static final String PROJECTS_URL_PREFIX = "https://www.googleapis.com/compute/v1beta15/projects";
 
    public void testGetProjectResponseIs2xx() throws Exception {
       HttpRequest getProjectRequest = HttpRequest

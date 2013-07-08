@@ -39,7 +39,6 @@ public class InstanceTemplate {
    protected String name;
    protected String description;
    protected URI machineType;
-   protected URI zone;
    protected URI image;
    protected Set<String> tags = Sets.newLinkedHashSet();
    protected Set<Instance.ServiceAccount> serviceAccounts = Sets.newLinkedHashSet();
@@ -48,7 +47,6 @@ public class InstanceTemplate {
    protected transient Set<NetworkInterface> networkInterfaces = Sets.newLinkedHashSet();
    protected transient Map<String, String> metadata = Maps.newLinkedHashMap();
    protected transient String machineTypeName;
-   protected transient String zoneName;
 
 
    protected InstanceTemplate(URI machineType) {
@@ -96,22 +94,6 @@ public class InstanceTemplate {
     */
    public InstanceTemplate machineType(String machineTypeName) {
       this.machineTypeName = machineTypeName;
-      return this;
-   }
-
-   /**
-    * @see org.jclouds.googlecomputeengine.domain.Instance#getZone()
-    */
-   public InstanceTemplate zone(String zoneName) {
-      this.zoneName = zoneName;
-      return this;
-   }
-
-   /**
-    * @see org.jclouds.googlecomputeengine.domain.Instance#getZone()
-    */
-   public InstanceTemplate zone(URI zone) {
-      this.zone = zone;
       return this;
    }
 
@@ -294,20 +276,6 @@ public class InstanceTemplate {
       return name;
    }
 
-   /**
-    * @see org.jclouds.googlecomputeengine.domain.Instance#getZone()
-    */
-   public URI getZone() {
-      return zone;
-   }
-
-   /**
-    * @see org.jclouds.googlecomputeengine.domain.Instance#getZone()
-    */
-   public String getZoneName() {
-      return zoneName;
-   }
-
    public static Builder builder() {
       return new Builder();
    }
@@ -332,7 +300,6 @@ public class InstanceTemplate {
                  .networkInterfaces(instanceTemplate.getNetworkInterfaces())
                  .name(instanceTemplate.getName())
                  .description(instanceTemplate.getDescription())
-                 .zone(instanceTemplate.getZone())
                  .image(instanceTemplate.getImage())
                  .tags(instanceTemplate.getTags())
                  .disks(instanceTemplate.getDisks())

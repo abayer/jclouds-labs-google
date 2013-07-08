@@ -26,7 +26,7 @@ import java.util.Date;
  * Represents a kernel.
  *
  * @author David Alves
- * @see <a href="https://developers.google.com/compute/docs/reference/v1beta13/kernels"/>
+ * @see <a href="https://developers.google.com/compute/docs/reference/v1beta15/kernels"/>
  */
 @Beta
 public final class Kernel extends Resource {

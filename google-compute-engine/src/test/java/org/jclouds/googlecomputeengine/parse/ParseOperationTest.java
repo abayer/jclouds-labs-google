@@ -42,11 +42,11 @@ public class ParseOperationTest extends BaseGoogleComputeEngineParseTest<Operati
       SimpleDateFormatDateService dateService = new SimpleDateFormatDateService();
       return Operation.builder().id("13053095055850848306")
               .selfLink(URI.create("https://www.googleapis" +
-                      ".com/compute/v1beta13/projects/myproject/operations/operation-1354084865060-4cf88735faeb8" +
+                      ".com/compute/v1beta15/projects/myproject/operations/operation-1354084865060-4cf88735faeb8" +
                       "-bbbb12cb"))
               .name("operation-1354084865060-4cf88735faeb8-bbbb12cb")
               .targetLink(URI.create("https://www.googleapis" +
-                      ".com/compute/v1beta13/projects/myproject/instances/instance-api-live" +
+                      ".com/compute/v1beta15/projects/myproject/instances/instance-api-live" +
                       "-test-instance"))
               .targetId("13053094017547040099")
               .status(Operation.Status.DONE)

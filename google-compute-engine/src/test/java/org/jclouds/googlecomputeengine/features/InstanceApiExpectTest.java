@@ -47,7 +47,7 @@ public class InstanceApiExpectTest extends BaseGoogleComputeEngineApiExpectTest 
            .builder()
            .method("GET")
            .endpoint("https://www.googleapis" +
-                   ".com/compute/v1beta13/projects/myproject/instances/test-1")
+                   ".com/compute/v1beta15/projects/myproject/instances/test-1")
            .addHeader("Accept", "application/json")
            .addHeader("Authorization", "Bearer " + TOKEN).build();
 
@@ -59,7 +59,7 @@ public class InstanceApiExpectTest extends BaseGoogleComputeEngineApiExpectTest 
            .builder()
            .method("GET")
            .endpoint("https://www.googleapis" +
-                   ".com/compute/v1beta13/projects/myproject/instances")
+                   ".com/compute/v1beta15/projects/myproject/instances")
            .addHeader("Accept", "application/json")
            .addHeader("Authorization", "Bearer " + TOKEN).build();
 
@@ -94,7 +94,7 @@ public class InstanceApiExpectTest extends BaseGoogleComputeEngineApiExpectTest 
               .builder()
               .method("GET")
               .endpoint("https://www.googleapis" +
-                      ".com/compute/v1beta13/projects/myproject/instances/test-1/serialPort")
+                      ".com/compute/v1beta15/projects/myproject/instances/test-1/serialPort")
               .addHeader("Accept", "application/json")
               .addHeader("Authorization", "Bearer " + TOKEN).build();
 
@@ -112,7 +112,7 @@ public class InstanceApiExpectTest extends BaseGoogleComputeEngineApiExpectTest 
       HttpRequest insert = HttpRequest
               .builder()
               .method("POST")
-              .endpoint("https://www.googleapis.com/compute/v1beta13/projects/myproject/instances")
+              .endpoint("https://www.googleapis.com/compute/v1beta15/projects/myproject/instances")
               .addHeader("Accept", "application/json")
               .addHeader("Authorization", "Bearer " + TOKEN)
               .payload(payloadFromResourceWithContentType("/instance_insert_simple.json", MediaType.APPLICATION_JSON))
@@ -124,7 +124,7 @@ public class InstanceApiExpectTest extends BaseGoogleComputeEngineApiExpectTest 
 
       InstanceTemplate options = InstanceTemplate.builder().forMachineType("n1-standard-1")
               .addNetworkInterface(URI.create("https://www.googleapis" +
-                      ".com/compute/v1beta13/projects/myproject/networks/default"));
+                      ".com/compute/v1beta15/projects/myproject/networks/default"));
 
       assertEquals(api.createInZone("test-1", options, "us-central1-a"), new ParseOperationTest().expected());
    }
@@ -133,7 +133,7 @@ public class InstanceApiExpectTest extends BaseGoogleComputeEngineApiExpectTest 
       HttpRequest insert = HttpRequest
               .builder()
               .method("POST")
-              .endpoint("https://www.googleapis.com/compute/v1beta13/projects/myproject/instances")
+              .endpoint("https://www.googleapis.com/compute/v1beta15/projects/myproject/instances")
               .addHeader("Accept", "application/json")
               .addHeader("Authorization", "Bearer " + TOKEN)
               .payload(payloadFromResourceWithContentType("/instance_insert.json", MediaType.APPLICATION_JSON))
@@ -147,12 +147,12 @@ public class InstanceApiExpectTest extends BaseGoogleComputeEngineApiExpectTest 
 
       InstanceTemplate options = InstanceTemplate.builder().forMachineType("n1-standard-1")
               .addNetworkInterface(URI.create("https://www.googleapis" +
-                      ".com/compute/v1beta13/projects/myproject/networks/default"), Instance.NetworkInterface.AccessConfig.Type.ONE_TO_ONE_NAT)
+                      ".com/compute/v1beta15/projects/myproject/networks/default"), Instance.NetworkInterface.AccessConfig.Type.ONE_TO_ONE_NAT)
               .description("desc")
               .image(URI.create("https://www.googleapis" +
-                      ".com/compute/v1beta13/projects/google/images/gcel-12-04-v20121106"))
+                      ".com/compute/v1beta15/projects/google/global/images/gcel-12-04-v20121106"))
               .addDisk(InstanceTemplate.PersistentDisk.Mode.READ_WRITE,
-                      create("https://www.googleapis.com/compute/v1beta13/projects/myproject/disks/test"))
+                      create("https://www.googleapis.com/compute/v1beta15/projects/myproject/disks/test"))
               .addTag("aTag")
               .addServiceAccount(Instance.ServiceAccount.builder().email("default").addScopes("myscope").build())
               .addMetadata("aKey", "aValue");
@@ -166,7 +166,7 @@ public class InstanceApiExpectTest extends BaseGoogleComputeEngineApiExpectTest 
               .builder()
               .method("DELETE")
               .endpoint("https://www.googleapis" +
-                      ".com/compute/v1beta13/projects/myproject/instances/test-1")
+                      ".com/compute/v1beta15/projects/myproject/instances/test-1")
               .addHeader("Accept", "application/json")
               .addHeader("Authorization", "Bearer " + TOKEN).build();
 
@@ -185,7 +185,7 @@ public class InstanceApiExpectTest extends BaseGoogleComputeEngineApiExpectTest 
               .builder()
               .method("DELETE")
               .endpoint("https://www.googleapis" +
-                      ".com/compute/v1beta13/projects/myproject/instances/test-1")
+                      ".com/compute/v1beta15/projects/myproject/instances/test-1")
               .addHeader("Accept", "application/json")
               .addHeader("Authorization", "Bearer " + TOKEN).build();
 
@@ -212,7 +212,7 @@ public class InstanceApiExpectTest extends BaseGoogleComputeEngineApiExpectTest 
               .builder()
               .method("GET")
               .endpoint("https://www.googleapis" +
-                      ".com/compute/v1beta13/projects/myproject/instances")
+                      ".com/compute/v1beta15/projects/myproject/instances")
               .addHeader("Accept", "application/json")
               .addHeader("Authorization", "Bearer " + TOKEN).build();
 

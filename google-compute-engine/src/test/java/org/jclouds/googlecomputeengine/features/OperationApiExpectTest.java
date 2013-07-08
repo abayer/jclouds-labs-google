@@ -37,7 +37,7 @@ import static org.testng.Assert.assertTrue;
 public class OperationApiExpectTest extends BaseGoogleComputeEngineApiExpectTest {
 
    private static final String OPERATIONS_URL_PREFIX = "https://www.googleapis" +
-           ".com/compute/v1beta13/projects/myproject/operations";
+           ".com/compute/v1beta15/projects/myproject/operations";
 
    public static final HttpRequest GET_OPERATION_REQUEST = HttpRequest
            .builder()

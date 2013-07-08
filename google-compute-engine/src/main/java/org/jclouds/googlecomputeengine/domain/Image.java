@@ -33,7 +33,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Represents a disk image to use on an instance.
  *
  * @author David Alves
- * @see <a href="https://developers.google.com/compute/docs/reference/v1beta13/images"/>
+ * @see <a href="https://developers.google.com/compute/docs/reference/v1beta15/images"/>
  */
 @Beta
 public final class Image extends Resource {
@@ -155,7 +155,7 @@ public final class Image extends Resource {
     * A raw disk image, usually the base for an image.
     *
     * @author David Alves
-    * @see <a href="https://developers.google.com/compute/docs/reference/v1beta13/images"/>
+    * @see <a href="https://developers.google.com/compute/docs/reference/v1beta15/images"/>
     */
    public static class RawDisk {
 

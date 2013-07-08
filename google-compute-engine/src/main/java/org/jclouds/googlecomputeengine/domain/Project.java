@@ -176,7 +176,7 @@ public class Project extends Resource {
    /**
     * Quotas assigned to a given project
     *
-    * @see <a href="https://developers.google.com/compute/docs/reference/v1beta13/projects#resource"/>
+    * @see <a href="https://developers.google.com/compute/docs/reference/v1beta15/projects#resource"/>
     */
    public static final class Quota {
 

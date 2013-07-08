@@ -38,7 +38,7 @@ import static com.google.common.collect.Range.singleton;
  * Represents a network firewall
  *
  * @author David Alves
- * @see <a href="https://developers.google.com/compute/docs/reference/v1beta13/firewalls"/>
+ * @see <a href="https://developers.google.com/compute/docs/reference/v1beta15/firewalls"/>
  * @see <a href="https://developers.google.com/compute/docs/networking#firewalls"/>
  */
 @Beta
@@ -241,7 +241,7 @@ public final class Firewall extends Resource {
     * permitted connection.
     *
     * @author David Alves
-    * @see <a href="https://developers.google.com/compute/docs/reference/v1beta13/firewalls"/>
+    * @see <a href="https://developers.google.com/compute/docs/reference/v1beta15/firewalls"/>
     */
    public static final class Rule {
 

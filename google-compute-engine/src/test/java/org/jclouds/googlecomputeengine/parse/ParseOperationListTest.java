@@ -41,7 +41,7 @@ public class ParseOperationListTest extends BaseGoogleComputeEngineParseTest<Lis
       return ListPage.<Operation>builder()
               .kind(Resource.Kind.OPERATION_LIST)
               .id("projects/myproject/operations")
-              .selfLink(URI.create("https://www.googleapis.com/compute/v1beta13/projects/myproject/operations"))
+              .selfLink(URI.create("https://www.googleapis.com/compute/v1beta15/projects/myproject/operations"))
               .addItem(new ParseOperationTest().expected())
               .build();
    }

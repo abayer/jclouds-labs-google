@@ -45,18 +45,18 @@ public class ParseFirewallListTest extends BaseGoogleComputeEngineParseTest<List
       return ListPage.<Firewall>builder()
               .kind(Resource.Kind.FIREWALL_LIST)
               .id("projects/google/firewalls")
-              .selfLink(URI.create("https://www.googleapis.com/compute/v1beta13/projects/google/firewalls"))
+              .selfLink(URI.create("https://www.googleapis.com/compute/v1beta15/projects/google/firewalls"))
               .items(ImmutableSet.of(
                       new ParseFirewallTest().expected()
                       , Firewall.builder()
                       .id("12862241067393040785")
                       .creationTimestamp(new SimpleDateFormatDateService().iso8601DateParse("2012-04-13T03:05:04.365"))
                       .selfLink(URI.create("https://www.googleapis" +
-                              ".com/compute/v1beta13/projects/google/firewalls/default-ssh"))
+                              ".com/compute/v1beta15/projects/google/firewalls/default-ssh"))
                       .name("default-ssh")
                       .description("SSH allowed from anywhere")
                       .network(URI.create("https://www.googleapis" +
-                              ".com/compute/v1beta13/projects/google/networks/default"))
+                              ".com/compute/v1beta15/projects/google/networks/default"))
                       .addSourceRange("0.0.0.0/0")
                       .addAllowed(Firewall.Rule.builder()
                               .IPProtocol(Firewall.Rule.IPProtocol.TCP)

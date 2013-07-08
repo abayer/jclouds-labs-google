@@ -24,7 +24,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Allows to optionally specify a filter, max results and a page token for <code>listFirstPage()</code> REST methods.
  *
  * @author David Alves
- * @see <a href="https://developers.google.com/compute/docs/reference/v1beta13/operations/listFirstPage"/>
+ * @see <a href="https://developers.google.com/compute/docs/reference/v1beta15/operations/listFirstPage"/>
  */
 public class ListOptions extends BaseHttpRequestOptions {
 

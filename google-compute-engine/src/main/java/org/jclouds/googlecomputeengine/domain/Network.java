@@ -32,7 +32,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Represents a network used to enable instance communication.
  *
  * @author David Alves
- * @see <a href="https://developers.google.com/compute/docs/reference/v1beta13/networks"/>
+ * @see <a href="https://developers.google.com/compute/docs/reference/v1beta15/networks"/>
  */
 @Beta
 public final class Network extends Resource {

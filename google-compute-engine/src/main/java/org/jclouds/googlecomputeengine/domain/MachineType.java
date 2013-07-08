@@ -35,7 +35,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Represents a machine type used to host an instance.
  *
  * @author David Alves
- * @see <a href="https://developers.google.com/compute/docs/reference/v1beta13/machineTypes"/>
+ * @see <a href="https://developers.google.com/compute/docs/reference/v1beta15/machineTypes"/>
  */
 @Beta
 public final class MachineType extends Resource {

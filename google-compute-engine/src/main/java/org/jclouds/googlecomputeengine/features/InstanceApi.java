@@ -58,7 +58,7 @@ import org.jclouds.rest.binders.BindToJsonPayload;
  * Provides access to Instances via their REST API.
  *
  * @author David Alves
- * @see <a href="https://developers.google.com/compute/docs/reference/v1beta13/instances"/>
+ * @see <a href="https://developers.google.com/compute/docs/reference/v1beta15/instances"/>
  * @see InstanceApi
  */
 @SkipEncoding({'/', '='})
@@ -74,11 +74,11 @@ public interface InstanceApi {
    @Named("Instances:get")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
-   @Path("/instances/{instance}")
+   @Path("/zones/{zone}/instances/{instance}")
    @OAuthScopes(COMPUTE_READONLY_SCOPE)
    @Fallback(NullOnNotFoundOr404.class)
    @Nullable
-   Instance get(@PathParam("instance") String instanceName);
+   Instance getInZone(@PathParam("instance") String instanceName, @PathParam("zone") String zone);
 
    /**
     * Creates a instance resource in the specified project using the data included in the request.
@@ -93,12 +93,13 @@ public interface InstanceApi {
    @POST
    @Consumes(MediaType.APPLICATION_JSON)
    @Produces(MediaType.APPLICATION_JSON)
-   @Path("/instances")
+   @Path("/zones/{zone}/instances")
    @OAuthScopes({COMPUTE_SCOPE})
    @MapBinder(InstanceBinder.class)
-   Operation createInZone(@PayloadParam("name") String instanceName,
-                          @PayloadParam("template") InstanceTemplate template,
-                          @PayloadParam("zone") String zone);
+   Operation createInZone(@PathParam("zone") String zone,
+                          @PayloadParam("name") String instanceName,
+                          @PayloadParam("template") InstanceTemplate template);
+                          
 
    /**
     * Deletes the specified instance resource.
@@ -110,11 +111,11 @@ public interface InstanceApi {
    @Named("Instances:delete")
    @DELETE
    @Consumes(MediaType.APPLICATION_JSON)
-   @Path("/instances/{instance}")
+   @Path("/zones/{zone}/instances/{instance}")
    @OAuthScopes(COMPUTE_SCOPE)
    @Fallback(NullOnNotFoundOr404.class)
    @Nullable
-   Operation delete(@PathParam("instance") String instanceName);
+   Operation deleteInZone(@PathParam("zone") String zone, @PathParam("instance") String instanceName);
 
    /**
     * A paged version of InstanceApi#list()
@@ -126,11 +127,11 @@ public interface InstanceApi {
    @Named("Instances:list")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
-   @Path("/instances")
+   @Path("/zones/{zone}/instances")
    @OAuthScopes(COMPUTE_READONLY_SCOPE)
    @ResponseParser(ParseInstances.class)
    @Fallback(EmptyIterableWithMarkerOnNotFoundOr404.class)
-   ListPage<Instance> listFirstPage();
+   ListPage<Instance> listFirstPageInZone(@PathParam("zone") String zone);
 
    /**
     * Retrieves the list of instance resources available to the specified project.
@@ -146,11 +147,11 @@ public interface InstanceApi {
    @Named("Instances:list")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
-   @Path("/instances")
+   @Path("/zones/{zone}/instances")
    @OAuthScopes(COMPUTE_READONLY_SCOPE)
    @ResponseParser(ParseInstances.class)
    @Fallback(EmptyIterableWithMarkerOnNotFoundOr404.class)
-   ListPage<Instance> listAtMarker(@Nullable String marker);
+   ListPage<Instance> listAtMarkerInZone(@PathParam("zone") String zone, @Nullable String marker);
 
    /**
     * @see InstanceApi#listAtMarker(String, org.jclouds.googlecomputeengine.options.ListOptions)
@@ -158,11 +159,12 @@ public interface InstanceApi {
    @Named("Instances:list")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
-   @Path("/instances")
+   @Path("/zones/{zone}/instances")
    @OAuthScopes(COMPUTE_READONLY_SCOPE)
    @ResponseParser(ParseInstances.class)
    @Fallback(EmptyIterableWithMarkerOnNotFoundOr404.class)
-   ListPage<Instance> listAtMarker(@Nullable String marker, ListOptions options);
+   ListPage<Instance> listAtMarkerInZone(@PathParam("zone") String zone,
+                                         @Nullable String marker, ListOptions options);
 
    /**
     * @see InstanceApi#list(org.jclouds.googlecomputeengine.options.ListOptions)
@@ -170,12 +172,12 @@ public interface InstanceApi {
    @Named("Instances:list")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
-   @Path("/instances")
+   @Path("/zones/{zone}/instances")
    @OAuthScopes(COMPUTE_READONLY_SCOPE)
    @ResponseParser(ParseInstances.class)
    @Transform(ParseInstances.ToPagedIterable.class)
    @Fallback(EmptyPagedIterableOnNotFoundOr404.class)
-   PagedIterable<Instance> list();
+   PagedIterable<Instance> listInZone(@PathParam("zone") String zone);
 
    /**
     * @see InstanceApi#list(org.jclouds.googlecomputeengine.options.ListOptions)
@@ -183,12 +185,12 @@ public interface InstanceApi {
    @Named("Instances:list")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
-   @Path("/instances")
+   @Path("/zones/{zone}/instances")
    @OAuthScopes(COMPUTE_READONLY_SCOPE)
    @ResponseParser(ParseInstances.class)
    @Transform(ParseInstances.ToPagedIterable.class)
    @Fallback(EmptyPagedIterableOnNotFoundOr404.class)
-   PagedIterable<Instance> list(ListOptions options);
+   PagedIterable<Instance> listInZone(@PathParam("zone") String zone, ListOptions options);
 
    /**
     * Adds an access config to an instance's network interface.
@@ -203,13 +205,14 @@ public interface InstanceApi {
    @POST
    @Consumes(MediaType.APPLICATION_JSON)
    @Produces(MediaType.APPLICATION_JSON)
-   @Path("/instances/{instance}/addAccessConfig")
+   @Path("/zones/{zone}/instances/{instance}/addAccessConfig")
    @OAuthScopes({COMPUTE_SCOPE})
-   Operation addAccessConfigToNic(@PathParam("instance") String instanceName,
-                                  @BinderParam(BindToJsonPayload.class)
-                                  Instance.NetworkInterface.AccessConfig accessConfig,
-                                  @QueryParam("network_interface") String networkInterfaceName);
-
+   Operation addAccessConfigToNicInZone(@PathParam("zone") String zone,
+                                        @PathParam("instance") String instanceName,
+                                        @BinderParam(BindToJsonPayload.class)
+                                        Instance.NetworkInterface.AccessConfig accessConfig,
+                                        @QueryParam("network_interface") String networkInterfaceName);
+  
    /**
     * Deletes an access config from an instance's network interface.
     *
@@ -222,11 +225,12 @@ public interface InstanceApi {
    @Named("Instances:deleteAccessConfig")
    @DELETE
    @Consumes(MediaType.APPLICATION_JSON)
-   @Path("/instances/{instance}/deleteAccessConfig")
+   @Path("/zones/{zone}/instances/{instance}/deleteAccessConfig")
    @OAuthScopes(COMPUTE_SCOPE)
-   Operation deleteAccessConfigFromNic(@PathParam("instance") String instanceName,
-                                       @QueryParam("access_config") String accessConfigName,
-                                       @QueryParam("network_interface") String networkInterfaceName);
+   Operation deleteAccessConfigFromNicInZone(@PathParam("zone") String zone,
+                                             @PathParam("instance") String instanceName,
+                                             @QueryParam("access_config") String accessConfigName,
+                                             @QueryParam("network_interface") String networkInterfaceName);
 
    /**
     * Returns the specified instance's serial port output.
@@ -237,7 +241,8 @@ public interface InstanceApi {
    @Named("Instances:serialPort")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
-   @Path("/instances/{instance}/serialPort")
+   @Path("/zones/{zone}/instances/{instance}/serialPort")
    @OAuthScopes(COMPUTE_READONLY_SCOPE)
-   Instance.SerialPortOutput getSerialPortOutput(@PathParam("instance") String instanceName);
+   Instance.SerialPortOutput getSerialPortOutputInZone(@PathParam("zone") String zone,
+                                                       @PathParam("instance") String instanceName);
 }
