@@ -37,7 +37,8 @@ public class ParseFirewalls extends ParseJson<ListPage<Firewall>> {
 
    @Inject
    public ParseFirewalls(Json json) {
-      super(json, new TypeLiteral<ListPage<Firewall>>() {});
+      super(json, new TypeLiteral<ListPage<Firewall>>() {
+      });
    }
 
    public static class ToPagedIterable extends BaseToPagedIterable<Firewall, ToPagedIterable> {

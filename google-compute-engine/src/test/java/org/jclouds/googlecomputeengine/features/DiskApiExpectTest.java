@@ -43,7 +43,7 @@ public class DiskApiExpectTest extends BaseGoogleComputeEngineApiExpectTest {
       HttpRequest get = HttpRequest
               .builder()
               .method("GET")
-              .endpoint("https://www.googleapis.com/compute/v1beta15/projects/myproject/disks/testimage1")
+              .endpoint("https://www.googleapis.com/compute/v1beta15/projects/myproject/zones/us-central1-a/disks/testimage1")
               .addHeader("Accept", "application/json")
               .addHeader("Authorization", "Bearer " + TOKEN).build();
 
@@ -53,7 +53,7 @@ public class DiskApiExpectTest extends BaseGoogleComputeEngineApiExpectTest {
       DiskApi api = requestsSendResponses(requestForScopes(COMPUTE_READONLY_SCOPE),
               TOKEN_RESPONSE, get, operationResponse).getDiskApiForProject("myproject");
 
-      assertEquals(api.get("testimage1"),
+      assertEquals(api.getInZone("us-central1-a", "testimage1"),
               new ParseDiskTest().expected());
    }
 
@@ -61,7 +61,7 @@ public class DiskApiExpectTest extends BaseGoogleComputeEngineApiExpectTest {
       HttpRequest get = HttpRequest
               .builder()
               .method("GET")
-              .endpoint("https://www.googleapis.com/compute/v1beta15/projects/myproject/disks/testimage1")
+              .endpoint("https://www.googleapis.com/compute/v1beta15/projects/myproject/zones/us-central1-a/disks/testimage1")
               .addHeader("Accept", "application/json")
               .addHeader("Authorization", "Bearer " + TOKEN).build();
 
@@ -70,14 +70,14 @@ public class DiskApiExpectTest extends BaseGoogleComputeEngineApiExpectTest {
       DiskApi api = requestsSendResponses(requestForScopes(COMPUTE_READONLY_SCOPE),
               TOKEN_RESPONSE, get, operationResponse).getDiskApiForProject("myproject");
 
-      assertNull(api.get("testimage1"));
+      assertNull(api.getInZone("us-central1-a", "testimage1"));
    }
 
    public void testInsertDiskResponseIs2xx() {
       HttpRequest insert = HttpRequest
               .builder()
               .method("POST")
-              .endpoint("https://www.googleapis.com/compute/v1beta15/projects/myproject/disks")
+              .endpoint("https://www.googleapis.com/compute/v1beta15/projects/myproject/zones/us-central1-a/disks")
               .addHeader("Accept", "application/json")
               .addHeader("Authorization", "Bearer " + TOKEN)
               .payload(payloadFromResourceWithContentType("/disk_insert.json", MediaType.APPLICATION_JSON))
@@ -90,9 +90,7 @@ public class DiskApiExpectTest extends BaseGoogleComputeEngineApiExpectTest {
               TOKEN_RESPONSE, insert,
               insertDiskResponse).getDiskApiForProject("myproject");
 
-      assertEquals(api.createInZone("testimage1", 1, URI.create("https://www.googleapis" +
-              ".com/compute/v1beta15/projects/myproject/zones/us-central1-a"))
-              , new ParseOperationTest().expected());
+      assertEquals(api.createInZone("testimage1", 1, "us-central1-a"), new ParseOperationTest().expected());
    }
 
    public void testDeleteDiskResponseIs2xx() {
@@ -100,7 +98,7 @@ public class DiskApiExpectTest extends BaseGoogleComputeEngineApiExpectTest {
               .builder()
               .method("DELETE")
               .endpoint("https://www.googleapis" +
-                      ".com/compute/v1beta15/projects/myproject/disks/testimage1")
+                      ".com/compute/v1beta15/projects/myproject/zones/us-central1-a/disks/testimage1")
               .addHeader("Accept", "application/json")
               .addHeader("Authorization", "Bearer " + TOKEN).build();
 
@@ -110,7 +108,7 @@ public class DiskApiExpectTest extends BaseGoogleComputeEngineApiExpectTest {
       DiskApi api = requestsSendResponses(requestForScopes(COMPUTE_SCOPE),
               TOKEN_RESPONSE, delete, deleteResponse).getDiskApiForProject("myproject");
 
-      assertEquals(api.delete("testimage1"),
+      assertEquals(api.deleteInZone("us-central1-a", "testimage1"),
               new ParseOperationTest().expected());
    }
 
@@ -119,7 +117,7 @@ public class DiskApiExpectTest extends BaseGoogleComputeEngineApiExpectTest {
               .builder()
               .method("DELETE")
               .endpoint("https://www.googleapis" +
-                      ".com/compute/v1beta15/projects/myproject/disks/testimage1")
+                      ".com/compute/v1beta15/projects/myproject/zones/us-central1-a/disks/testimage1")
               .addHeader("Accept", "application/json")
               .addHeader("Authorization", "Bearer " + TOKEN).build();
 
@@ -128,7 +126,7 @@ public class DiskApiExpectTest extends BaseGoogleComputeEngineApiExpectTest {
       DiskApi api = requestsSendResponses(requestForScopes(COMPUTE_SCOPE),
               TOKEN_RESPONSE, delete, deleteResponse).getDiskApiForProject("myproject");
 
-      assertNull(api.delete("testimage1"));
+      assertNull(api.deleteInZone("us-central1-a", "testimage1"));
    }
 
    public void testListDisksResponseIs2xx() {
@@ -136,7 +134,7 @@ public class DiskApiExpectTest extends BaseGoogleComputeEngineApiExpectTest {
               .builder()
               .method("GET")
               .endpoint("https://www.googleapis" +
-                      ".com/compute/v1beta15/projects/myproject/disks")
+                      ".com/compute/v1beta15/projects/myproject/zones/us-central1-a/disks")
               .addHeader("Accept", "application/json")
               .addHeader("Authorization", "Bearer " + TOKEN).build();
 
@@ -146,7 +144,7 @@ public class DiskApiExpectTest extends BaseGoogleComputeEngineApiExpectTest {
       DiskApi api = requestsSendResponses(requestForScopes(COMPUTE_READONLY_SCOPE),
               TOKEN_RESPONSE, list, operationResponse).getDiskApiForProject("myproject");
 
-      assertEquals(api.listFirstPage().toString(),
+      assertEquals(api.listFirstPageInZone("us-central1-a").toString(),
               new ParseDiskListTest().expected().toString());
    }
 
@@ -155,7 +153,7 @@ public class DiskApiExpectTest extends BaseGoogleComputeEngineApiExpectTest {
               .builder()
               .method("GET")
               .endpoint("https://www.googleapis" +
-                      ".com/compute/v1beta15/projects/myproject/disks")
+                      ".com/compute/v1beta15/projects/myproject/zones/us-central1-a/disks")
               .addHeader("Accept", "application/json")
               .addHeader("Authorization", "Bearer " + TOKEN).build();
 
@@ -164,6 +162,6 @@ public class DiskApiExpectTest extends BaseGoogleComputeEngineApiExpectTest {
       DiskApi api = requestsSendResponses(requestForScopes(COMPUTE_READONLY_SCOPE),
               TOKEN_RESPONSE, list, operationResponse).getDiskApiForProject("myproject");
 
-      assertTrue(api.list().concat().isEmpty());
+      assertTrue(api.listInZone("us-central1-a").concat().isEmpty());
    }
 }

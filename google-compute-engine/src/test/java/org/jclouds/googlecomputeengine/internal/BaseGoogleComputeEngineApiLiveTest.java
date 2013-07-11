@@ -47,6 +47,9 @@ public class BaseGoogleComputeEngineApiLiveTest extends BaseApiLiveTest<GoogleCo
    protected static final String ZONE_API_URL_SUFFIX = "/zones/";
    protected static final String DEFAULT_ZONE_NAME = "us-central1-a";
 
+   protected static final String REGION_API_URL_SUFFIX = "/region/";
+   protected static final String DEFAULT_REGION_NAME = "us-central1";
+
    protected static final String NETWORK_API_URL_SUFFIX = "/networks/";
    protected static final String DEFAULT_NETWORK_NAME = "live-test-network";
 
@@ -114,7 +117,7 @@ public class BaseGoogleComputeEngineApiLiveTest extends BaseApiLiveTest<GoogleCo
    protected static Operation waitOperationDone(Predicate<AtomicReference<Operation>> operationDonePredicate,
                                                 Operation operation, long maxWaitSeconds) {
       AtomicReference<Operation> operationReference = new AtomicReference<Operation>(operation);
-      retry(operationDonePredicate,  maxWaitSeconds, 1, SECONDS).apply(operationReference);
+      retry(operationDonePredicate, maxWaitSeconds, 1, SECONDS).apply(operationReference);
       return operationReference.get();
    }
 }

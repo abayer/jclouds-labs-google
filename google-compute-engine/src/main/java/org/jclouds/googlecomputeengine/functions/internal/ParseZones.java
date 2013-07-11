@@ -37,7 +37,8 @@ public class ParseZones extends ParseJson<ListPage<Zone>> {
 
    @Inject
    public ParseZones(Json json) {
-      super(json, new TypeLiteral<ListPage<Zone>>() {});
+      super(json, new TypeLiteral<ListPage<Zone>>() {
+      });
    }
 
    public static class ToPagedIterable extends BaseToPagedIterable<Zone, ToPagedIterable> {

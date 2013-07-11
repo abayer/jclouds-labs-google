@@ -117,7 +117,7 @@ public class GoogleComputeEngineService extends BaseComputeService {
                                         GroupNamingConvention.Factory namingConvention,
                                         GoogleComputeEngineApi api,
                                         @UserProject Supplier<String> project,
-                                        Predicate<AtomicReference<Operation>> operationDonePredicate,
+                                        @Named("global") Predicate<AtomicReference<Operation>> operationDonePredicate,
                                         @Named(OPERATION_COMPLETE_INTERVAL) Long operationCompleteCheckInterval,
                                         @Named(OPERATION_COMPLETE_TIMEOUT) Long operationCompleteCheckTimeout) {
 

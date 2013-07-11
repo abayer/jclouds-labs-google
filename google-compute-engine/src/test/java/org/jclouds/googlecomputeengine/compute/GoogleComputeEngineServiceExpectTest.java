@@ -49,8 +49,8 @@ import static org.jclouds.googlecomputeengine.features.InstanceApiExpectTest.LIS
 import static org.jclouds.googlecomputeengine.features.MachineTypeApiExpectTest.LIST_MACHINE_TYPES_REQUEST;
 import static org.jclouds.googlecomputeengine.features.MachineTypeApiExpectTest.LIST_MACHINE_TYPES_RESPONSE;
 import static org.jclouds.googlecomputeengine.features.NetworkApiExpectTest.GET_NETWORK_REQUEST;
-import static org.jclouds.googlecomputeengine.features.OperationApiExpectTest.GET_OPERATION_REQUEST;
-import static org.jclouds.googlecomputeengine.features.OperationApiExpectTest.GET_OPERATION_RESPONSE;
+import static org.jclouds.googlecomputeengine.features.ZoneOperationApiExpectTest.GET_OPERATION_REQUEST;
+import static org.jclouds.googlecomputeengine.features.ZoneOperationApiExpectTest.GET_OPERATION_RESPONSE;
 import static org.jclouds.googlecomputeengine.features.ZoneApiExpectTest.LIST_ZONES_REQ;
 import static org.jclouds.googlecomputeengine.features.ZoneApiExpectTest.LIST_ZONES_RESPONSE;
 import static org.jclouds.util.Strings2.toStringAndClose;
@@ -77,7 +77,7 @@ public class GoogleComputeEngineServiceExpectTest extends BaseGoogleComputeEngin
    private HttpRequest INSERT_NETWORK_REQUEST = HttpRequest
            .builder()
            .method("POST")
-           .endpoint("https://www.googleapis.com/compute/v1beta15/projects/myproject/networks")
+           .endpoint("https://www.googleapis.com/compute/v1beta15/projects/myproject/global/networks")
            .addHeader("Accept", "application/json")
            .addHeader("Authorization", "Bearer " + TOKEN)
            .payload(payloadFromStringWithContentType("{\"name\":\"jclouds-test\",\"IPv4Range\":\"10.0.0.0/8\"}",
@@ -87,7 +87,7 @@ public class GoogleComputeEngineServiceExpectTest extends BaseGoogleComputeEngin
    private HttpRequest INSERT_FIREWALL_REQUEST = HttpRequest
            .builder()
            .method("POST")
-           .endpoint("https://www.googleapis.com/compute/v1beta15/projects/myproject/firewalls")
+           .endpoint("https://www.googleapis.com/compute/v1beta15/projects/myproject/global/firewalls")
            .addHeader("Accept", "application/json")
            .addHeader("Authorization", "Bearer " + TOKEN)
            .payload(payloadFromStringWithContentType("{\"name\":\"jclouds-test\",\"network\":\"https://www.googleapis" +
@@ -104,7 +104,7 @@ public class GoogleComputeEngineServiceExpectTest extends BaseGoogleComputeEngin
                    " \"id\": \"13024414170909937976\",\n" +
                    " \"creationTimestamp\": \"2012-10-24T20:13:19.967\",\n" +
                    " \"selfLink\": \"https://www.googleapis" +
-                   ".com/compute/v1beta15/projects/myproject/networks/jclouds-test\",\n" +
+                   ".com/compute/v1beta15/projects/myproject/global/networks/jclouds-test\",\n" +
                    " \"name\": \"jclouds-test\",\n" +
                    " \"description\": \"test network\",\n" +
                    " \"IPv4Range\": \"10.0.0.0/8\",\n" +

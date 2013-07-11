@@ -16,28 +16,30 @@
  */
 package org.jclouds.googlecomputeengine.functions.internal;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import javax.inject.Inject;
+
 import com.google.common.base.Function;
 import com.google.inject.TypeLiteral;
 import org.jclouds.collect.IterableWithMarker;
 import org.jclouds.googlecomputeengine.GoogleComputeEngineApi;
 import org.jclouds.googlecomputeengine.domain.ListPage;
 import org.jclouds.googlecomputeengine.domain.Operation;
+import org.jclouds.googlecomputeengine.domain.SlashEncodedIds;
 import org.jclouds.googlecomputeengine.options.ListOptions;
 import org.jclouds.http.functions.ParseJson;
 import org.jclouds.json.Json;
 
-import javax.inject.Inject;
-
-import static com.google.common.base.Preconditions.checkNotNull;
-
 /**
  * @author David Alves
  */
-public class ParseOperations extends ParseJson<ListPage<Operation>> {
+public class ParseZoneOperations extends ParseJson<ListPage<Operation>> {
 
    @Inject
-   public ParseOperations(Json json) {
-      super(json, new TypeLiteral<ListPage<Operation>>() {});
+   public ParseZoneOperations(Json json) {
+      super(json, new TypeLiteral<ListPage<Operation>>() {
+      });
    }
 
    public static class ToPagedIterable extends BaseToPagedIterable<Operation, ToPagedIterable> {
@@ -50,13 +52,16 @@ public class ParseOperations extends ParseJson<ListPage<Operation>> {
       }
 
       @Override
-      protected Function<Object, IterableWithMarker<Operation>> fetchNextPage(final String projectName,
+      protected Function<Object, IterableWithMarker<Operation>> fetchNextPage(final String projectAndZoneName,
                                                                               final ListOptions options) {
+         final SlashEncodedIds slashEncodedIds = SlashEncodedIds.fromSlashEncoded(projectAndZoneName);
+
          return new Function<Object, IterableWithMarker<Operation>>() {
 
             @Override
             public IterableWithMarker<Operation> apply(Object input) {
-               return api.getOperationApiForProject(projectName).listAtMarker(input.toString(), options);
+               return api.getZoneOperationApiForProject(slashEncodedIds.getFirstId())
+                       .listAtMarkerInZone(slashEncodedIds.getSecondId(), input.toString(), options);
             }
          };
       }

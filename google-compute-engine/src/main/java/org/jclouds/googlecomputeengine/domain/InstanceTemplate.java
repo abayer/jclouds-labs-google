@@ -143,7 +143,7 @@ public class InstanceTemplate {
     * @see org.jclouds.googlecomputeengine.domain.Instance#getNetworkInterfaces()
     */
    public InstanceTemplate addNetworkInterface(URI network) {
-      this.networkInterfaces.add(new NetworkInterface(checkNotNull(network, "network"), null,null));
+      this.networkInterfaces.add(new NetworkInterface(checkNotNull(network, "network"), null, null));
       return this;
    }
 

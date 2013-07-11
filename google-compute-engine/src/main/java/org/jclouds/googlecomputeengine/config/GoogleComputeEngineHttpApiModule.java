@@ -18,6 +18,7 @@ package org.jclouds.googlecomputeengine.config;
 
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Suppliers.compose;
+import static com.google.inject.name.Names.named;
 
 import java.net.URI;
 import java.util.concurrent.atomic.AtomicReference;
@@ -28,8 +29,11 @@ import javax.inject.Singleton;
 import org.jclouds.domain.Credentials;
 import org.jclouds.googlecomputeengine.GoogleComputeEngineApi;
 import org.jclouds.googlecomputeengine.domain.Operation;
+import org.jclouds.googlecomputeengine.domain.SlashEncodedIds;
 import org.jclouds.googlecomputeengine.handlers.GoogleComputeEngineErrorHandler;
-import org.jclouds.googlecomputeengine.predicates.OperationDonePredicate;
+import org.jclouds.googlecomputeengine.predicates.GlobalOperationDonePredicate;
+import org.jclouds.googlecomputeengine.predicates.RegionOperationDonePredicate;
+import org.jclouds.googlecomputeengine.predicates.ZoneOperationDonePredicate;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.Uris;
 import org.jclouds.http.annotation.ClientError;
@@ -62,7 +66,12 @@ public class GoogleComputeEngineHttpApiModule extends HttpApiModule<GoogleComput
    @Override
    protected void configure() {
       bind(DateAdapter.class).to(Iso8601DateAdapter.class);
-      bind(new TypeLiteral<Predicate<AtomicReference<Operation>>>() {}).to(OperationDonePredicate.class);
+      bind(new TypeLiteral<Predicate<AtomicReference<Operation>>>() {
+      }).annotatedWith(named("global")).to(GlobalOperationDonePredicate.class);
+      bind(new TypeLiteral<Predicate<AtomicReference<Operation>>>() {
+      }).annotatedWith(named("region")).to(RegionOperationDonePredicate.class);
+      bind(new TypeLiteral<Predicate<AtomicReference<Operation>>>() {
+      }).annotatedWith(named("zone")).to(ZoneOperationDonePredicate.class);
       super.configure();
    }
 
@@ -94,8 +103,10 @@ public class GoogleComputeEngineHttpApiModule extends HttpApiModule<GoogleComput
       return new Function<String, URI>() {
          @Override
          public URI apply(String input) {
+            SlashEncodedIds slashEncodedIds = SlashEncodedIds.fromSlashEncoded(input);
             return Uris.uriBuilder(endpoint.get()).appendPath("/projects/").appendPath(userProject.get()).appendPath
-                    ("/machineTypes/").appendPath(input).build();
+                    ("/zones/").appendPath(slashEncodedIds.getFirstId())
+                    .appendPath("/machineTypes/").appendPath(slashEncodedIds.getSecondId()).build();
          }
       };
    }
@@ -109,7 +120,7 @@ public class GoogleComputeEngineHttpApiModule extends HttpApiModule<GoogleComput
          @Override
          public URI apply(String input) {
             return Uris.uriBuilder(endpoint.get()).appendPath("/projects/").appendPath(userProject.get()).appendPath
-                    ("/networks/").appendPath(input).build();
+                    ("/global/networks/").appendPath(input).build();
          }
       };
    }
@@ -124,6 +135,20 @@ public class GoogleComputeEngineHttpApiModule extends HttpApiModule<GoogleComput
          public URI apply(String input) {
             return Uris.uriBuilder(endpoint.get()).appendPath("/projects/").appendPath(userProject.get()).appendPath
                     ("/zones/").appendPath(input).build();
+         }
+      };
+   }
+
+   @Provides
+   @Singleton
+   @Named("regions")
+   public Function<String, URI> provideRegionNameToURIFunction(final @Provider Supplier<URI> endpoint,
+                                                               final @UserProject Supplier<String> userProject) {
+      return new Function<String, URI>() {
+         @Override
+         public URI apply(String input) {
+            return Uris.uriBuilder(endpoint.get()).appendPath("/projects/").appendPath(userProject.get()).appendPath
+                    ("/regions/").appendPath(input).build();
          }
       };
    }

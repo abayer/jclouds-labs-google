@@ -17,6 +17,7 @@
 package org.jclouds.googlecomputeengine.config;
 
 import com.google.common.collect.ForwardingMap;
+import com.google.common.collect.ForwardingSet;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Range;
 import com.google.gson.JsonArray;
@@ -35,6 +36,7 @@ import org.jclouds.googlecomputeengine.domain.Instance;
 import org.jclouds.googlecomputeengine.domain.InstanceTemplate;
 import org.jclouds.googlecomputeengine.domain.Operation;
 import org.jclouds.googlecomputeengine.domain.Project;
+import org.jclouds.googlecomputeengine.options.DeprecateOptions;
 import org.jclouds.googlecomputeengine.options.FirewallOptions;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.oauth.v2.domain.ClaimSet;
@@ -107,16 +109,16 @@ public class GoogleComputeEngineParserModule extends AbstractModule {
          @ConstructorProperties({
                  "id", "creationTimestamp", "selfLink", "name", "description", "targetLink", "targetId",
                  "clientOperationId", "status", "statusMessage", "user", "progress", "insertTime", "startTime",
-                 "endTime", "httpErrorStatusCode", "httpErrorMessage", "operationType"
+                 "endTime", "httpErrorStatusCode", "httpErrorMessage", "operationType", "region", "zone"
          })
          private OperationInternal(String id, Date creationTimestamp, URI selfLink, String name,
                                    String description, URI targetLink, String targetId, String clientOperationId,
                                    Status status, String statusMessage, String user, int progress, Date insertTime,
                                    Date startTime, Date endTime, int httpErrorStatusCode, String httpErrorMessage,
-                                   String operationType) {
+                                   String operationType, String region, String zone) {
             super(id, creationTimestamp, selfLink, name, description, targetLink, targetId, clientOperationId,
                     status, statusMessage, user, progress, insertTime, startTime, endTime, httpErrorStatusCode,
-                    httpErrorMessage, operationType, null);
+                    httpErrorMessage, operationType, null, region, zone);
          }
       }
    }
@@ -162,7 +164,6 @@ public class GoogleComputeEngineParserModule extends AbstractModule {
             super(template.getMachineType());
             name(template.getName());
             description(template.getDescription());
-            zone(template.getZone());
             image(template.getImage());
             tags(template.getTags());
             serviceAccounts(template.getServiceAccounts());

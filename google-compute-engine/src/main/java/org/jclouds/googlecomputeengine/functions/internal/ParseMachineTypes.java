@@ -22,6 +22,7 @@ import org.jclouds.collect.IterableWithMarker;
 import org.jclouds.googlecomputeengine.GoogleComputeEngineApi;
 import org.jclouds.googlecomputeengine.domain.ListPage;
 import org.jclouds.googlecomputeengine.domain.MachineType;
+import org.jclouds.googlecomputeengine.domain.SlashEncodedIds;
 import org.jclouds.googlecomputeengine.options.ListOptions;
 import org.jclouds.http.functions.ParseJson;
 import org.jclouds.json.Json;
@@ -50,13 +51,15 @@ public class ParseMachineTypes extends ParseJson<ListPage<MachineType>> {
       }
 
       @Override
-      protected Function<Object, IterableWithMarker<MachineType>> fetchNextPage(final String projectName,
+      protected Function<Object, IterableWithMarker<MachineType>> fetchNextPage(final String projectAndZoneName,
                                                                                 final ListOptions options) {
+         final SlashEncodedIds slashEncodedIds = SlashEncodedIds.fromSlashEncoded(projectAndZoneName);
          return new Function<Object, IterableWithMarker<MachineType>>() {
 
             @Override
             public IterableWithMarker<MachineType> apply(Object input) {
-               return api.getMachineTypeApiForProject(projectName).listAtMarker(input.toString(), options);
+               return api.getMachineTypeApiForProject(slashEncodedIds.getFirstId())
+                       .listAtMarkerInZone(slashEncodedIds.getSecondId(), input.toString(), options);
             }
          };
       }

@@ -37,7 +37,8 @@ public class ParseNetworks extends ParseJson<ListPage<Network>> {
 
    @Inject
    public ParseNetworks(Json json) {
-      super(json, new TypeLiteral<ListPage<Network>>() {});
+      super(json, new TypeLiteral<ListPage<Network>>() {
+      });
    }
 
    public static class ToPagedIterable extends BaseToPagedIterable<Network, ToPagedIterable> {

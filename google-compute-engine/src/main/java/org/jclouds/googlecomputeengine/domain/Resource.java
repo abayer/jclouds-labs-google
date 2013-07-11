@@ -61,6 +61,8 @@ public class Resource {
       PROJECT,
       NETWORK,
       NETWORK_LIST,
+      REGION,
+      REGION_LIST,
       ZONE,
       ZONE_LIST;
 

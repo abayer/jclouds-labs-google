@@ -50,15 +50,14 @@ public class DiskApiLiveTest extends BaseGoogleComputeEngineApiLiveTest {
    @Test(groups = "live")
    public void testInsertDisk() {
       Project project = api.getProjectApi().get(userProject.get());
-      zoneUrl = getDefaultZoneUrl(project.getName());
-      assertOperationDoneSucessfully(api().createInZone(DISK_NAME, sizeGb, zoneUrl), TIME_WAIT);
+      assertOperationDoneSucessfully(api().createInZone(DISK_NAME, sizeGb, DEFAULT_ZONE_NAME), TIME_WAIT);
 
    }
 
    @Test(groups = "live", dependsOnMethods = "testInsertDisk")
    public void testGetDisk() {
 
-      Disk disk = api().get(DISK_NAME);
+      Disk disk = api().getInZone(DEFAULT_ZONE_NAME, DISK_NAME);
       assertNotNull(disk);
       assertDiskEquals(disk);
    }
@@ -66,7 +65,7 @@ public class DiskApiLiveTest extends BaseGoogleComputeEngineApiLiveTest {
    @Test(groups = "live", dependsOnMethods = "testGetDisk")
    public void testListDisk() {
 
-      PagedIterable<Disk> disks = api().list(new ListOptions.Builder()
+      PagedIterable<Disk> disks = api().listInZone(DEFAULT_ZONE_NAME, new ListOptions.Builder()
               .filter("name eq " + DISK_NAME));
 
       List<Disk> disksAsList = Lists.newArrayList(disks.concat());
@@ -80,7 +79,7 @@ public class DiskApiLiveTest extends BaseGoogleComputeEngineApiLiveTest {
    @Test(groups = "live", dependsOnMethods = "testListDisk")
    public void testDeleteDisk() {
 
-      assertOperationDoneSucessfully(api().delete(DISK_NAME), TIME_WAIT);
+      assertOperationDoneSucessfully(api().deleteInZone(DEFAULT_ZONE_NAME, DISK_NAME), TIME_WAIT);
    }
 
    private void assertDiskEquals(Disk result) {

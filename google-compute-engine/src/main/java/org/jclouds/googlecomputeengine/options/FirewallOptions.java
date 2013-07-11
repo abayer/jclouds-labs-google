@@ -25,8 +25,8 @@ import java.util.Set;
 /**
  * Options to create a firewall.
  *
- * @see Firewall
  * @author David Alves
+ * @see Firewall
  */
 public class FirewallOptions {
 

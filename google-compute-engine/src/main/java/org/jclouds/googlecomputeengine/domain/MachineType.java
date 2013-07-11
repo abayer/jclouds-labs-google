@@ -46,15 +46,15 @@ public final class MachineType extends Resource {
    private final List<EphemeralDisk> ephemeralDisks;
    private final Integer maximumPersistentDisks;
    private final Long maximumPersistentDisksSizeGb;
-   private final Set<String> availableZone;
+   private final URI zone;
 
    @ConstructorProperties({
            "id", "creationTimestamp", "selfLink", "name", "description", "guestCpus", "memoryMb",
-           "imageSpaceGb", "ephemeralDisks", "maximumPersistentDisks", "maximumPersistentDisksSizeGb", "availableZone"
+           "imageSpaceGb", "ephemeralDisks", "maximumPersistentDisks", "maximumPersistentDisksSizeGb", "zone"
    })
    private MachineType(String id, Date creationTimestamp, URI selfLink, String name, String description,
                        int guestCpus, int memoryMb, int imageSpaceGb, List<EphemeralDisk> ephemeralDisks,
-                       int maximumPersistentDisks, long maximumPersistentDisksSizeGb, Set<String> availableZone) {
+                       int maximumPersistentDisks, long maximumPersistentDisksSizeGb, URI zone) {
       super(Kind.MACHINE_TYPE, id, creationTimestamp, selfLink, name, description);
       this.guestCpus = checkNotNull(guestCpus, "guestCpus of %s", name);
       this.memoryMb = checkNotNull(memoryMb, "memoryMb of %s", name);
@@ -62,7 +62,7 @@ public final class MachineType extends Resource {
       this.ephemeralDisks = ephemeralDisks == null ? ImmutableList.<EphemeralDisk>of() : ephemeralDisks;
       this.maximumPersistentDisks = checkNotNull(maximumPersistentDisks, "maximumPersistentDisks of %s", name);
       this.maximumPersistentDisksSizeGb = maximumPersistentDisksSizeGb;
-      this.availableZone = availableZone == null ? ImmutableSet.<String>of() : availableZone;
+      this.zone = checkNotNull(zone, "zone of %s", name);
    }
 
    /**
@@ -110,8 +110,8 @@ public final class MachineType extends Resource {
    /**
     * @return the zones that this machine type can run in.
     */
-   public Set<String> getAvailableZone() {
-      return availableZone;
+   public URI getZone() {
+      return zone;
    }
 
    /**
@@ -125,7 +125,7 @@ public final class MachineType extends Resource {
               .add("ephemeralDisks", ephemeralDisks)
               .add("maximumPersistentDisks", maximumPersistentDisks)
               .add("maximumPersistentDisksSizeGb", maximumPersistentDisksSizeGb)
-              .add("availableZone", availableZone);
+              .add("zone", zone);
    }
 
    /**
@@ -152,7 +152,7 @@ public final class MachineType extends Resource {
       private ImmutableList.Builder<EphemeralDisk> ephemeralDisks = ImmutableList.builder();
       private Integer maximumPersistentDisks;
       private Long maximumPersistentDisksSizeGb;
-      private ImmutableSet.Builder<String> availableZone = ImmutableSet.builder();
+      private URI zone;
 
       /**
        * @see MachineType#getGuestCpus()
@@ -211,18 +211,10 @@ public final class MachineType extends Resource {
       }
 
       /**
-       * @see MachineType#getAvailableZone()
+       * @see MachineType#getZone()
        */
-      public Builder addAvailableZone(String availableZone) {
-         this.availableZone.add(availableZone);
-         return this;
-      }
-
-      /**
-       * @see MachineType#getAvailableZone()
-       */
-      public Builder availableZones(Set<String> availableZone) {
-         this.availableZone.addAll(availableZone);
+      public Builder zone(URI zone) {
+         this.zone = zone;
          return this;
       }
 
@@ -234,15 +226,15 @@ public final class MachineType extends Resource {
       public MachineType build() {
          return new MachineType(id, creationTimestamp, selfLink, name, description, guestCpus, memoryMb,
                  imageSpaceGb, ephemeralDisks.build(), maximumPersistentDisks, maximumPersistentDisksSizeGb,
-                 availableZone.build());
+                 zone);
       }
 
 
       public Builder fromMachineType(MachineType in) {
          return super.fromResource(in).memoryMb(in.getMemoryMb()).imageSpaceGb(in.getImageSpaceGb()).ephemeralDisks(in
                  .getEphemeralDisks()).maximumPersistentDisks(in.getMaximumPersistentDisks())
-                 .maximumPersistentDisksSizeGb(in.getMaximumPersistentDisksSizeGb()).availableZones(in
-                         .getAvailableZone());
+                 .maximumPersistentDisksSizeGb(in.getMaximumPersistentDisksSizeGb()).zone(in
+                         .getZone());
       }
    }
 

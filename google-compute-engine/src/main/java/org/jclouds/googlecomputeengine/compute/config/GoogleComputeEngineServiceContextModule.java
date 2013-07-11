@@ -43,6 +43,7 @@ import org.jclouds.googlecomputeengine.compute.functions.GoogleComputeEngineImag
 import org.jclouds.googlecomputeengine.compute.functions.InstanceToNodeMetadata;
 import org.jclouds.googlecomputeengine.compute.functions.MachineTypeToHardware;
 import org.jclouds.googlecomputeengine.compute.functions.OrphanedGroupsFromDeadNodes;
+import org.jclouds.googlecomputeengine.compute.functions.RegionToLocation;
 import org.jclouds.googlecomputeengine.compute.functions.ZoneToLocation;
 import org.jclouds.googlecomputeengine.compute.options.GoogleComputeEngineTemplateOptions;
 import org.jclouds.googlecomputeengine.compute.predicates.AllNodesInGroupTerminated;
@@ -50,11 +51,9 @@ import org.jclouds.googlecomputeengine.compute.strategy.CreateNodesWithGroupEnco
 import org.jclouds.googlecomputeengine.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.googlecomputeengine.compute.strategy.UseNodeCredentialsButOverrideFromTemplate;
 import org.jclouds.googlecomputeengine.config.UserProject;
-import org.jclouds.googlecomputeengine.domain.Image;
-import org.jclouds.googlecomputeengine.domain.Instance;
-import org.jclouds.googlecomputeengine.domain.MachineType;
-import org.jclouds.googlecomputeengine.domain.Zone;
+import org.jclouds.googlecomputeengine.domain.*;
 
+import javax.inject.Named;
 import javax.inject.Singleton;
 import java.net.URI;
 import java.util.Map;
@@ -86,6 +85,10 @@ public class GoogleComputeEngineServiceContextModule
 
       bind(new TypeLiteral<Function<Image, org.jclouds.compute.domain.Image>>() {})
               .to(GoogleComputeEngineImageToImage.class);
+
+      bind(new TypeLiteral<Function<Region, Location>>() {
+      })
+              .to(RegionToLocation.class);
 
       bind(new TypeLiteral<Function<Zone, Location>>() {})
               .to(ZoneToLocation.class);
@@ -151,13 +154,35 @@ public class GoogleComputeEngineServiceContextModule
    @Provides
    @Singleton
    @Memoized
-   public Supplier<Map<URI, ? extends Location>> provideLocations(
+   @Named("zones")
+   public Supplier<Map<URI, ? extends Location>> provideZones(
            final GoogleComputeEngineApi api, final Function<Zone, Location> zoneToLocation,
            final @UserProject Supplier<String> userProject) {
       return new Supplier<Map<URI, ? extends Location>>() {
          @Override
          public Map<URI, ? extends Location> get() {
             return uniqueIndex(transform(api.getZoneApiForProject(userProject.get()).list().concat(), zoneToLocation),
+                    new Function<Location, URI>() {
+                       @Override
+                       public URI apply(Location input) {
+                          return (URI) input.getMetadata().get("selfLink");
+                       }
+                    });
+         }
+      };
+   }
+
+   @Provides
+   @Singleton
+   @Memoized
+   @Named("regions")
+   public Supplier<Map<URI, ? extends Location>> provideRegions(
+           final GoogleComputeEngineApi api, final Function<Region, Location> regionToLocation,
+           final @UserProject Supplier<String> userProject) {
+      return new Supplier<Map<URI, ? extends Location>>() {
+         @Override
+         public Map<URI, ? extends Location> get() {
+            return uniqueIndex(transform(api.getRegionApiForProject(userProject.get()).list().concat(), regionToLocation),
                     new Function<Location, URI>() {
                        @Override
                        public URI apply(Location input) {

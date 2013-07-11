@@ -37,7 +37,8 @@ public class ParseImages extends ParseJson<ListPage<Image>> {
 
    @Inject
    public ParseImages(Json json) {
-      super(json, new TypeLiteral<ListPage<Image>>() {});
+      super(json, new TypeLiteral<ListPage<Image>>() {
+      });
    }
 
    public static class ToPagedIterable extends BaseToPagedIterable<Image, ToPagedIterable> {

@@ -39,12 +39,15 @@ import org.jclouds.googlecomputeengine.domain.InstanceTemplate;
 import org.jclouds.googlecomputeengine.domain.MachineType;
 import org.jclouds.googlecomputeengine.domain.Operation;
 import org.jclouds.googlecomputeengine.domain.Zone;
+import org.jclouds.googlecomputeengine.domain.SlashEncodedIds;
+
 import org.jclouds.http.HttpResponse;
 import org.jclouds.logging.Logger;
 
 import javax.annotation.Resource;
 import javax.inject.Named;
 import java.net.URI;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -70,6 +73,7 @@ public class GoogleComputeEngineServiceAdapter implements ComputeServiceAdapter<
 
    private final GoogleComputeEngineApi api;
    private final Supplier<String> userProject;
+   private final Supplier<Set<String>> zoneIds;
    private final Function<TemplateOptions, ImmutableMap.Builder<String, String>> metatadaFromTemplateOptions;
    private final Predicate<AtomicReference<Operation>> retryOperationDonePredicate;
    private final long operationCompleteCheckInterval;
@@ -80,9 +84,10 @@ public class GoogleComputeEngineServiceAdapter implements ComputeServiceAdapter<
                                             @UserProject Supplier<String> userProject,
                                             Function<TemplateOptions,
                                                     ImmutableMap.Builder<String, String>> metatadaFromTemplateOptions,
-                                            Predicate<AtomicReference<Operation>> operationDonePredicate,
+                                            @Named("zone") Predicate<AtomicReference<Operation>> operationDonePredicate,
                                             @Named(OPERATION_COMPLETE_INTERVAL) Long operationCompleteCheckInterval,
-                                            @Named(OPERATION_COMPLETE_TIMEOUT) Long operationCompleteCheckTimeout) {
+                                            @Named(OPERATION_COMPLETE_TIMEOUT) Long operationCompleteCheckTimeout,
+                                            @org.jclouds.location.Zone Supplier<Set<String>> zoneIds) {
       this.api = checkNotNull(api, "google compute api");
       this.userProject = checkNotNull(userProject, "user project name");
       this.metatadaFromTemplateOptions = checkNotNull(metatadaFromTemplateOptions,
@@ -93,11 +98,12 @@ public class GoogleComputeEngineServiceAdapter implements ComputeServiceAdapter<
               "operation completed check timeout");
       this.retryOperationDonePredicate = retry(operationDonePredicate, operationCompleteCheckTimeout,
               operationCompleteCheckInterval, TimeUnit.MILLISECONDS);
+      this.zoneIds = checkNotNull(zoneIds, "zoneIds");
    }
 
    @Override
    public NodeAndInitialCredentials<Instance> createNodeWithGroupEncodedIntoName(
-           final String group, final String name, Template template) {
+           final String group, final String name, final Template template) {
 
       checkNotNull(template, "template");
 
@@ -124,7 +130,7 @@ public class GoogleComputeEngineServiceAdapter implements ComputeServiceAdapter<
       instanceTemplate.image(checkNotNull(template.getImage().getUri(), "image URI is null"));
 
       Operation operation = api.getInstanceApiForProject(userProject.get())
-              .createInZone(name, instanceTemplate, template.getLocation().getId());
+              .createInZone(template.getLocation().getId(), name, instanceTemplate);
 
       if (options.shouldBlockUntilRunning()) {
          waitOperationDone(operation);
@@ -136,7 +142,8 @@ public class GoogleComputeEngineServiceAdapter implements ComputeServiceAdapter<
       retry(new Predicate<AtomicReference<Instance>>() {
          @Override
          public boolean apply(AtomicReference<Instance> input) {
-            input.set(api.getInstanceApiForProject(userProject.get()).get(name));
+            input.set(api.getInstanceApiForProject(userProject.get()).getInZone(template.getLocation().getId(),
+                    name));
             return input.get() != null;
          }
       }, operationCompleteCheckTimeout, operationCompleteCheckInterval, MILLISECONDS).apply(instance);
@@ -147,7 +154,11 @@ public class GoogleComputeEngineServiceAdapter implements ComputeServiceAdapter<
 
    @Override
    public Iterable<MachineType> listHardwareProfiles() {
-      return api.getMachineTypeApiForProject(userProject.get()).list().concat();
+      ImmutableSet.Builder<MachineType> builder = ImmutableSet.builder();
+      for (final String zoneId : zoneIds.get()) {
+         builder.addAll(api.getMachineTypeApiForProject(userProject.get()).listInZone(zoneId).concat());
+      }
+      return builder.build();
    }
 
    @Override
@@ -171,12 +182,19 @@ public class GoogleComputeEngineServiceAdapter implements ComputeServiceAdapter<
 
    @Override
    public Instance getNode(String name) {
-      return api.getInstanceApiForProject(userProject.get()).get(name);
+      SlashEncodedIds slashEncodedIds = SlashEncodedIds.fromSlashEncoded(name);
+
+      return api.getInstanceApiForProject(userProject.get()).getInZone(slashEncodedIds.getFirstId(),
+              slashEncodedIds.getSecondId());
    }
 
    @Override
    public Iterable<Instance> listNodes() {
-      return api.getInstanceApiForProject(userProject.get()).list().concat();
+      ImmutableSet.Builder<Instance> builder = ImmutableSet.builder();
+      for (final String zoneId : zoneIds.get()) {
+         builder.addAll(api.getInstanceApiForProject(userProject.get()).listInZone(zoneId).concat());
+      }
+      return builder.build();
    }
 
    @Override
@@ -192,12 +210,18 @@ public class GoogleComputeEngineServiceAdapter implements ComputeServiceAdapter<
 
    @Override
    public void destroyNode(final String name) {
-      waitOperationDone(api.getInstanceApiForProject(userProject.get()).delete(name));
+      SlashEncodedIds slashEncodedIds = SlashEncodedIds.fromSlashEncoded(name);
+
+      waitOperationDone(api.getInstanceApiForProject(userProject.get()).deleteInZone(slashEncodedIds.getFirstId(),
+              slashEncodedIds.getSecondId()));
    }
 
    @Override
-   public void rebootNode(String name) {
-      throw new UnsupportedOperationException("reboot is not supported by GCE");
+   public void rebootNode(final String name) {
+      SlashEncodedIds slashEncodedIds = SlashEncodedIds.fromSlashEncoded(name);
+
+      waitOperationDone(api.getInstanceApiForProject(userProject.get()).resetInZone(slashEncodedIds.getFirstId(),
+              slashEncodedIds.getSecondId()));
    }
 
    @Override

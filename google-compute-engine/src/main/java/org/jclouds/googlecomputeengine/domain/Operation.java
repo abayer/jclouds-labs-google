@@ -60,12 +60,14 @@ public class Operation extends Resource {
    private final Optional<HttpResponse> httpError;
    private final String operationType;
    private final List<Error> errors;
+   private final Optional<String> zone;
+   private final Optional<String> region;
 
    protected Operation(String id, Date creationTimestamp, URI selfLink, String name, String description,
                        URI targetLink, String targetId, String clientOperationId, Status status,
                        String statusMessage, String user, Integer progress, Date insertTime, Date startTime,
                        Date endTime, Integer httpErrorStatusCode, String httpErrorMessage, String operationType,
-                       List<Error> errors) {
+                       List<Error> errors, String region, String zone) {
       super(Kind.OPERATION, id, creationTimestamp, selfLink, name, description);
       this.targetLink = checkNotNull(targetLink, "targetLink of %s", name);
       this.targetId = fromNullable(targetId);
@@ -85,6 +87,8 @@ public class Operation extends Resource {
               : Optional.<HttpResponse>absent();
       this.operationType = checkNotNull(operationType, "insertTime of %s", name);
       this.errors = errors == null ? ImmutableList.<Error>of() : ImmutableList.copyOf(errors);
+      this.region = fromNullable(region);
+      this.zone = fromNullable(zone);
    }
 
    /**
@@ -95,6 +99,14 @@ public class Operation extends Resource {
    }
 
    /**
+    * @return An optional identifier specified by the client when the mutation was initiated. Must be unique for all
+    *         operation resources in the project.
+    */
+   public Optional<String> getClientOperationId() {
+      return clientOperationId;
+   }
+
+   /**
     * @return unique target id which identifies a particular incarnation of the target.
     */
    public Optional<String> getTargetId() {
@@ -102,11 +114,17 @@ public class Operation extends Resource {
    }
 
    /**
-    * @return An optional identifier specified by the client when the mutation was initiated. Must be unique for all
-    *         operation resources in the project.
+    * @return region this operation is in, if any.
     */
-   public Optional<String> getClientOperationId() {
-      return clientOperationId;
+   public Optional<String> getRegion() {
+      return region;
+   }
+
+   /**
+    * @return zone this operation is in, if any.
+    */
+   public Optional<String> getZone() {
+      return zone;
    }
 
    /**
@@ -199,7 +217,9 @@ public class Operation extends Resource {
               .add("endTime", endTime.orNull())
               .add("httpError", httpError.orNull())
               .add("operationType", operationType)
-              .add("errors", errors);
+              .add("errors", errors)
+              .add("region", region)
+              .add("zone", zone);
    }
 
    /**
@@ -234,12 +254,30 @@ public class Operation extends Resource {
       private String httpErrorMessage;
       private String operationType;
       private ImmutableList.Builder<Error> errors = ImmutableList.builder();
+      private String region;
+      private String zone;
 
       /**
        * @see Operation#getTargetLink()
        */
       public Builder targetLink(URI targetLink) {
          this.targetLink = targetLink;
+         return self();
+      }
+
+      /**
+       * @see Operation#getRegion()
+       */
+      public Builder region(String region) {
+         this.region = region;
+         return self();
+      }
+
+      /**
+       * @see Operation#getZone()
+       */
+      public Builder zone(String zone) {
+         this.zone = zone;
          return self();
       }
 
@@ -365,7 +403,7 @@ public class Operation extends Resource {
          return new Operation(super.id, super.creationTimestamp, super.selfLink, super.name,
                  super.description, targetLink, targetId, clientOperationId, status, statusMessage, user, progress,
                  insertTime, startTime, endTime, httpErrorStatusCode, httpErrorMessage, operationType,
-                 errors.build());
+                 errors.build(), zone, region);
       }
 
       public Builder fromOperation(Operation in) {
@@ -382,7 +420,8 @@ public class Operation extends Resource {
                  .endTime(in.getEndTime().orNull())
                  .httpErrorStatusCode(in.getHttpError().isPresent() ? in.getHttpError().get().getStatusCode() : null)
                  .httpErrorMessage(in.getHttpError().isPresent() ? in.getHttpError().get().getMessage() : null)
-                 .operationType(in.getOperationType()).errors(in.getErrors());
+                 .operationType(in.getOperationType()).errors(in.getErrors())
+                 .zone(in.getZone().get()).region(in.getRegion().get());
       }
    }
 

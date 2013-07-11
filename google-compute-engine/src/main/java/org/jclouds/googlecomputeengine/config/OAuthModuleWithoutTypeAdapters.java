@@ -40,9 +40,13 @@ public class OAuthModuleWithoutTypeAdapters extends OAuthModule {
 
    @Override
    protected void configure() {
-      bind(new TypeLiteral<Function<byte[], byte[]>>() {}).to(SignOrProduceMacForToken.class);
-      bind(new TypeLiteral<Supplier<OAuthCredentials>>() {}).to(OAuthCredentialsSupplier.class);
-      bind(new TypeLiteral<Function<GeneratedHttpRequest, TokenRequest>>() {}).to(BuildTokenRequest.class);
-      bind(new TypeLiteral<Function<TokenRequest, Token>>() {}).to(FetchToken.class);
+      bind(new TypeLiteral<Function<byte[], byte[]>>() {
+      }).to(SignOrProduceMacForToken.class);
+      bind(new TypeLiteral<Supplier<OAuthCredentials>>() {
+      }).to(OAuthCredentialsSupplier.class);
+      bind(new TypeLiteral<Function<GeneratedHttpRequest, TokenRequest>>() {
+      }).to(BuildTokenRequest.class);
+      bind(new TypeLiteral<Function<TokenRequest, Token>>() {
+      }).to(FetchToken.class);
    }
 }

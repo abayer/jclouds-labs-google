@@ -22,6 +22,7 @@ import org.jclouds.collect.IterableWithMarker;
 import org.jclouds.googlecomputeengine.GoogleComputeEngineApi;
 import org.jclouds.googlecomputeengine.domain.Disk;
 import org.jclouds.googlecomputeengine.domain.ListPage;
+import org.jclouds.googlecomputeengine.domain.SlashEncodedIds;
 import org.jclouds.googlecomputeengine.options.ListOptions;
 import org.jclouds.http.functions.ParseJson;
 import org.jclouds.json.Json;
@@ -39,7 +40,8 @@ public class ParseDisks extends ParseJson<ListPage<Disk>> {
 
    @Inject
    public ParseDisks(Json json) {
-      super(json, new TypeLiteral<ListPage<Disk>>() {});
+      super(json, new TypeLiteral<ListPage<Disk>>() {
+      });
    }
 
    public static class ToPagedIterable extends BaseToPagedIterable<Disk, ToPagedIterable> {
@@ -52,13 +54,15 @@ public class ParseDisks extends ParseJson<ListPage<Disk>> {
       }
 
       @Override
-      protected Function<Object, IterableWithMarker<Disk>> fetchNextPage(final String projectName,
+      protected Function<Object, IterableWithMarker<Disk>> fetchNextPage(final String projectAndZoneName,
                                                                          final ListOptions options) {
+         final SlashEncodedIds slashEncodedIds = SlashEncodedIds.fromSlashEncoded(projectAndZoneName);
          return new Function<Object, IterableWithMarker<Disk>>() {
 
             @Override
             public IterableWithMarker<Disk> apply(Object input) {
-               return api.getDiskApiForProject(projectName).listAtMarker(input.toString(), options);
+               return api.getDiskApiForProject(slashEncodedIds.getFirstId())
+                       .listAtMarkerInZone(slashEncodedIds.getSecondId(), input.toString(), options);
             }
          };
       }

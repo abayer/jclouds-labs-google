@@ -89,6 +89,6 @@ public interface ProjectApi {
    @Consumes(MediaType.APPLICATION_JSON)
    @Produces(MediaType.APPLICATION_JSON)
    Operation setCommonInstanceMetadata(@PathParam("project") String projectName,
-                                                         @BinderParam(MetadataBinder.class)
-                                                         Map<String, String> commonInstanceMetadata);
+                                       @BinderParam(MetadataBinder.class)
+                                       Map<String, String> commonInstanceMetadata);
 }

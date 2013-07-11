@@ -51,7 +51,7 @@ public class MachineTypeApiExpectTest extends BaseGoogleComputeEngineApiExpectTe
               .builder()
               .method("GET")
               .endpoint("https://www.googleapis" +
-                      ".com/compute/v1beta15/projects/myproject/machineTypes/n1-standard-1")
+                      ".com/compute/v1beta15/projects/myproject/zones/us-central1-a/machineTypes/n1-standard-1")
               .addHeader("Accept", "application/json")
               .addHeader("Authorization", "Bearer " + TOKEN).build();
 
@@ -61,7 +61,7 @@ public class MachineTypeApiExpectTest extends BaseGoogleComputeEngineApiExpectTe
       MachineTypeApi machineTypeApi = requestsSendResponses(requestForScopes(COMPUTE_READONLY_SCOPE),
               TOKEN_RESPONSE, get, operationResponse).getMachineTypeApiForProject("myproject");
 
-      assertEquals(machineTypeApi.get("n1-standard-1"),
+      assertEquals(machineTypeApi.getInZone("us-central1-a", "n1-standard-1"),
               new ParseMachineTypeTest().expected());
    }
 
@@ -70,7 +70,7 @@ public class MachineTypeApiExpectTest extends BaseGoogleComputeEngineApiExpectTe
               .builder()
               .method("GET")
               .endpoint("https://www.googleapis" +
-                      ".com/compute/v1beta15/projects/myproject/machineTypes/n1-standard-1")
+                      ".com/compute/v1beta15/projects/myproject/zones/us-central1-a/machineTypes/n1-standard-1")
               .addHeader("Accept", "application/json")
               .addHeader("Authorization", "Bearer " + TOKEN).build();
 
@@ -79,7 +79,7 @@ public class MachineTypeApiExpectTest extends BaseGoogleComputeEngineApiExpectTe
       MachineTypeApi machineTypeApi = requestsSendResponses(requestForScopes(COMPUTE_READONLY_SCOPE),
               TOKEN_RESPONSE, get, operationResponse).getMachineTypeApiForProject("myproject");
 
-      assertNull(machineTypeApi.get("n1-standard-1"));
+      assertNull(machineTypeApi.getInZone("us-central1-a", "n1-standard-1"));
    }
 
    public void testListMachineTypeNoOptionsResponseIs2xx() throws Exception {
@@ -88,7 +88,7 @@ public class MachineTypeApiExpectTest extends BaseGoogleComputeEngineApiExpectTe
               TOKEN_RESPONSE, LIST_MACHINE_TYPES_REQUEST, LIST_MACHINE_TYPES_RESPONSE).getMachineTypeApiForProject
               ("myproject");
 
-      assertEquals(machineTypeApi.listFirstPage().toString(),
+      assertEquals(machineTypeApi.listFirstPageInZone("us-central1-a").toString(),
               new ParseMachineTypeListTest().expected().toString());
    }
 
@@ -99,6 +99,6 @@ public class MachineTypeApiExpectTest extends BaseGoogleComputeEngineApiExpectTe
       MachineTypeApi machineTypeApi = requestsSendResponses(requestForScopes(COMPUTE_READONLY_SCOPE),
               TOKEN_RESPONSE, LIST_MACHINE_TYPES_REQUEST, operationResponse).getMachineTypeApiForProject("myproject");
 
-      assertTrue(machineTypeApi.list().concat().isEmpty());
+      assertTrue(machineTypeApi.listInZone("us-central1-a").concat().isEmpty());
    }
 }

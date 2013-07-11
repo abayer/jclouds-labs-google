@@ -29,6 +29,7 @@ import org.jclouds.domain.Location;
 import org.jclouds.googlecomputeengine.domain.Instance;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import java.net.URI;
 import java.util.Map;
 import java.util.Set;
@@ -53,7 +54,7 @@ public class InstanceToNodeMetadata implements Function<Instance, NodeMetadata> 
                                  GroupNamingConvention.Factory namingConvention,
                                  @Memoized Supplier<Map<URI, ? extends Image>> images,
                                  @Memoized Supplier<Map<URI, ? extends Hardware>> hardwares,
-                                 @Memoized Supplier<Map<URI, ? extends Location>> locations) {
+                                 @Memoized @Named("zones") Supplier<Map<URI, ? extends Location>> locations) {
       this.toPortableNodeStatus = toPortableNodeStatus;
       this.nodeNamingConvention = namingConvention.createWithoutPrefix();
       this.images = images;

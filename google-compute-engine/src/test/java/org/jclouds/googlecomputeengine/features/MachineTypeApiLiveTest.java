@@ -47,7 +47,7 @@ public class MachineTypeApiLiveTest extends BaseGoogleComputeEngineApiLiveTest {
    @Test(groups = "live")
    public void testListMachineType() {
 
-      PagedIterable<MachineType> machineTypes = api().list(new ListOptions.Builder()
+      PagedIterable<MachineType> machineTypes = api().listInZone(DEFAULT_ZONE_NAME, new ListOptions.Builder()
               .maxResults(1));
 
       Iterator<IterableWithMarker<MachineType>> pageIterator = machineTypes.iterator();
@@ -64,7 +64,7 @@ public class MachineTypeApiLiveTest extends BaseGoogleComputeEngineApiLiveTest {
 
    @Test(groups = "live", dependsOnMethods = "testListMachineType")
    public void testGetMachineType() {
-      MachineType machineType = api().get(this.machineType.getName());
+      MachineType machineType = api().getInZone(DEFAULT_ZONE_NAME, this.machineType.getName());
       assertNotNull(machineType);
       assertMachineTypeEquals(machineType, this.machineType);
    }

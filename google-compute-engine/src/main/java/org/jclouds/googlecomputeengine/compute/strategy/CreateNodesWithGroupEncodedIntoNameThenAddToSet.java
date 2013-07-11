@@ -78,7 +78,7 @@ public class CreateNodesWithGroupEncodedIntoNameThenAddToSet extends
                    customizeNodeAndAddToGoodMapOrPutExceptionIntoBadMapFactory,
            GoogleComputeEngineApi api,
            @UserProject Supplier<String> userProject,
-           Predicate<AtomicReference<Operation>> operationDonePredicate,
+           @Named("global") Predicate<AtomicReference<Operation>> operationDonePredicate,
            @Named(OPERATION_COMPLETE_INTERVAL) Long operationCompleteCheckInterval,
            @Named(OPERATION_COMPLETE_TIMEOUT) Long operationCompleteCheckTimeout) {
       super(addNodeWithGroupStrategy, listNodesStrategy, namingConvention, userExecutor,
@@ -127,7 +127,7 @@ public class CreateNodesWithGroupEncodedIntoNameThenAddToSet extends
       if (network != null) {
          return network;
       } else if (templateOptions.getNetwork().isPresent()) {
-         throw new IllegalArgumentException("requested network " + networkName + " does not exist"); 
+         throw new IllegalArgumentException("requested network " + networkName + " does not exist");
       }
 
       AtomicReference<Operation> operation = new AtomicReference<Operation>(api.getNetworkApiForProject(userProject
@@ -135,7 +135,7 @@ public class CreateNodesWithGroupEncodedIntoNameThenAddToSet extends
       retry(operationDonePredicate, operationCompleteCheckTimeout, operationCompleteCheckInterval,
               MILLISECONDS).apply(operation);
 
-      checkState(!operation.get().getHttpError().isPresent(),"Could not create network, operation failed" + operation);
+      checkState(!operation.get().getHttpError().isPresent(), "Could not create network, operation failed" + operation);
 
       return checkNotNull(api.getNetworkApiForProject(userProject.get()).get(sharedResourceName),
               "no network with name %s was found", sharedResourceName);
@@ -186,7 +186,7 @@ public class CreateNodesWithGroupEncodedIntoNameThenAddToSet extends
       retry(operationDonePredicate, operationCompleteCheckTimeout, operationCompleteCheckInterval,
               MILLISECONDS).apply(operation);
 
-      checkState(!operation.get().getHttpError().isPresent(),"Could not create firewall, operation failed" + operation);
+      checkState(!operation.get().getHttpError().isPresent(), "Could not create firewall, operation failed" + operation);
    }
 
 

@@ -18,14 +18,10 @@ package org.jclouds.googlecomputeengine.features;
 
 import static org.jclouds.googlecomputeengine.GoogleComputeEngineConstants.COMPUTE_READONLY_SCOPE;
 import static org.jclouds.googlecomputeengine.GoogleComputeEngineConstants.COMPUTE_SCOPE;
+import static org.jclouds.googlecomputeengine.GoogleComputeEngineConstants.STORAGE_WRITEONLY_SCOPE;
 
 import javax.inject.Named;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.Fallbacks.EmptyIterableWithMarkerOnNotFoundOr404;
@@ -36,15 +32,13 @@ import org.jclouds.googlecomputeengine.domain.Image;
 import org.jclouds.googlecomputeengine.domain.ListPage;
 import org.jclouds.googlecomputeengine.domain.Operation;
 import org.jclouds.googlecomputeengine.functions.internal.ParseImages;
+import org.jclouds.googlecomputeengine.options.DeprecateOptions;
 import org.jclouds.googlecomputeengine.options.ListOptions;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.oauth.v2.config.OAuthScopes;
 import org.jclouds.oauth.v2.filters.OAuthAuthenticator;
-import org.jclouds.rest.annotations.Fallback;
-import org.jclouds.rest.annotations.RequestFilters;
-import org.jclouds.rest.annotations.ResponseParser;
-import org.jclouds.rest.annotations.SkipEncoding;
-import org.jclouds.rest.annotations.Transform;
+import org.jclouds.rest.annotations.*;
+import org.jclouds.rest.binders.BindToJsonPayload;
 
 /**
  * Provides access to Images via their REST API.
@@ -116,7 +110,6 @@ public interface ImageApi {
     * By default the list as a maximum size of 100, if no options are provided or ListOptions#getMaxResults() has not
     * been set.
     *
-    *
     * @param marker      marks the beginning of the next list page
     * @param listOptions listing options
     * @return a page of the list
@@ -130,7 +123,7 @@ public interface ImageApi {
    @OAuthScopes(COMPUTE_READONLY_SCOPE)
    @ResponseParser(ParseImages.class)
    @Fallback(EmptyIterableWithMarkerOnNotFoundOr404.class)
-   ListPage<Image> listAtMarker(@QueryParam("pageToken") @Nullable String marker, ListOptions options);
+   ListPage<Image> listAtMarker(@QueryParam("pageToken") @Nullable String marker, ListOptions listOptions);
 
    /**
     * A paged version of ImageApi#list()
@@ -165,4 +158,47 @@ public interface ImageApi {
    @Transform(ParseImages.ToPagedIterable.class)
    @Fallback(EmptyPagedIterableOnNotFoundOr404.class)
    PagedIterable<Image> list(ListOptions options);
+
+   /**
+    * TODO live and expect tests for deprecate
+    * Set the deprecation status of an image.
+    *
+    * @param image The name of the image
+    * @param deprecateOptions Optional DeprecateOptions object - if null, the deprecation status will be cleared
+    *
+    * @return an Operation resource. To check on the status of an operation, poll the Operations resource returned to
+    *         you, and look for the status field.  If the image did not exist the result is null.
+    */
+   @Named("Images:deprecate")
+   @POST
+   @Consumes(MediaType.APPLICATION_JSON)
+   @Produces(MediaType.APPLICATION_JSON)
+   @Path("/global/images/{image}/deprecate")
+   @OAuthScopes(COMPUTE_SCOPE)
+   Operation deprecate(@PathParam("image") String image,
+                       @BinderParam(BindToJsonPayload.class) DeprecateOptions deprecateOptions);
+
+   /**
+    * TODO live and expect tests for insert
+    * Create a new image from an existing disk image.
+    *
+    * @param name the name for the new image.
+    * @param preferredKernel the URL for the {@link org.jclouds.googlecomputeengine.domain.Kernel} to use for this image.
+    * @param source URL for raw disk source.
+    * @param sourceType Source type of image. Must be RAW.
+    *
+    * @return an Operation resource. To check on the status of an operation, poll the Operations resource returned to
+    *         you, and look for the status field.
+    */
+   @Named("Images:insert")
+   @POST
+   @Consumes(MediaType.APPLICATION_JSON)
+   @Path("/global/images")
+   @OAuthScopes({COMPUTE_SCOPE, STORAGE_WRITEONLY_SCOPE})
+   @MapBinder(BindToJsonPayload.class)
+   Operation create(@PayloadParam("name") String name,
+                    @PayloadParam("preferredKernel") String preferredKernel,
+                    @WrapWith("rawDisk") @PayloadParam("source") String source,
+                    @PayloadParam("sourceType") String sourceType);
+
 }

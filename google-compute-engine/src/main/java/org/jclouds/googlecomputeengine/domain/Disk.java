@@ -101,7 +101,8 @@ public final class Disk extends Resource {
    public static final class Builder extends Resource.Builder<Builder> {
 
       private Integer sizeGb;
-      private URI zone;;
+      private URI zone;
+      ;
       private String status;
 
       /**

@@ -19,6 +19,8 @@ package org.jclouds.googlecomputeengine.features;
 import static org.jclouds.googlecomputeengine.GoogleComputeEngineConstants.COMPUTE_READONLY_SCOPE;
 import static org.jclouds.googlecomputeengine.GoogleComputeEngineConstants.COMPUTE_SCOPE;
 
+import java.util.Map;
+import java.util.Set;
 import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -40,6 +42,8 @@ import org.jclouds.googlecomputeengine.domain.ListPage;
 import org.jclouds.googlecomputeengine.domain.Operation;
 import org.jclouds.googlecomputeengine.functions.internal.ParseInstances;
 import org.jclouds.googlecomputeengine.handlers.InstanceBinder;
+import org.jclouds.googlecomputeengine.handlers.MetadataBinder;
+import org.jclouds.googlecomputeengine.options.AttachDiskOptions;
 import org.jclouds.googlecomputeengine.options.ListOptions;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.oauth.v2.config.OAuthScopes;
@@ -69,6 +73,7 @@ public interface InstanceApi {
     * Returns the specified instance resource.
     *
     * @param instanceName name of the instance resource to return.
+    * @param zone zone the instance is in.
     * @return an Instance resource
     */
    @Named("Instances:get")
@@ -104,6 +109,7 @@ public interface InstanceApi {
    /**
     * Deletes the specified instance resource.
     *
+    * @param zone the instance is in.
     * @param instanceName name of the instance resource to delete.
     * @return an Operation resource. To check on the status of an operation, poll the Operations resource returned to
     *         you, and look for the status field.  If the instance did not exist the result is null.
@@ -118,11 +124,12 @@ public interface InstanceApi {
    Operation deleteInZone(@PathParam("zone") String zone, @PathParam("instance") String instanceName);
 
    /**
-    * A paged version of InstanceApi#list()
+    * A paged version of InstanceApi#listInZone()
     *
+    * @param zone zone instances are in
     * @return a Paged, Fluent Iterable that is able to fetch additional pages when required
     * @see PagedIterable
-    * @see InstanceApi#listAtMarker(String, org.jclouds.googlecomputeengine.options.ListOptions)
+    * @see InstanceApi#listAtMarkerInZone(String, String, org.jclouds.googlecomputeengine.options.ListOptions)
     */
    @Named("Instances:list")
    @GET
@@ -138,6 +145,7 @@ public interface InstanceApi {
     * By default the list as a maximum size of 100, if no options are provided or ListOptions#getMaxResults() has not
     * been set.
     *
+    * @param zone zone instances are in
     * @param marker      marks the beginning of the next list page
     * @param listOptions listing options
     * @return a page of the list
@@ -151,10 +159,11 @@ public interface InstanceApi {
    @OAuthScopes(COMPUTE_READONLY_SCOPE)
    @ResponseParser(ParseInstances.class)
    @Fallback(EmptyIterableWithMarkerOnNotFoundOr404.class)
-   ListPage<Instance> listAtMarkerInZone(@PathParam("zone") String zone, @Nullable String marker);
+   ListPage<Instance> listAtMarkerInZone(@PathParam("zone") String zone, @Nullable String marker,
+                                         ListOptions listOptions);
 
    /**
-    * @see InstanceApi#listAtMarker(String, org.jclouds.googlecomputeengine.options.ListOptions)
+    * @see InstanceApi#listAtMarkerInZone(String, String, org.jclouds.googlecomputeengine.options.ListOptions)
     */
    @Named("Instances:list")
    @GET
@@ -164,10 +173,10 @@ public interface InstanceApi {
    @ResponseParser(ParseInstances.class)
    @Fallback(EmptyIterableWithMarkerOnNotFoundOr404.class)
    ListPage<Instance> listAtMarkerInZone(@PathParam("zone") String zone,
-                                         @Nullable String marker, ListOptions options);
+                                         @Nullable String marker);
 
    /**
-    * @see InstanceApi#list(org.jclouds.googlecomputeengine.options.ListOptions)
+    * @see InstanceApi#listInZone(String, org.jclouds.googlecomputeengine.options.ListOptions)
     */
    @Named("Instances:list")
    @GET
@@ -180,7 +189,7 @@ public interface InstanceApi {
    PagedIterable<Instance> listInZone(@PathParam("zone") String zone);
 
    /**
-    * @see InstanceApi#list(org.jclouds.googlecomputeengine.options.ListOptions)
+    * @see InstanceApi#listInZone(String, org.jclouds.googlecomputeengine.options.ListOptions)
     */
    @Named("Instances:list")
    @GET
@@ -195,6 +204,7 @@ public interface InstanceApi {
    /**
     * Adds an access config to an instance's network interface.
     *
+    * @param zone zone instance is in
     * @param instanceName         the instance name.
     * @param accessConfig         the AccessConfig to add.
     * @param networkInterfaceName network interface name.
@@ -216,6 +226,7 @@ public interface InstanceApi {
    /**
     * Deletes an access config from an instance's network interface.
     *
+    * @param zone zone instance is in
     * @param instanceName         the instance name.
     * @param accessConfigName     the name of the access config to delete
     * @param networkInterfaceName network interface name.
@@ -235,6 +246,7 @@ public interface InstanceApi {
    /**
     * Returns the specified instance's serial port output.
     *
+    * @param zone zone instance is in
     * @param instanceName the instance name.
     * @return if successful, this method returns a SerialPortOutput containing the instance's serial output.
     */
@@ -245,4 +257,200 @@ public interface InstanceApi {
    @OAuthScopes(COMPUTE_READONLY_SCOPE)
    Instance.SerialPortOutput getSerialPortOutputInZone(@PathParam("zone") String zone,
                                                        @PathParam("instance") String instanceName);
+
+   /**
+    * TODO add live and expect tests for reset
+    * Hard-resets the instance.
+    *
+    * @param zone         the zone the instance is in
+    * @param instanceName the instance name
+    * @return an Operation resource. To check on the status of an operation, poll the Operations resource returned to
+    *         you, and look for the status field.  If the instance did not exist the result is null.
+    */
+   @Named("Instances:reset")
+   @POST
+   @Consumes(MediaType.APPLICATION_JSON)
+   @Path("/zones/{zone}/instances/{instance}/reset")
+   @OAuthScopes(COMPUTE_SCOPE)
+   @Fallback(NullOnNotFoundOr404.class)
+   @Nullable
+   Operation resetInZone(@PathParam("zone") String zone,
+                         @PathParam("instance") String instanceName);
+
+   /**
+    * TODO add live and expect tests for attachDisk
+    * Attaches a disk to an instance
+    *
+    * @param zone The zone the instance is in.
+    * @param instanceName The instance name to attach to
+    * @param attachDiskOptions The options for attaching the disk.
+    *
+    * @return an Operation resource. To check on the status of an operation, poll the Operations resource returned to
+    *         you, and look for the status field.
+    */
+   @Named("Instances:attachDisk")
+   @POST
+   @Consumes(MediaType.APPLICATION_JSON)
+   @Produces(MediaType.APPLICATION_JSON)
+   @Path("/zones/{zone}/instances/{instance}/attachDisk")
+   @OAuthScopes(COMPUTE_SCOPE)
+   @Fallback(NullOnNotFoundOr404.class)
+   @Nullable
+   Operation attachDiskInZone(@PathParam("zone") String zone,
+                              @PathParam("instance") String instanceName,
+                              @BinderParam(BindToJsonPayload.class) AttachDiskOptions attachDiskOptions);
+
+   /**
+    * TODO add live and expect tests for detachDisk
+    * Detaches an attached disk from an instance
+    *
+    * @param zone The zone the instance is in.
+    * @param instanceName The instance name to attach to
+    * @param deviceName The device name of the disk to detach.
+    *
+    * @return an Operation resource. To check on the status of an operation, poll the Operations resource returned to
+    *         you, and look for the status field.
+    */
+   @Named("Instances:detachDisk")
+   @POST
+   @Consumes(MediaType.APPLICATION_JSON)
+   @Path("/zones/{zone}/instances/{instance}/detachDisk")
+   @OAuthScopes(COMPUTE_SCOPE)
+   @Fallback(NullOnNotFoundOr404.class)
+   @Nullable
+   Operation detachDiskInZone(@PathParam("zone") String zone,
+                              @PathParam("instance") String instanceName,
+                              @QueryParam("deviceName") String deviceName);
+
+   /**
+    * TODO add live and expect tests for setMetadata
+    * Sets metadata for an instance using the data included in the request.
+    * <p/>
+    * NOTE: This *sets* metadata items on the project (vs *adding* items to metadata),
+    * if there are pre-existing metadata items that must be kept these must be fetched first and then re-set on the
+    * new Metadata, e.g.
+    * <pre><tt>
+    *    Metadata.Builder current = instanceApi.getInZone("us-central1-a", "myInstance").getMetadata().toBuilder();
+    *    current.addItem("newItem","newItemValue");
+    *    instanceApi.setMetadataInZone("us-central1-a", "myInstance", current.build());
+    * </tt></pre>
+    *
+    * @param zone The zone the instance is in
+    * @param instanceName The name of the instance
+    * @param metadata the metadata to set
+    * @return an Operations resource. To check on the status of an operation, poll the Operations resource returned
+    *         to you, and look for the status field.
+    */
+   @Named("Instances:setMetadata")
+   @POST
+   @Path("/zones/{zone}/instances/{instance}/setMetadata")
+   @OAuthScopes(COMPUTE_SCOPE)
+   @Consumes(MediaType.APPLICATION_JSON)
+   @Produces(MediaType.APPLICATION_JSON)
+   @Fallback(NullOnNotFoundOr404.class)
+   @Nullable
+   Operation setMetadataInZone(@PathParam("zone") String zone,
+                               @PathParam("instance") String instanceName,
+                               @BinderParam(MetadataBinder.class)
+                               Map<String, String> metadata);
+
+   /**
+    * TODO add live and expect tests for setTags
+    * Sets tags for an instance
+    *
+    * @param zone The zone the instance is in
+    * @param instanceName the name of the instance
+    * @param tags A set of tags
+    * @return an Operations resource. To check on the status of an operation, poll the Operations resource returned
+    *         to you, and look for the status field.
+    */
+   @Named("Instances:setTags")
+   @POST
+   @Path("/zones/{zone}/instances/{instance}/setTags")
+   @OAuthScopes(COMPUTE_SCOPE)
+   @Consumes(MediaType.APPLICATION_JSON)
+   @Produces(MediaType.APPLICATION_JSON)
+   @Fallback(NullOnNotFoundOr404.class)
+   @Nullable
+   Operation setTagsInZone(@PathParam("zone") String zone,
+                           @PathParam("instance") String instanceName,
+                           @PayloadParam("items") Set<String> tags);
+
+   /**
+    * TODO live and expect tests for aggregatedList
+    * A paged version of InstanceApi#aggregatedList()
+    *
+    * @return a Paged, Fluent Iterable that is able to fetch additional pages when required
+    * @see PagedIterable
+    * @see InstanceApi#aggregatedListAtMarker(String, org.jclouds.googlecomputeengine.options.ListOptions)
+    */
+   @Named("Instances:aggregatedList")
+   @GET
+   @Consumes(MediaType.APPLICATION_JSON)
+   @Path("/aggregated/instances")
+   @OAuthScopes(COMPUTE_READONLY_SCOPE)
+   @ResponseParser(ParseInstances.class)
+   @Fallback(EmptyIterableWithMarkerOnNotFoundOr404.class)
+   ListPage<Instance> aggregatedListFirstPage();
+
+   /**
+    * Retrieves the aggregated list of instance resources available to the specified project.
+    * By default the aggregated list as a maximum size of 100, if no options are provided or ListOptions#getMaxResults() has not
+    * been set.
+    *
+    * @param marker      marks the beginning of the next aggregatedList page
+    * @param listOptions listing options
+    * @return a page of the aggregatedList
+    * @see ListOptions
+    * @see org.jclouds.googlecomputeengine.domain.ListPage
+    */
+   @Named("Instances:aggregatedList")
+   @GET
+   @Consumes(MediaType.APPLICATION_JSON)
+   @Path("/aggregated/instances")
+   @OAuthScopes(COMPUTE_READONLY_SCOPE)
+   @ResponseParser(ParseInstances.class)
+   @Fallback(EmptyIterableWithMarkerOnNotFoundOr404.class)
+   ListPage<Instance> aggregatedListAtMarker(@Nullable String marker,
+                                         ListOptions listOptions);
+
+   /**
+    * @see InstanceApi#aggregatedListAtMarker(String, org.jclouds.googlecomputeengine.options.ListOptions)
+    */
+   @Named("Instances:aggregatedList")
+   @GET
+   @Consumes(MediaType.APPLICATION_JSON)
+   @Path("/aggregated/instances")
+   @OAuthScopes(COMPUTE_READONLY_SCOPE)
+   @ResponseParser(ParseInstances.class)
+   @Fallback(EmptyIterableWithMarkerOnNotFoundOr404.class)
+   ListPage<Instance> aggregatedListAtMarker(@Nullable String marker);
+
+   /**
+    * @see InstanceApi#aggregatedList(org.jclouds.googlecomputeengine.options.ListOptions)
+    */
+   @Named("Instances:aggregatedList")
+   @GET
+   @Consumes(MediaType.APPLICATION_JSON)
+   @Path("/aggregated/instances")
+   @OAuthScopes(COMPUTE_READONLY_SCOPE)
+   @ResponseParser(ParseInstances.class)
+   @Transform(ParseInstances.ToPagedIterable.class)
+   @Fallback(EmptyPagedIterableOnNotFoundOr404.class)
+   PagedIterable<Instance> aggregatedList();
+
+   /**
+    * @see InstanceApi#aggregatedList(org.jclouds.googlecomputeengine.options.ListOptions)
+    */
+   @Named("Instances:aggregatedList")
+   @GET
+   @Consumes(MediaType.APPLICATION_JSON)
+   @Path("/aggregated/instances")
+   @OAuthScopes(COMPUTE_READONLY_SCOPE)
+   @ResponseParser(ParseInstances.class)
+   @Transform(ParseInstances.ToPagedIterable.class)
+   @Fallback(EmptyPagedIterableOnNotFoundOr404.class)
+   PagedIterable<Instance> aggregatedList(ListOptions options);
+
 }
+

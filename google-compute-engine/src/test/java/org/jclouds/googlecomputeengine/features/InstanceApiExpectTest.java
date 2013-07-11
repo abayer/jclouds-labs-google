@@ -47,7 +47,7 @@ public class InstanceApiExpectTest extends BaseGoogleComputeEngineApiExpectTest 
            .builder()
            .method("GET")
            .endpoint("https://www.googleapis" +
-                   ".com/compute/v1beta15/projects/myproject/instances/test-1")
+                   ".com/compute/v1beta15/projects/myproject/zones/us-central1-a/instances/test-1")
            .addHeader("Accept", "application/json")
            .addHeader("Authorization", "Bearer " + TOKEN).build();
 
@@ -59,7 +59,7 @@ public class InstanceApiExpectTest extends BaseGoogleComputeEngineApiExpectTest 
            .builder()
            .method("GET")
            .endpoint("https://www.googleapis" +
-                   ".com/compute/v1beta15/projects/myproject/instances")
+                   ".com/compute/v1beta15/projects/myproject/zones/us-central1-a/instances")
            .addHeader("Accept", "application/json")
            .addHeader("Authorization", "Bearer " + TOKEN).build();
 
@@ -76,7 +76,7 @@ public class InstanceApiExpectTest extends BaseGoogleComputeEngineApiExpectTest 
               requestForScopes(COMPUTE_READONLY_SCOPE), TOKEN_RESPONSE,
               GET_INSTANCE_REQUEST, GET_INSTANCE_RESPONSE).getInstanceApiForProject("myproject");
 
-      assertEquals(api.get("test-1"), new ParseInstanceTest().expected());
+      assertEquals(api.getInZone("us-central1-a", "test-1"), new ParseInstanceTest().expected());
    }
 
    public void testGetInstanceResponseIs4xx() throws Exception {
@@ -86,7 +86,7 @@ public class InstanceApiExpectTest extends BaseGoogleComputeEngineApiExpectTest 
       InstanceApi api = requestsSendResponses(requestForScopes(COMPUTE_READONLY_SCOPE),
               TOKEN_RESPONSE, GET_INSTANCE_REQUEST, operationResponse).getInstanceApiForProject("myproject");
 
-      assertNull(api.get("test-1"));
+      assertNull(api.getInZone("us-central1-a", "test-1"));
    }
 
    public void testGetInstanceSerialPortOutput() throws Exception {
@@ -94,7 +94,7 @@ public class InstanceApiExpectTest extends BaseGoogleComputeEngineApiExpectTest 
               .builder()
               .method("GET")
               .endpoint("https://www.googleapis" +
-                      ".com/compute/v1beta15/projects/myproject/instances/test-1/serialPort")
+                      ".com/compute/v1beta15/projects/myproject/zones/us-central1-a/instances/test-1/serialPort")
               .addHeader("Accept", "application/json")
               .addHeader("Authorization", "Bearer " + TOKEN).build();
 
@@ -105,14 +105,14 @@ public class InstanceApiExpectTest extends BaseGoogleComputeEngineApiExpectTest 
       InstanceApi api = requestsSendResponses(requestForScopes(COMPUTE_READONLY_SCOPE),
               TOKEN_RESPONSE, get, operationResponse).getInstanceApiForProject("myproject");
 
-      assertEquals(api.getSerialPortOutput("test-1"), new ParseInstanceSerialOutputTest().expected());
+      assertEquals(api.getSerialPortOutputInZone("us-central1-a", "test-1"), new ParseInstanceSerialOutputTest().expected());
    }
 
    public void testInsertInstanceResponseIs2xxNoOptions() {
       HttpRequest insert = HttpRequest
               .builder()
               .method("POST")
-              .endpoint("https://www.googleapis.com/compute/v1beta15/projects/myproject/instances")
+              .endpoint("https://www.googleapis.com/compute/v1beta15/projects/myproject/zones/us-central1-a/instances")
               .addHeader("Accept", "application/json")
               .addHeader("Authorization", "Bearer " + TOKEN)
               .payload(payloadFromResourceWithContentType("/instance_insert_simple.json", MediaType.APPLICATION_JSON))
@@ -124,16 +124,16 @@ public class InstanceApiExpectTest extends BaseGoogleComputeEngineApiExpectTest 
 
       InstanceTemplate options = InstanceTemplate.builder().forMachineType("n1-standard-1")
               .addNetworkInterface(URI.create("https://www.googleapis" +
-                      ".com/compute/v1beta15/projects/myproject/networks/default"));
+                      ".com/compute/v1beta15/projects/myproject/global/networks/default"));
 
-      assertEquals(api.createInZone("test-1", options, "us-central1-a"), new ParseOperationTest().expected());
+      assertEquals(api.createInZone("us-central1-a", "test-1", options), new ParseOperationTest().expected());
    }
 
    public void testInsertInstanceResponseIs2xxAllOptions() {
       HttpRequest insert = HttpRequest
               .builder()
               .method("POST")
-              .endpoint("https://www.googleapis.com/compute/v1beta15/projects/myproject/instances")
+              .endpoint("https://www.googleapis.com/compute/v1beta15/projects/myproject/zones/us-central1-a/instances")
               .addHeader("Accept", "application/json")
               .addHeader("Authorization", "Bearer " + TOKEN)
               .payload(payloadFromResourceWithContentType("/instance_insert.json", MediaType.APPLICATION_JSON))
@@ -157,7 +157,7 @@ public class InstanceApiExpectTest extends BaseGoogleComputeEngineApiExpectTest 
               .addServiceAccount(Instance.ServiceAccount.builder().email("default").addScopes("myscope").build())
               .addMetadata("aKey", "aValue");
 
-      assertEquals(api.createInZone("test-0", options, "us-central1-a"),
+      assertEquals(api.createInZone("us-central1-a", "test-0", options),
               new ParseOperationTest().expected());
    }
 
@@ -166,7 +166,7 @@ public class InstanceApiExpectTest extends BaseGoogleComputeEngineApiExpectTest 
               .builder()
               .method("DELETE")
               .endpoint("https://www.googleapis" +
-                      ".com/compute/v1beta15/projects/myproject/instances/test-1")
+                      ".com/compute/v1beta15/projects/myproject/zones/us-central1-a/instances/test-1")
               .addHeader("Accept", "application/json")
               .addHeader("Authorization", "Bearer " + TOKEN).build();
 
@@ -176,7 +176,7 @@ public class InstanceApiExpectTest extends BaseGoogleComputeEngineApiExpectTest 
       InstanceApi api = requestsSendResponses(requestForScopes(COMPUTE_SCOPE),
               TOKEN_RESPONSE, delete, deleteResponse).getInstanceApiForProject("myproject");
 
-      assertEquals(api.delete("test-1"),
+      assertEquals(api.deleteInZone("us-central1-a", "test-1"),
               new ParseOperationTest().expected());
    }
 
@@ -185,7 +185,7 @@ public class InstanceApiExpectTest extends BaseGoogleComputeEngineApiExpectTest 
               .builder()
               .method("DELETE")
               .endpoint("https://www.googleapis" +
-                      ".com/compute/v1beta15/projects/myproject/instances/test-1")
+                      ".com/compute/v1beta15/projects/myproject/zones/us-central1-a/instances/test-1")
               .addHeader("Accept", "application/json")
               .addHeader("Authorization", "Bearer " + TOKEN).build();
 
@@ -194,7 +194,7 @@ public class InstanceApiExpectTest extends BaseGoogleComputeEngineApiExpectTest 
       InstanceApi api = requestsSendResponses(requestForScopes(COMPUTE_SCOPE),
               TOKEN_RESPONSE, delete, deleteResponse).getInstanceApiForProject("myproject");
 
-      assertNull(api.delete("test-1"));
+      assertNull(api.deleteInZone("us-central1-a", "test-1"));
    }
 
    public void testListInstancesResponseIs2xx() {
@@ -203,7 +203,7 @@ public class InstanceApiExpectTest extends BaseGoogleComputeEngineApiExpectTest 
               requestForScopes(COMPUTE_READONLY_SCOPE), TOKEN_RESPONSE,
               LIST_INSTANCES_REQUEST, LIST_INSTANCES_RESPONSE).getInstanceApiForProject("myproject");
 
-      assertEquals(api.listFirstPage().toString(),
+      assertEquals(api.listFirstPageInZone("us-central1-a").toString(),
               new ParseInstanceListTest().expected().toString());
    }
 
@@ -212,7 +212,7 @@ public class InstanceApiExpectTest extends BaseGoogleComputeEngineApiExpectTest 
               .builder()
               .method("GET")
               .endpoint("https://www.googleapis" +
-                      ".com/compute/v1beta15/projects/myproject/instances")
+                      ".com/compute/v1beta15/projects/myproject/zones/us-central1-a/instances")
               .addHeader("Accept", "application/json")
               .addHeader("Authorization", "Bearer " + TOKEN).build();
 
@@ -221,7 +221,7 @@ public class InstanceApiExpectTest extends BaseGoogleComputeEngineApiExpectTest 
       InstanceApi api = requestsSendResponses(requestForScopes(COMPUTE_READONLY_SCOPE),
               TOKEN_RESPONSE, list, operationResponse).getInstanceApiForProject("myproject");
 
-      assertTrue(api.list().concat().isEmpty());
+      assertTrue(api.listInZone("us-central1-a").concat().isEmpty());
    }
 
 }

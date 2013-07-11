@@ -37,7 +37,8 @@ public class ParseKernels extends ParseJson<ListPage<Kernel>> {
 
    @Inject
    public ParseKernels(Json json) {
-      super(json, new TypeLiteral<ListPage<Kernel>>() {});
+      super(json, new TypeLiteral<ListPage<Kernel>>() {
+      });
    }
 
    public static class ToPagedIterable extends BaseToPagedIterable<Kernel, ToPagedIterable> {

@@ -33,17 +33,19 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
 /**
+ * TODO actually get this working with instance creation so we can set metadata etc
+ *
  * @author David Alves
  */
-public class OperationApiLiveTest extends BaseGoogleComputeEngineApiLiveTest {
+public class ZoneOperationApiLiveTest extends BaseGoogleComputeEngineApiLiveTest {
 
    private static final String METADATA_ITEM_KEY = "operationLiveTestTestProp";
    private static final String METADATA_ITEM_VALUE = "operationLiveTestTestValue";
    private Operation addOperation;
    private Operation deleteOperation;
 
-   private OperationApi api() {
-      return api.getOperationApiForProject(userProject.get());
+   private ZoneOperationApi api() {
+      return api.getZoneOperationApiForProject(userProject.get());
    }
 
 
@@ -62,14 +64,14 @@ public class OperationApiLiveTest extends BaseGoogleComputeEngineApiLiveTest {
 
    @Test(groups = "live", dependsOnMethods = "testCreateOperations")
    public void testGetOperation() {
-      Operation operation = api().get(addOperation.getName());
+      Operation operation = api().getInZone(DEFAULT_ZONE_NAME, addOperation.getName());
       assertNotNull(operation);
       assertOperationEquals(operation, this.addOperation);
    }
 
    @Test(groups = "live", dependsOnMethods = "testCreateOperations")
    public void testListOperationsWithFiltersAndPagination() {
-      PagedIterable<Operation> operations = api().list(new ListOptions.Builder()
+      PagedIterable<Operation> operations = api().listInZone(DEFAULT_ZONE_NAME, new ListOptions.Builder()
               .filter("operationType eq setMetadata")
               .maxResults(1));
 

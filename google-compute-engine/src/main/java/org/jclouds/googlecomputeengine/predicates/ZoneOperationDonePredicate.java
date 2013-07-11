@@ -16,6 +16,10 @@
  */
 package org.jclouds.googlecomputeengine.predicates;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.util.concurrent.atomic.AtomicReference;
+
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.inject.Inject;
@@ -23,22 +27,18 @@ import org.jclouds.googlecomputeengine.GoogleComputeEngineApi;
 import org.jclouds.googlecomputeengine.config.UserProject;
 import org.jclouds.googlecomputeengine.domain.Operation;
 
-import java.util.concurrent.atomic.AtomicReference;
-
-import static com.google.common.base.Preconditions.checkNotNull;
-
 /**
- * Tests that an Operation is done, returning the completed Operation when it is.
+ * Tests that a Global Operation is done, returning the completed Operation when it is.
  *
  * @author David Alves
  */
-public class OperationDonePredicate implements Predicate<AtomicReference<Operation>> {
+public class ZoneOperationDonePredicate implements Predicate<AtomicReference<Operation>> {
 
    private final GoogleComputeEngineApi api;
    private final Supplier<String> project;
 
    @Inject
-   OperationDonePredicate(GoogleComputeEngineApi api, @UserProject Supplier<String> project) {
+   ZoneOperationDonePredicate(GoogleComputeEngineApi api, @UserProject Supplier<String> project) {
       this.api = api;
       this.project = project;
    }
@@ -46,7 +46,8 @@ public class OperationDonePredicate implements Predicate<AtomicReference<Operati
    @Override
    public boolean apply(AtomicReference<Operation> input) {
       checkNotNull(input, "input");
-      Operation current = api.getOperationApiForProject(project.get()).get(input.get().getName());
+      Operation current = api.getZoneOperationApiForProject(project.get()).getInZone(input.get().getZone().get(),
+              input.get().getName());
       switch (current.getStatus()) {
          case DONE:
             input.set(current);
