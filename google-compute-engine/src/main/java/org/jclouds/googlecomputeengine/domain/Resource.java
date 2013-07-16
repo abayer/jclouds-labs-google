@@ -44,6 +44,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class Resource {
 
    public enum Kind {
+      ADDRESS,
+      ADDRESS_LIST,
       DISK,
       DISK_LIST,
       FIREWALL,
@@ -64,6 +66,9 @@ public class Resource {
       REGION,
       REGION_LIST,
       ROUTE,
+      ROUTE_LIST,
+      SNAPSHOT,
+      SNAPSHOT_LIST,
       ZONE,
       ZONE_LIST;
 

@@ -38,6 +38,15 @@ import com.google.common.annotations.Beta;
 public interface GoogleComputeEngineApi extends Closeable {
 
    /**
+    * Provides access to Address features
+    *
+    * @param projectName the name of the project
+    */
+   @Delegate
+   @Path("/projects/{project}")
+   AddressApi getAddressApiForProject(@PathParam("project") String projectName);
+
+   /**
     * Provides access to Disk features
     *
     * @param projectName the name of the project
@@ -141,6 +150,15 @@ public interface GoogleComputeEngineApi extends Closeable {
    @Delegate
    @Path("/projects/{project}")
    RouteApi getRouteApiForProject(@PathParam("project") String projectName);
+
+   /**
+    * Provides access to Snapshot features
+    *
+    * @param projectName the name of the project
+    */
+   @Delegate
+   @Path("/projects/{project}")
+   SnapshotApi getSnapshotApiForProject(@PathParam("project") String projectName);
 
    /**
     * Provides access to Zone features

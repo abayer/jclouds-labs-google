@@ -32,11 +32,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @see <a href="https://developers.google.com/compute/docs/reference/v1beta15/disks"/>
  */
 @Beta
-public final class Disk extends Resource {
+public final class Disk extends AbstractDisk {
 
-   private final Integer sizeGb;
    private final URI zone;
-   private final String status;
 
    @ConstructorProperties({
            "id", "creationTimestamp", "selfLink", "name", "description", "sizeGb", "zone",
@@ -44,17 +42,8 @@ public final class Disk extends Resource {
    })
    private Disk(String id, Date creationTimestamp, URI selfLink, String name, String description,
                 Integer sizeGb, URI zone, String status) {
-      super(Kind.DISK, id, creationTimestamp, selfLink, name, description);
-      this.sizeGb = checkNotNull(sizeGb, "sizeGb of %s", name);
+      super(Kind.DISK, id, creationTimestamp, selfLink, name, description, sizeGb, status);
       this.zone = checkNotNull(zone, "zone of %s", name);
-      this.status = checkNotNull(status, "status of %s", name);
-   }
-
-   /**
-    * @return size of the persistent disk, specified in GB.
-    */
-   public int getSizeGb() {
-      return sizeGb;
    }
 
    /**
@@ -65,21 +54,12 @@ public final class Disk extends Resource {
    }
 
    /**
-    * @return the status of disk creation.
-    */
-   public String getStatus() {
-      return status;
-   }
-
-   /**
     * {@inheritDoc}
     */
    protected Objects.ToStringHelper string() {
       return super.string()
               .omitNullValues()
-              .add("sizeGb", sizeGb)
-              .add("zone", zone)
-              .add("status", status);
+              .add("zone", zone);
    }
 
    /**
@@ -98,20 +78,9 @@ public final class Disk extends Resource {
       return new Builder().fromDisk(this);
    }
 
-   public static final class Builder extends Resource.Builder<Builder> {
+   public static final class Builder extends AbstractDisk.Builder<Builder> {
 
-      private Integer sizeGb;
       private URI zone;
-      ;
-      private String status;
-
-      /**
-       * @see Disk#getSizeGb()
-       */
-      public Builder sizeGb(Integer sizeGb) {
-         this.sizeGb = sizeGb;
-         return this;
-      }
 
       /**
        * @see Disk#getZone()
@@ -121,15 +90,6 @@ public final class Disk extends Resource {
          return this;
       }
 
-      /**
-       * @see Disk#getStatus()
-       */
-      public Builder status(String status) {
-         this.status = status;
-         return this;
-      }
-
-
       @Override
       protected Builder self() {
          return this;
@@ -137,14 +97,12 @@ public final class Disk extends Resource {
 
       public Disk build() {
          return new Disk(super.id, super.creationTimestamp, super.selfLink, super.name,
-                 super.description, sizeGb, zone, status);
+                 super.description, super.sizeGb, zone, super.status);
       }
 
       public Builder fromDisk(Disk in) {
-         return super.fromResource(in)
-                 .sizeGb(in.getSizeGb())
-                 .zone(in.getZone())
-                 .status(in.getStatus());
+         return super.fromAbstractDisk(in)
+                 .zone(in.getZone());
       }
 
    }

@@ -219,7 +219,7 @@ public interface DiskApi {
    @OAuthScopes(COMPUTE_READONLY_SCOPE)
    @ResponseParser(ParseDisks.class)
    @Fallback(EmptyIterableWithMarkerOnNotFoundOr404.class)
-   ListPage<Disk> aggregatedistFirstPage();
+   ListPage<Disk> aggregatedListFirstPage();
 
    /**
     * @see DiskApi#aggregatedListAtMarker(String, org.jclouds.googlecomputeengine.options.ListOptions)
