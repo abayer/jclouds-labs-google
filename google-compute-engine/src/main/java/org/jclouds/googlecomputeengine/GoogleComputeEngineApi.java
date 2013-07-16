@@ -21,19 +21,7 @@ import java.io.Closeable;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
-import org.jclouds.googlecomputeengine.features.DiskApi;
-import org.jclouds.googlecomputeengine.features.FirewallApi;
-import org.jclouds.googlecomputeengine.features.GlobalOperationApi;
-import org.jclouds.googlecomputeengine.features.ImageApi;
-import org.jclouds.googlecomputeengine.features.InstanceApi;
-import org.jclouds.googlecomputeengine.features.KernelApi;
-import org.jclouds.googlecomputeengine.features.MachineTypeApi;
-import org.jclouds.googlecomputeengine.features.NetworkApi;
-import org.jclouds.googlecomputeengine.features.ProjectApi;
-import org.jclouds.googlecomputeengine.features.RegionApi;
-import org.jclouds.googlecomputeengine.features.RegionOperationApi;
-import org.jclouds.googlecomputeengine.features.ZoneApi;
-import org.jclouds.googlecomputeengine.features.ZoneOperationApi;
+import org.jclouds.googlecomputeengine.features.*;
 import org.jclouds.rest.annotations.Delegate;
 
 import com.google.common.annotations.Beta;
@@ -144,6 +132,15 @@ public interface GoogleComputeEngineApi extends Closeable {
    @Delegate
    @Path("/projects/{project}")
    RegionOperationApi getRegionOperationApiForProject(@PathParam("project") String projectName);
+
+   /**
+    * Provides access to Route features
+    *
+    * @param projectName the name of the project
+    */
+   @Delegate
+   @Path("/projects/{project}")
+   RouteApi getRouteApiForProject(@PathParam("project") String projectName);
 
    /**
     * Provides access to Zone features

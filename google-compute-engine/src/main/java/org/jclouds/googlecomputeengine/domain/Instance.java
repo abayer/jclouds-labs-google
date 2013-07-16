@@ -321,7 +321,7 @@ public class Instance extends Resource {
       /**
        * @see Instance#getServiceAccounts()
        */
-      public Builder serviceAccoutns(Set<ServiceAccount> serviceAccounts) {
+      public Builder serviceAccounts(Set<ServiceAccount> serviceAccounts) {
          this.serviceAccounts.addAll(serviceAccounts);
          return this;
       }
@@ -349,7 +349,7 @@ public class Instance extends Resource {
                  .networkInterfaces(in.getNetworkInterfaces())
                  .disks(in.getDisks())
                  .metadata(in.getMetadata())
-                 .serviceAccoutns(in.getServiceAccounts());
+                 .serviceAccounts(in.getServiceAccounts());
       }
    }
 

@@ -63,6 +63,7 @@ public class Resource {
       NETWORK_LIST,
       REGION,
       REGION_LIST,
+      ROUTE,
       ZONE,
       ZONE_LIST;
 
