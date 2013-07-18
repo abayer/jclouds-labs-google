@@ -50,9 +50,11 @@ public class ZoneApiExpectTest extends BaseGoogleComputeEngineApiExpectTest {
            .addHeader("Accept", "application/json")
            .addHeader("Authorization", "Bearer " + TOKEN).build();
 
+   public static final HttpResponse LIST_ZONES_SHORT_RESPONSE = HttpResponse.builder().statusCode(200)
+           .payload(staticPayloadFromResource("/zone_list_short.json")).build();
+
    public static final HttpResponse LIST_ZONES_RESPONSE = HttpResponse.builder().statusCode(200)
            .payload(staticPayloadFromResource("/zone_list.json")).build();
-
 
    public void testGetZoneResponseIs2xx() throws Exception {
 

@@ -84,7 +84,7 @@ public class DiskApiExpectTest extends BaseGoogleComputeEngineApiExpectTest {
               .build();
 
       HttpResponse insertDiskResponse = HttpResponse.builder().statusCode(200)
-              .payload(payloadFromResource("/operation.json")).build();
+              .payload(payloadFromResource("/zone_operation.json")).build();
 
       DiskApi api = requestsSendResponses(requestForScopes(COMPUTE_SCOPE),
               TOKEN_RESPONSE, insert,
@@ -103,7 +103,7 @@ public class DiskApiExpectTest extends BaseGoogleComputeEngineApiExpectTest {
               .addHeader("Authorization", "Bearer " + TOKEN).build();
 
       HttpResponse deleteResponse = HttpResponse.builder().statusCode(200)
-              .payload(payloadFromResource("/operation.json")).build();
+              .payload(payloadFromResource("/zone_operation.json")).build();
 
       DiskApi api = requestsSendResponses(requestForScopes(COMPUTE_SCOPE),
               TOKEN_RESPONSE, delete, deleteResponse).getDiskApiForProject("myproject");

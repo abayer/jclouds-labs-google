@@ -16,35 +16,38 @@
  */
 package org.jclouds.googlecomputeengine.parse;
 
-import org.jclouds.date.internal.SimpleDateFormatDateService;
-import org.jclouds.googlecomputeengine.domain.Kernel;
-import org.jclouds.googlecomputeengine.internal.BaseGoogleComputeEngineParseTest;
-import org.testng.annotations.Test;
-
+import java.net.URI;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.core.MediaType;
-import java.net.URI;
+
+import org.jclouds.date.internal.SimpleDateFormatDateService;
+import org.jclouds.googlecomputeengine.domain.Snapshot;
+import org.jclouds.googlecomputeengine.internal.BaseGoogleComputeEngineParseTest;
+import org.testng.annotations.Test;
 
 /**
  * @author David Alves
  */
 @Test(groups = "unit")
-public class ParseKernelTest extends BaseGoogleComputeEngineParseTest<Kernel> {
+public class ParseSnapshotTest extends BaseGoogleComputeEngineParseTest<Snapshot> {
 
    @Override
    public String resource() {
-      return "/kernel.json";
+      return "/snapshot_get.json";
    }
 
    @Override
    @Consumes(MediaType.APPLICATION_JSON)
-   public Kernel expected() {
-      return Kernel.builder()
-              .id("12941177846308850718")
-              .creationTimestamp(new SimpleDateFormatDateService().iso8601DateParse("2012-07-16T21:42:16.950"))
-              .selfLink(URI.create("https://www.googleapis.com/compute/v1beta15/projects/google/global/kernels/gce-20110524"))
-              .name("gce-20110524")
-              .description("DEPRECATED. Created Tue, 24 May 2011 00:48:22 +0000")
+   public Snapshot expected() {
+      return Snapshot.builder()
+              .id("13050421646334304999")
+              .sourceDiskId("13050421646334304115")
+              .creationTimestamp(new SimpleDateFormatDateService().iso8601DateParse("2012-11-25T01:38:48.306"))
+              .sourceDisk(URI.create("https://www.googleapis.com/compute/v1beta15/projects/myproject/zones/us-central1-a/disks/testimage1"))
+              .selfLink(URI.create("https://www.googleapis.com/compute/v1beta15/projects/myproject/global/snapshots/testsnap1"))
+              .name("testsnap1")
+              .sizeGb(1)
+              .status("READY")
               .build();
    }
 }

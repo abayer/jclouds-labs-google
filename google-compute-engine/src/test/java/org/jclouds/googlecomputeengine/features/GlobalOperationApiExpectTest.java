@@ -39,20 +39,20 @@ public class GlobalOperationApiExpectTest extends BaseGoogleComputeEngineApiExpe
    private static final String OPERATIONS_URL_PREFIX = "https://www.googleapis" +
            ".com/compute/v1beta15/projects/myproject/global/operations";
 
-   public static final HttpRequest GET_OPERATION_REQUEST = HttpRequest
+   public static final HttpRequest GET_GLOBAL_OPERATION_REQUEST = HttpRequest
            .builder()
            .method("GET")
            .endpoint(OPERATIONS_URL_PREFIX + "/operation-1354084865060-4cf88735faeb8-bbbb12cb")
            .addHeader("Accept", "application/json")
            .addHeader("Authorization", "Bearer " + TOKEN).build();
 
-   public static final HttpResponse GET_OPERATION_RESPONSE = HttpResponse.builder().statusCode(200)
-           .payload(staticPayloadFromResource("/operation.json")).build();
+   public static final HttpResponse GET_GLOBAL_OPERATION_RESPONSE = HttpResponse.builder().statusCode(200)
+           .payload(staticPayloadFromResource("/global_operation.json")).build();
 
    public void testGetOperationResponseIs2xx() throws Exception {
 
       GlobalOperationApi operationApi = requestsSendResponses(requestForScopes(COMPUTE_READONLY_SCOPE),
-              TOKEN_RESPONSE, GET_OPERATION_REQUEST, GET_OPERATION_RESPONSE).getGlobalOperationApiForProject("myproject");
+              TOKEN_RESPONSE, GET_GLOBAL_OPERATION_REQUEST, GET_GLOBAL_OPERATION_RESPONSE).getGlobalOperationApiForProject("myproject");
 
       assertEquals(operationApi.get("operation-1354084865060-4cf88735faeb8-bbbb12cb"),
               new ParseOperationTest().expected());
@@ -63,7 +63,7 @@ public class GlobalOperationApiExpectTest extends BaseGoogleComputeEngineApiExpe
       HttpResponse operationResponse = HttpResponse.builder().statusCode(404).build();
 
       GlobalOperationApi globalOperationApi = requestsSendResponses(requestForScopes(COMPUTE_READONLY_SCOPE),
-              TOKEN_RESPONSE, GET_OPERATION_REQUEST, operationResponse).getGlobalOperationApiForProject("myproject");
+              TOKEN_RESPONSE, GET_GLOBAL_OPERATION_REQUEST, operationResponse).getGlobalOperationApiForProject("myproject");
 
       assertNull(globalOperationApi.get("operation-1354084865060-4cf88735faeb8-bbbb12cb"));
    }
@@ -107,7 +107,7 @@ public class GlobalOperationApiExpectTest extends BaseGoogleComputeEngineApiExpe
               .addHeader("Authorization", "Bearer " + TOKEN).build();
 
       HttpResponse operationResponse = HttpResponse.builder().statusCode(200)
-              .payload(payloadFromResource("/operation_list.json")).build();
+              .payload(payloadFromResource("/global_operation_list.json")).build();
 
       GlobalOperationApi globalOperationApi = requestsSendResponses(requestForScopes(COMPUTE_READONLY_SCOPE),
               TOKEN_RESPONSE, get, operationResponse).getGlobalOperationApiForProject("myproject");
@@ -130,7 +130,7 @@ public class GlobalOperationApiExpectTest extends BaseGoogleComputeEngineApiExpe
               .addHeader("Authorization", "Bearer " + TOKEN).build();
 
       HttpResponse operationResponse = HttpResponse.builder().statusCode(200)
-              .payload(payloadFromResource("/operation_list.json")).build();
+              .payload(payloadFromResource("/global_operation_list.json")).build();
 
       GlobalOperationApi globalOperationApi = requestsSendResponses(requestForScopes(COMPUTE_READONLY_SCOPE),
               TOKEN_RESPONSE, get, operationResponse).getGlobalOperationApiForProject("myproject");

@@ -27,6 +27,8 @@ import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.domain.Location;
 import org.jclouds.googlecomputeengine.domain.Instance;
+import org.jclouds.googlecomputeengine.domain.InstanceInZone;
+import org.jclouds.googlecomputeengine.domain.SlashEncodedIds;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -41,7 +43,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  *
  * @author David Alves
  */
-public class InstanceToNodeMetadata implements Function<Instance, NodeMetadata> {
+public class InstanceInZoneToNodeMetadata implements Function<InstanceInZone, NodeMetadata> {
 
    private final Map<Instance.Status, NodeMetadata.Status> toPortableNodeStatus;
    private final GroupNamingConvention nodeNamingConvention;
@@ -50,11 +52,11 @@ public class InstanceToNodeMetadata implements Function<Instance, NodeMetadata> 
    private final Supplier<Map<URI, ? extends Location>> locations;
 
    @Inject
-   public InstanceToNodeMetadata(Map<Instance.Status, NodeMetadata.Status> toPortableNodeStatus,
+   public InstanceInZoneToNodeMetadata(Map<Instance.Status, NodeMetadata.Status> toPortableNodeStatus,
                                  GroupNamingConvention.Factory namingConvention,
                                  @Memoized Supplier<Map<URI, ? extends Image>> images,
                                  @Memoized Supplier<Map<URI, ? extends Hardware>> hardwares,
-                                 @Memoized @Named("zones") Supplier<Map<URI, ? extends Location>> locations) {
+                                 @Memoized Supplier<Map<URI, ? extends Location>> locations) {
       this.toPortableNodeStatus = toPortableNodeStatus;
       this.nodeNamingConvention = namingConvention.createWithoutPrefix();
       this.images = images;
@@ -63,20 +65,22 @@ public class InstanceToNodeMetadata implements Function<Instance, NodeMetadata> 
    }
 
    @Override
-   public NodeMetadata apply(Instance input) {
+   public NodeMetadata apply(InstanceInZone instanceInZone) {
+      Instance input = instanceInZone.getInstance();
       Map<URI, ? extends Image> imagesMap = images.get();
       Image image = checkNotNull(imagesMap.get(checkNotNull(input.getImage(), "image")),
               "no image for %s. images: %s", input.getImage(), imagesMap.values());
 
       return new NodeMetadataBuilder()
-              .id(input.getName())
+              .id(SlashEncodedIds.fromTwoIds(checkNotNull(locations.get().get(input.getZone()), "location for %s", input.getZone()).getId(),
+                      input.getName()).slashEncode())
               .name(input.getName())
               .providerId(input.getId())
               .hostname(input.getName())
               .imageId(image.getId())
               .location(checkNotNull(locations.get().get(input.getZone()), "location for %s", input.getZone()))
               .hardware(checkNotNull(hardwares.get().get(input.getMachineType()), "hardware type for %s",
-                      input.getMachineType().toString()))
+                              input.getMachineType().toString()))
               .operatingSystem(image.getOperatingSystem())
               .status(toPortableNodeStatus.get(input.getStatus()))
               .tags(input.getTags())

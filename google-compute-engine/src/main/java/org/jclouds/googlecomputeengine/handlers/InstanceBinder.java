@@ -38,7 +38,7 @@ public class InstanceBinder implements MapBinder {
    private BindToJsonPayload jsonBinder;
 
    @Inject
-   @Named("machineTypes")
+   @Named("machineTypeToURI")
    Function<String, URI> machineTypesToURI;
 
    /**

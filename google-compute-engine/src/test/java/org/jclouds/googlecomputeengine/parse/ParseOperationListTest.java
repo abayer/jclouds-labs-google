@@ -32,7 +32,7 @@ public class ParseOperationListTest extends BaseGoogleComputeEngineParseTest<Lis
 
    @Override
    public String resource() {
-      return "/operation_list.json";
+      return "/global_operation_list.json";
    }
 
    @Override
@@ -40,8 +40,8 @@ public class ParseOperationListTest extends BaseGoogleComputeEngineParseTest<Lis
    public ListPage<Operation> expected() {
       return ListPage.<Operation>builder()
               .kind(Resource.Kind.OPERATION_LIST)
-              .id("projects/myproject/operations")
-              .selfLink(URI.create("https://www.googleapis.com/compute/v1beta15/projects/myproject/operations"))
+              .id("projects/myproject/global/operations")
+              .selfLink(URI.create("https://www.googleapis.com/compute/v1beta15/projects/myproject/global/operations"))
               .addItem(new ParseOperationTest().expected())
               .build();
    }

@@ -97,7 +97,7 @@ public class GoogleComputeEngineHttpApiModule extends HttpApiModule<GoogleComput
 
    @Provides
    @Singleton
-   @Named("machineTypes")
+   @Named("machineTypeToURI")
    public Function<String, URI> provideMachineTypeNameToURIFunction(final @Provider Supplier<URI> endpoint,
                                                                     final @UserProject Supplier<String> userProject) {
       return new Function<String, URI>() {
@@ -113,7 +113,7 @@ public class GoogleComputeEngineHttpApiModule extends HttpApiModule<GoogleComput
 
    @Provides
    @Singleton
-   @Named("networks")
+   @Named("networkToURI")
    public Function<String, URI> provideNetworkNameToURIFunction(final @Provider Supplier<URI> endpoint,
                                                                 final @UserProject Supplier<String> userProject) {
       return new Function<String, URI>() {
@@ -127,7 +127,7 @@ public class GoogleComputeEngineHttpApiModule extends HttpApiModule<GoogleComput
 
    @Provides
    @Singleton
-   @Named("zones")
+   @Named("zoneToURI")
    public Function<String, URI> provideZoneNameToURIFunction(final @Provider Supplier<URI> endpoint,
                                                              final @UserProject Supplier<String> userProject) {
       return new Function<String, URI>() {
@@ -141,7 +141,7 @@ public class GoogleComputeEngineHttpApiModule extends HttpApiModule<GoogleComput
 
    @Provides
    @Singleton
-   @Named("regions")
+   @Named("regionToURI")
    public Function<String, URI> provideRegionNameToURIFunction(final @Provider Supplier<URI> endpoint,
                                                                final @UserProject Supplier<String> userProject) {
       return new Function<String, URI>() {

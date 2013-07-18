@@ -37,13 +37,25 @@ public class MachineTypeApiExpectTest extends BaseGoogleComputeEngineApiExpectTe
    public static final HttpRequest LIST_MACHINE_TYPES_REQUEST = HttpRequest
            .builder()
            .method("GET")
-           .endpoint("https://www.googleapis.com/compute/v1beta15/projects/myproject/machineTypes")
+           .endpoint("https://www.googleapis.com/compute/v1beta15/projects/myproject/zones/us-central1-a/machineTypes")
            .addHeader("Accept", "application/json")
            .addHeader("Authorization", "Bearer " + TOKEN).build();
 
    public static final HttpResponse LIST_MACHINE_TYPES_RESPONSE = HttpResponse.builder()
            .statusCode(200)
            .payload(staticPayloadFromResource("/machinetype_list.json"))
+           .build();
+
+   public static final HttpRequest LIST_EAST_MACHINE_TYPES_REQUEST = HttpRequest
+           .builder()
+           .method("GET")
+           .endpoint("https://www.googleapis.com/compute/v1beta15/projects/myproject/zones/us-east1-a/machineTypes")
+           .addHeader("Accept", "application/json")
+           .addHeader("Authorization", "Bearer " + TOKEN).build();
+
+   public static final HttpResponse LIST_EAST_MACHINE_TYPES_RESPONSE = HttpResponse.builder()
+           .statusCode(200)
+           .payload(staticPayloadFromResource("/machinetype_list_east_empty.json"))
            .build();
 
    public void testGetMachineTypeResponseIs2xx() throws Exception {

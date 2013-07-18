@@ -66,8 +66,19 @@ public class InstanceApiExpectTest extends BaseGoogleComputeEngineApiExpectTest 
    public static final HttpResponse LIST_INSTANCES_RESPONSE = HttpResponse.builder().statusCode(200)
            .payload(staticPayloadFromResource("/instance_list.json")).build();
 
+   public static final HttpRequest LIST_EAST_INSTANCES_REQUEST = HttpRequest
+           .builder()
+           .method("GET")
+           .endpoint("https://www.googleapis" +
+                   ".com/compute/v1beta15/projects/myproject/zones/us-east1-a/instances")
+           .addHeader("Accept", "application/json")
+           .addHeader("Authorization", "Bearer " + TOKEN).build();
+
+   public static final HttpResponse LIST_EAST_INSTANCES_RESPONSE = HttpResponse.builder().statusCode(200)
+           .payload(staticPayloadFromResource("/instance_list_east_empty.json")).build();
+
    public static final HttpResponse CREATE_INSTANCE_RESPONSE = HttpResponse.builder().statusCode(200)
-           .payload(staticPayloadFromResource("/operation.json")).build();
+           .payload(staticPayloadFromResource("/zone_operation.json")).build();
 
 
    public void testGetInstanceResponseIs2xx() throws Exception {
@@ -122,7 +133,8 @@ public class InstanceApiExpectTest extends BaseGoogleComputeEngineApiExpectTest 
               TOKEN_RESPONSE, insert,
               CREATE_INSTANCE_RESPONSE).getInstanceApiForProject("myproject");
 
-      InstanceTemplate options = InstanceTemplate.builder().forMachineType("n1-standard-1")
+      InstanceTemplate options = InstanceTemplate.builder().forMachineType("us-central1-a/n1-standard-1")
+              .image(URI.create("https://www.googleapis.com/compute/v1beta15/projects/google/global/images/gcel-12-04-v20121106"))
               .addNetworkInterface(URI.create("https://www.googleapis" +
                       ".com/compute/v1beta15/projects/myproject/global/networks/default"));
 
@@ -140,19 +152,19 @@ public class InstanceApiExpectTest extends BaseGoogleComputeEngineApiExpectTest 
               .build();
 
       HttpResponse insertInstanceResponse = HttpResponse.builder().statusCode(200)
-              .payload(payloadFromResource("/operation.json")).build();
+              .payload(payloadFromResource("/zone_operation.json")).build();
 
       InstanceApi api = requestsSendResponses(requestForScopes(COMPUTE_SCOPE),
               TOKEN_RESPONSE, insert, insertInstanceResponse).getInstanceApiForProject("myproject");
 
-      InstanceTemplate options = InstanceTemplate.builder().forMachineType("n1-standard-1")
+      InstanceTemplate options = InstanceTemplate.builder().forMachineType("us-central1-a/n1-standard-1")
               .addNetworkInterface(URI.create("https://www.googleapis" +
-                      ".com/compute/v1beta15/projects/myproject/networks/default"), Instance.NetworkInterface.AccessConfig.Type.ONE_TO_ONE_NAT)
+                      ".com/compute/v1beta15/projects/myproject/global/networks/default"), Instance.NetworkInterface.AccessConfig.Type.ONE_TO_ONE_NAT)
               .description("desc")
               .image(URI.create("https://www.googleapis" +
                       ".com/compute/v1beta15/projects/google/global/images/gcel-12-04-v20121106"))
               .addDisk(InstanceTemplate.PersistentDisk.Mode.READ_WRITE,
-                      create("https://www.googleapis.com/compute/v1beta15/projects/myproject/disks/test"))
+                      create("https://www.googleapis.com/compute/v1beta15/projects/myproject/zones/us-central1-a/disks/test"))
               .addTag("aTag")
               .addServiceAccount(Instance.ServiceAccount.builder().email("default").addScopes("myscope").build())
               .addMetadata("aKey", "aValue");
@@ -171,7 +183,7 @@ public class InstanceApiExpectTest extends BaseGoogleComputeEngineApiExpectTest 
               .addHeader("Authorization", "Bearer " + TOKEN).build();
 
       HttpResponse deleteResponse = HttpResponse.builder().statusCode(200)
-              .payload(payloadFromResource("/operation.json")).build();
+              .payload(payloadFromResource("/zone_operation.json")).build();
 
       InstanceApi api = requestsSendResponses(requestForScopes(COMPUTE_SCOPE),
               TOKEN_RESPONSE, delete, deleteResponse).getInstanceApiForProject("myproject");

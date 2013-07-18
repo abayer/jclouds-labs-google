@@ -44,13 +44,13 @@ public class ParseDiskListTest extends BaseGoogleComputeEngineParseTest<ListPage
    public ListPage<Disk> expected() {
       return ListPage.<Disk>builder()
               .kind(Resource.Kind.DISK_LIST)
-              .id("projects/myproject/disks")
-              .selfLink(URI.create("https://www.googleapis.com/compute/v1beta15/projects/myproject/disks"))
+              .id("projects/myproject/zones/us-central1-a/disks")
+              .selfLink(URI.create("https://www.googleapis.com/compute/v1beta15/projects/myproject/zones/us-central1-a/disks"))
               .items(ImmutableSet.of(Disk.builder()
                       .id("13050421646334304115")
                       .creationTimestamp(new SimpleDateFormatDateService().iso8601DateParse("2012-11-25T01:38:48.306"))
                       .selfLink(URI.create("https://www.googleapis" +
-                              ".com/compute/v1beta15/projects/myproject/disks/testimage1"))
+                              ".com/compute/v1beta15/projects/myproject/zones/us-central1-a/disks/testimage1"))
                       .name("testimage1")
                       .sizeGb(1)
                       .zone(URI.create("https://www.googleapis" +

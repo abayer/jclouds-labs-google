@@ -18,17 +18,24 @@ package org.jclouds.googlecomputeengine.predicates;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.net.URI;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
+import javax.inject.Named;
+
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.inject.Inject;
+import org.jclouds.collect.Memoized;
+import org.jclouds.domain.Location;
 import org.jclouds.googlecomputeengine.GoogleComputeEngineApi;
 import org.jclouds.googlecomputeengine.config.UserProject;
 import org.jclouds.googlecomputeengine.domain.Operation;
 
 /**
- * Tests that a Global Operation is done, returning the completed Operation when it is.
+ * Tests that a Zone Operation is done, returning the completed Operation when it is.
  *
  * @author David Alves
  */
@@ -36,18 +43,22 @@ public class ZoneOperationDonePredicate implements Predicate<AtomicReference<Ope
 
    private final GoogleComputeEngineApi api;
    private final Supplier<String> project;
+   private final Supplier<Map<URI, ? extends Location>> zones;
 
    @Inject
-   ZoneOperationDonePredicate(GoogleComputeEngineApi api, @UserProject Supplier<String> project) {
+   ZoneOperationDonePredicate(GoogleComputeEngineApi api, @UserProject Supplier<String> project,
+                              @Memoized Supplier<Map<URI, ? extends Location>> zones) {
       this.api = api;
       this.project = project;
+      this.zones = zones;
    }
 
    @Override
    public boolean apply(AtomicReference<Operation> input) {
       checkNotNull(input, "input");
-      Operation current = api.getZoneOperationApiForProject(project.get()).getInZone(input.get().getZone().get(),
-              input.get().getName());
+      Operation current = api.getZoneOperationApiForProject(project.get())
+              .getInZone(zones.get().get(input.get().getZone().get()).getId(),
+                      input.get().getName());
       switch (current.getStatus()) {
          case DONE:
             input.set(current);

@@ -40,7 +40,7 @@ import org.jclouds.googlecomputeengine.compute.GoogleComputeEngineService;
 import org.jclouds.googlecomputeengine.compute.GoogleComputeEngineServiceAdapter;
 import org.jclouds.googlecomputeengine.compute.functions.BuildInstanceMetadata;
 import org.jclouds.googlecomputeengine.compute.functions.GoogleComputeEngineImageToImage;
-import org.jclouds.googlecomputeengine.compute.functions.InstanceToNodeMetadata;
+import org.jclouds.googlecomputeengine.compute.functions.InstanceInZoneToNodeMetadata;
 import org.jclouds.googlecomputeengine.compute.functions.MachineTypeToHardware;
 import org.jclouds.googlecomputeengine.compute.functions.OrphanedGroupsFromDeadNodes;
 import org.jclouds.googlecomputeengine.compute.functions.RegionToLocation;
@@ -52,21 +52,26 @@ import org.jclouds.googlecomputeengine.compute.strategy.PopulateDefaultLoginCred
 import org.jclouds.googlecomputeengine.compute.strategy.UseNodeCredentialsButOverrideFromTemplate;
 import org.jclouds.googlecomputeengine.config.UserProject;
 import org.jclouds.googlecomputeengine.domain.*;
+import org.jclouds.rest.AuthorizationException;
+import org.jclouds.rest.suppliers.MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
 import java.net.URI;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static com.google.common.collect.Iterables.transform;
 import static com.google.common.collect.Maps.uniqueIndex;
+import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 
 /**
  * @author David Alves
  */
 public class GoogleComputeEngineServiceContextModule
-        extends ComputeServiceAdapterContextModule<Instance, MachineType, Image, Zone> {
+        extends ComputeServiceAdapterContextModule<InstanceInZone, MachineType, Image, Zone> {
 
    @Override
    protected void configure() {
@@ -74,11 +79,11 @@ public class GoogleComputeEngineServiceContextModule
 
       bind(ComputeService.class).to(GoogleComputeEngineService.class);
 
-      bind(new TypeLiteral<ComputeServiceAdapter<Instance, MachineType, Image, Zone>>() {})
+      bind(new TypeLiteral<ComputeServiceAdapter<InstanceInZone, MachineType, Image, Zone>>() {})
               .to(GoogleComputeEngineServiceAdapter.class);
 
-      bind(new TypeLiteral<Function<Instance, NodeMetadata>>() {})
-              .to(InstanceToNodeMetadata.class);
+      bind(new TypeLiteral<Function<InstanceInZone, NodeMetadata>>() {})
+              .to(InstanceInZoneToNodeMetadata.class);
 
       bind(new TypeLiteral<Function<MachineType, Hardware>>() {})
               .to(MachineTypeToHardware.class);
@@ -111,7 +116,7 @@ public class GoogleComputeEngineServiceContextModule
 
       bind(PrioritizeCredentialsFromTemplate.class).to(UseNodeCredentialsButOverrideFromTemplate.class);
 
-      install(new LocationsFromComputeServiceAdapterModule<Instance, MachineType, Image, Zone>() {});
+      install(new LocationsFromComputeServiceAdapterModule<InstanceInZone, MachineType, Image, Zone>() {});
 
    }
 
@@ -119,78 +124,92 @@ public class GoogleComputeEngineServiceContextModule
    @Singleton
    @Memoized
    public Supplier<Map<URI, ? extends org.jclouds.compute.domain.Image>> provideImagesMap(
-           final Supplier<Set<? extends org.jclouds.compute.domain.Image>> images) {
-      return new Supplier<Map<URI, ? extends org.jclouds.compute.domain.Image>>() {
-         @Override
-         public Map<URI, ? extends org.jclouds.compute.domain.Image> get() {
-            return uniqueIndex(images.get(), new Function<org.jclouds.compute.domain.Image, URI>() {
-               @Override
-               public URI apply(org.jclouds.compute.domain.Image input) {
-                  return input.getUri();
-               }
-            });
-         }
-      };
+           AtomicReference<AuthorizationException> authException,
+           final Supplier<Set<? extends org.jclouds.compute.domain.Image>> images,
+           @Named(PROPERTY_SESSION_INTERVAL) long seconds) {
+      return MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.create(authException,
+              new Supplier<Map<URI, ? extends org.jclouds.compute.domain.Image>>() {
+                 @Override
+                 public Map<URI, ? extends org.jclouds.compute.domain.Image> get() {
+                    return uniqueIndex(images.get(), new Function<org.jclouds.compute.domain.Image, URI>() {
+                       @Override
+                       public URI apply(org.jclouds.compute.domain.Image input) {
+                          return input.getUri();
+                       }
+                    });
+                 }
+              },
+              seconds, TimeUnit.SECONDS);
    }
 
    @Provides
    @Singleton
    @Memoized
    public Supplier<Map<URI, ? extends Hardware>> provideHardwaresMap(
-           final Supplier<Set<? extends Hardware>> hardwares) {
-      return new Supplier<Map<URI, ? extends Hardware>>() {
-         @Override
-         public Map<URI, ? extends Hardware> get() {
-            return uniqueIndex(hardwares.get(), new Function<Hardware, URI>() {
-               @Override
-               public URI apply(Hardware input) {
-                  return input.getUri();
-               }
-            });
-         }
-      };
+           AtomicReference<AuthorizationException> authException,
+           final Supplier<Set<? extends Hardware>> hardwares,
+           @Named(PROPERTY_SESSION_INTERVAL) long seconds) {
+      return MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.create(authException,
+              new Supplier<Map<URI, ? extends Hardware>>() {
+                 @Override
+                 public Map<URI, ? extends Hardware> get() {
+                    return uniqueIndex(hardwares.get(), new Function<Hardware, URI>() {
+                       @Override
+                       public URI apply(Hardware input) {
+                          return input.getUri();
+                       }
+                    });
+                 }
+              },
+              seconds, TimeUnit.SECONDS);
    }
 
    @Provides
    @Singleton
    @Memoized
-   @Named("zones")
    public Supplier<Map<URI, ? extends Location>> provideZones(
+           AtomicReference<AuthorizationException> authException,
            final GoogleComputeEngineApi api, final Function<Zone, Location> zoneToLocation,
-           final @UserProject Supplier<String> userProject) {
-      return new Supplier<Map<URI, ? extends Location>>() {
-         @Override
-         public Map<URI, ? extends Location> get() {
-            return uniqueIndex(transform(api.getZoneApiForProject(userProject.get()).list().concat(), zoneToLocation),
-                    new Function<Location, URI>() {
-                       @Override
-                       public URI apply(Location input) {
-                          return (URI) input.getMetadata().get("selfLink");
-                       }
-                    });
-         }
-      };
+           final @UserProject Supplier<String> userProject,
+           @Named(PROPERTY_SESSION_INTERVAL) long seconds) {
+      return MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.create(authException,
+              new Supplier<Map<URI, ? extends Location>>() {
+                 @Override
+                 public Map<URI, ? extends Location> get() {
+                    return uniqueIndex(transform(api.getZoneApiForProject(userProject.get()).list().concat(), zoneToLocation),
+                            new Function<Location, URI>() {
+                               @Override
+                               public URI apply(Location input) {
+                                  return (URI) input.getMetadata().get("selfLink");
+                               }
+                            });
+                 }
+              },
+              seconds, TimeUnit.SECONDS);
    }
 
    @Provides
    @Singleton
    @Memoized
-   @Named("regions")
-   public Supplier<Map<URI, ? extends Location>> provideRegions(
-           final GoogleComputeEngineApi api, final Function<Region, Location> regionToLocation,
-           final @UserProject Supplier<String> userProject) {
-      return new Supplier<Map<URI, ? extends Location>>() {
-         @Override
-         public Map<URI, ? extends Location> get() {
-            return uniqueIndex(transform(api.getRegionApiForProject(userProject.get()).list().concat(), regionToLocation),
-                    new Function<Location, URI>() {
-                       @Override
-                       public URI apply(Location input) {
-                          return (URI) input.getMetadata().get("selfLink");
-                       }
-                    });
-         }
-      };
+   public Supplier<Map<URI, Region>> provideRegions(
+           AtomicReference<AuthorizationException> authException,
+           final GoogleComputeEngineApi api,
+           final @UserProject Supplier<String> userProject,
+           @Named(PROPERTY_SESSION_INTERVAL) long seconds) {
+      return MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.create(authException,
+              new Supplier<Map<URI, Region>>() {
+                 @Override
+                 public Map<URI, Region> get() {
+                    return uniqueIndex(api.getRegionApiForProject(userProject.get()).list().concat(),
+                            new Function<Region, URI>() {
+                               @Override
+                               public URI apply(Region input) {
+                                  return input.getSelfLink();
+                               }
+                            });
+                 }
+              },
+              seconds, TimeUnit.SECONDS);
    }
 
    @Override

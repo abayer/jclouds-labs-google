@@ -18,14 +18,19 @@ package org.jclouds.googlecomputeengine.predicates;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.net.URI;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.inject.Inject;
+import org.jclouds.collect.Memoized;
+import org.jclouds.domain.Location;
 import org.jclouds.googlecomputeengine.GoogleComputeEngineApi;
 import org.jclouds.googlecomputeengine.config.UserProject;
 import org.jclouds.googlecomputeengine.domain.Operation;
+import org.jclouds.googlecomputeengine.domain.Region;
 
 /**
  * Tests that a Global Operation is done, returning the completed Operation when it is.
@@ -36,17 +41,21 @@ public class RegionOperationDonePredicate implements Predicate<AtomicReference<O
 
    private final GoogleComputeEngineApi api;
    private final Supplier<String> project;
+   private final Supplier<Map<URI, Region>> regions;
 
    @Inject
-   RegionOperationDonePredicate(GoogleComputeEngineApi api, @UserProject Supplier<String> project) {
+   RegionOperationDonePredicate(GoogleComputeEngineApi api, @UserProject Supplier<String> project,
+                                @Memoized Supplier<Map<URI, Region>> regions) {
       this.api = api;
       this.project = project;
+      this.regions = regions;
    }
 
    @Override
    public boolean apply(AtomicReference<Operation> input) {
       checkNotNull(input, "input");
-      Operation current = api.getRegionOperationApiForProject(project.get()).getInRegion(input.get().getRegion().get(),
+      Operation current = api.getRegionOperationApiForProject(project.get())
+              .getInRegion(regions.get().get(input.get().getRegion().get()).getId(),
               input.get().getName());
       switch (current.getStatus()) {
          case DONE:

@@ -72,8 +72,8 @@ public interface InstanceApi {
    /**
     * Returns the specified instance resource.
     *
-    * @param instanceName name of the instance resource to return.
     * @param zone zone the instance is in.
+    * @param instanceName name of the instance resource to return.
     * @return an Instance resource
     */
    @Named("Instances:get")
@@ -83,7 +83,7 @@ public interface InstanceApi {
    @OAuthScopes(COMPUTE_READONLY_SCOPE)
    @Fallback(NullOnNotFoundOr404.class)
    @Nullable
-   Instance getInZone(@PathParam("instance") String instanceName, @PathParam("zone") String zone);
+   Instance getInZone(@PathParam("zone") String zone, @PathParam("instance") String instanceName);
 
    /**
     * Creates a instance resource in the specified project using the data included in the request.

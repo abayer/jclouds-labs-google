@@ -41,7 +41,7 @@ public class ParseMachineTypes extends ParseJson<ListPage<MachineType>> {
       super(json, new TypeLiteral<ListPage<MachineType>>() {});
    }
 
-   public static class ToPagedIterable extends BaseToPagedIterable<MachineType, ToPagedIterable> {
+   public static class ToPagedIterable extends BaseWithZoneToPagedIterable<MachineType, ToPagedIterable> {
 
       private final GoogleComputeEngineApi api;
 
@@ -51,15 +51,15 @@ public class ParseMachineTypes extends ParseJson<ListPage<MachineType>> {
       }
 
       @Override
-      protected Function<Object, IterableWithMarker<MachineType>> fetchNextPage(final String projectAndZoneName,
+      protected Function<Object, IterableWithMarker<MachineType>> fetchNextPage(final String project,
+                                                                                final String zone,
                                                                                 final ListOptions options) {
-         final SlashEncodedIds slashEncodedIds = SlashEncodedIds.fromSlashEncoded(projectAndZoneName);
          return new Function<Object, IterableWithMarker<MachineType>>() {
 
             @Override
             public IterableWithMarker<MachineType> apply(Object input) {
-               return api.getMachineTypeApiForProject(slashEncodedIds.getFirstId())
-                       .listAtMarkerInZone(slashEncodedIds.getSecondId(), input.toString(), options);
+               return api.getMachineTypeApiForProject(project)
+                       .listAtMarkerInZone(zone, input.toString(), options);
             }
          };
       }

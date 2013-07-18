@@ -42,7 +42,7 @@ public class ParseZoneOperations extends ParseJson<ListPage<Operation>> {
       });
    }
 
-   public static class ToPagedIterable extends BaseToPagedIterable<Operation, ToPagedIterable> {
+   public static class ToPagedIterable extends BaseWithZoneToPagedIterable<Operation, ToPagedIterable> {
 
       private final GoogleComputeEngineApi api;
 
@@ -52,16 +52,15 @@ public class ParseZoneOperations extends ParseJson<ListPage<Operation>> {
       }
 
       @Override
-      protected Function<Object, IterableWithMarker<Operation>> fetchNextPage(final String projectAndZoneName,
+      protected Function<Object, IterableWithMarker<Operation>> fetchNextPage(final String projectName,
+                                                                              final String zoneName,
                                                                               final ListOptions options) {
-         final SlashEncodedIds slashEncodedIds = SlashEncodedIds.fromSlashEncoded(projectAndZoneName);
-
          return new Function<Object, IterableWithMarker<Operation>>() {
 
             @Override
             public IterableWithMarker<Operation> apply(Object input) {
-               return api.getZoneOperationApiForProject(slashEncodedIds.getFirstId())
-                       .listAtMarkerInZone(slashEncodedIds.getSecondId(), input.toString(), options);
+               return api.getZoneOperationApiForProject(projectName)
+                       .listAtMarkerInZone(zoneName, input.toString(), options);
             }
          };
       }

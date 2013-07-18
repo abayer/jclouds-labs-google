@@ -85,7 +85,7 @@ public class ProjectApiExpectTest extends BaseGoogleComputeEngineApiExpectTest {
               .build();
 
       HttpResponse setMetadataResponse = HttpResponse.builder().statusCode(200)
-              .payload(payloadFromResource("/operation.json")).build();
+              .payload(payloadFromResource("/global_operation.json")).build();
 
       ProjectApi api = requestsSendResponses(requestForScopes(GoogleComputeEngineConstants.COMPUTE_SCOPE),
               TOKEN_RESPONSE, setMetadata,

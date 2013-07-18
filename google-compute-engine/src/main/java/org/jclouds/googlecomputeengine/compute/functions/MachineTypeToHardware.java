@@ -16,14 +16,24 @@
  */
 package org.jclouds.googlecomputeengine.compute.functions;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.net.URI;
+import java.util.Map;
+
 import com.google.common.base.Function;
+import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableSet;
+import com.google.inject.Inject;
+import org.jclouds.collect.Memoized;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.HardwareBuilder;
 import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.domain.Volume;
 import org.jclouds.compute.domain.internal.VolumeImpl;
+import org.jclouds.domain.Location;
 import org.jclouds.googlecomputeengine.domain.MachineType;
+import org.jclouds.googlecomputeengine.domain.SlashEncodedIds;
 
 /**
  * Transforms a google compute domain specific machine type to a generic Hardware object.
@@ -32,10 +42,19 @@ import org.jclouds.googlecomputeengine.domain.MachineType;
  */
 public class MachineTypeToHardware implements Function<MachineType, Hardware> {
 
+   private final Supplier<Map<URI, ? extends Location>> locations;
+
+   @Inject
+   public MachineTypeToHardware(@Memoized Supplier<Map<URI, ? extends Location>> locations) {
+      this.locations = locations;
+   }
    @Override
    public Hardware apply(MachineType input) {
       return new HardwareBuilder()
-              .id(input.getName())
+              .id(SlashEncodedIds.fromTwoIds(checkNotNull(locations.get().get(input.getZone()),
+                      "location for %s",
+                      input.getZone()).getId(),
+                      input.getName()).slashEncode())
               .name(input.getName())
               .hypervisor("kvm")
               .processor(new Processor(input.getGuestCpus(), 1.0))

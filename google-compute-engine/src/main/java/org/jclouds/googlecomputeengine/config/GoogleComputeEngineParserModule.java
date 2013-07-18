@@ -115,7 +115,7 @@ public class GoogleComputeEngineParserModule extends AbstractModule {
                                    String description, URI targetLink, String targetId, String clientOperationId,
                                    Status status, String statusMessage, String user, int progress, Date insertTime,
                                    Date startTime, Date endTime, int httpErrorStatusCode, String httpErrorMessage,
-                                   String operationType, String region, String zone) {
+                                   String operationType, URI region, URI zone) {
             super(id, creationTimestamp, selfLink, name, description, targetLink, targetId, clientOperationId,
                     status, statusMessage, user, progress, insertTime, startTime, endTime, httpErrorStatusCode,
                     httpErrorMessage, operationType, null, region, zone);

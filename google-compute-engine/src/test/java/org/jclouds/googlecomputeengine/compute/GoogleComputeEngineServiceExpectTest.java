@@ -42,17 +42,24 @@ import static com.google.common.collect.Iterables.getOnlyElement;
 import static org.jclouds.googlecomputeengine.GoogleComputeEngineConstants.COMPUTE_READONLY_SCOPE;
 import static org.jclouds.googlecomputeengine.GoogleComputeEngineConstants.COMPUTE_SCOPE;
 import static org.jclouds.googlecomputeengine.features.FirewallApiExpectTest.GET_FIREWALL_REQUEST;
+import static org.jclouds.googlecomputeengine.features.GlobalOperationApiExpectTest.GET_GLOBAL_OPERATION_REQUEST;
+import static org.jclouds.googlecomputeengine.features.GlobalOperationApiExpectTest.GET_GLOBAL_OPERATION_RESPONSE;
 import static org.jclouds.googlecomputeengine.features.ImageApiExpectTest.LIST_PROJECT_IMAGES_REQUEST;
 import static org.jclouds.googlecomputeengine.features.ImageApiExpectTest.LIST_PROJECT_IMAGES_RESPONSE;
+import static org.jclouds.googlecomputeengine.features.InstanceApiExpectTest.LIST_EAST_INSTANCES_REQUEST;
+import static org.jclouds.googlecomputeengine.features.InstanceApiExpectTest.LIST_EAST_INSTANCES_RESPONSE;
 import static org.jclouds.googlecomputeengine.features.InstanceApiExpectTest.LIST_INSTANCES_REQUEST;
 import static org.jclouds.googlecomputeengine.features.InstanceApiExpectTest.LIST_INSTANCES_RESPONSE;
+import static org.jclouds.googlecomputeengine.features.MachineTypeApiExpectTest.LIST_EAST_MACHINE_TYPES_REQUEST;
+import static org.jclouds.googlecomputeengine.features.MachineTypeApiExpectTest.LIST_EAST_MACHINE_TYPES_RESPONSE;
 import static org.jclouds.googlecomputeengine.features.MachineTypeApiExpectTest.LIST_MACHINE_TYPES_REQUEST;
 import static org.jclouds.googlecomputeengine.features.MachineTypeApiExpectTest.LIST_MACHINE_TYPES_RESPONSE;
 import static org.jclouds.googlecomputeengine.features.NetworkApiExpectTest.GET_NETWORK_REQUEST;
-import static org.jclouds.googlecomputeengine.features.ZoneOperationApiExpectTest.GET_OPERATION_REQUEST;
-import static org.jclouds.googlecomputeengine.features.ZoneOperationApiExpectTest.GET_OPERATION_RESPONSE;
+import static org.jclouds.googlecomputeengine.features.ZoneOperationApiExpectTest.GET_ZONE_OPERATION_REQUEST;
+import static org.jclouds.googlecomputeengine.features.ZoneOperationApiExpectTest.GET_ZONE_OPERATION_RESPONSE;
 import static org.jclouds.googlecomputeengine.features.ZoneApiExpectTest.LIST_ZONES_REQ;
 import static org.jclouds.googlecomputeengine.features.ZoneApiExpectTest.LIST_ZONES_RESPONSE;
+import static org.jclouds.googlecomputeengine.features.ZoneApiExpectTest.LIST_ZONES_SHORT_RESPONSE;
 import static org.jclouds.util.Strings2.toStringAndClose;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
@@ -91,7 +98,7 @@ public class GoogleComputeEngineServiceExpectTest extends BaseGoogleComputeEngin
            .addHeader("Accept", "application/json")
            .addHeader("Authorization", "Bearer " + TOKEN)
            .payload(payloadFromStringWithContentType("{\"name\":\"jclouds-test\",\"network\":\"https://www.googleapis" +
-                   ".com/compute/v1beta15/projects/myproject/networks/jclouds-test\"," +
+                   ".com/compute/v1beta15/projects/myproject/global/networks/jclouds-test\"," +
                    "\"sourceRanges\":[\"10.0.0.0/8\",\"0.0.0.0/0\"],\"allowed\":[{\"IPProtocol\":\"tcp\"," +
                    "\"ports\":[\"22\"]}," +
                    "{\"IPProtocol\":\"udp\",\"ports\":[\"22\"]}]}",
@@ -149,19 +156,17 @@ public class GoogleComputeEngineServiceExpectTest extends BaseGoogleComputeEngin
       return HttpRequest
               .builder()
               .method("POST")
-              .endpoint("https://www.googleapis.com/compute/v1beta15/projects/myproject/instances")
+              .endpoint("https://www.googleapis.com/compute/v1beta15/projects/myproject/zones/us-central1-a/instances")
               .addHeader("Accept", "application/json")
               .addHeader("Authorization", "Bearer " + TOKEN)
               .payload(payloadFromStringWithContentType("{\"name\":\"" + instanceName + "\"," +
                       "\"machineType\":\"https://www.googleapis" +
-                      ".com/compute/v1beta15/projects/myproject/machineTypes/n1-standard-1\"," +
-                      "\"zone\":\"https://www.googleapis" +
-                      ".com/compute/v1beta15/projects/myproject/zones/us-central1-a\"," +
+                      ".com/compute/v1beta15/projects/myproject/zones/us-central1-a/machineTypes/n1-standard-1\"," +
                       "\"image\":\"https://www.googleapis" +
                       ".com/compute/v1beta15/projects/google/global/images/gcel-12-04-v20121106\"," +
                       "\"tags\":[],\"serviceAccounts\":[]," +
                       "\"networkInterfaces\":[{\"network\":\"https://www.googleapis" +
-                      ".com/compute/v1beta15/projects/myproject/networks/" + networkName + "\"," +
+                      ".com/compute/v1beta15/projects/myproject/global/networks/" + networkName + "\"," +
                       "\"accessConfigs\":[{\"type\":\"ONE_TO_ONE_NAT\"}]}]," +
                       "\"metadata\":{\"kind\":\"compute#metadata\",\"items\":[{\"key\":\"sshKeys\"," +
                       "\"value\":\"jclouds:" +
@@ -174,7 +179,7 @@ public class GoogleComputeEngineServiceExpectTest extends BaseGoogleComputeEngin
               .builder()
               .method("GET")
               .endpoint("https://www.googleapis" +
-                      ".com/compute/v1beta15/projects/myproject/instances/" + instanceName)
+                      ".com/compute/v1beta15/projects/myproject/zones/us-central1-a/instances/" + instanceName)
               .addHeader("Accept", "application/json")
               .addHeader("Authorization", "Bearer " + TOKEN).build();
    }
@@ -215,6 +220,7 @@ public class GoogleComputeEngineServiceExpectTest extends BaseGoogleComputeEngin
               .put(LIST_PROJECT_IMAGES_REQUEST, LIST_PROJECT_IMAGES_RESPONSE)
               .put(LIST_GOOGLE_IMAGES_REQUEST, LIST_GOOGLE_IMAGES_RESPONSE)
               .put(LIST_MACHINE_TYPES_REQUEST, LIST_MACHINE_TYPES_RESPONSE)
+              .put(LIST_EAST_MACHINE_TYPES_REQUEST, LIST_EAST_MACHINE_TYPES_RESPONSE)
               .build();
 
       ComputeService client = requestsSendResponses(requestResponseMap);
@@ -229,21 +235,21 @@ public class GoogleComputeEngineServiceExpectTest extends BaseGoogleComputeEngin
       HttpRequest deleteNodeRequest = HttpRequest.builder()
               .method("DELETE")
               .endpoint("https://www.googleapis" +
-                      ".com/compute/v1beta15/projects/myproject/instances/test-delete-networks")
+                      ".com/compute/v1beta15/projects/myproject/zones/us-central1-a/instances/test-delete-networks")
               .addHeader("Accept", "application/json")
               .addHeader("Authorization", "Bearer " + TOKEN).build();
 
       HttpRequest deleteFirewallRequest = HttpRequest.builder()
               .method("DELETE")
               .endpoint("https://www.googleapis" +
-                      ".com/compute/v1beta15/projects/myproject/firewalls/jclouds-test-delete")
+                      ".com/compute/v1beta15/projects/myproject/global/firewalls/jclouds-test-delete")
               .addHeader("Accept", "application/json")
               .addHeader("Authorization", "Bearer " + TOKEN).build();
 
       HttpRequest deleteNetworkReqquest = HttpRequest.builder()
               .method("DELETE")
               .endpoint("https://www.googleapis" +
-                      ".com/compute/v1beta15/projects/myproject/networks/jclouds-test-delete")
+                      ".com/compute/v1beta15/projects/myproject/global/networks/jclouds-test-delete")
               .addHeader("Accept", "application/json")
               .addHeader("Authorization", "Bearer " + TOKEN).build();
 
@@ -256,21 +262,13 @@ public class GoogleComputeEngineServiceExpectTest extends BaseGoogleComputeEngin
               .add(LIST_MACHINE_TYPES_REQUEST)
               .add(requestForScopes(COMPUTE_SCOPE))
               .add(deleteNodeRequest)
-              .add(GET_OPERATION_REQUEST)
+              .add(GET_ZONE_OPERATION_REQUEST)
               .add(getInstanceRequestForInstance("test-delete-networks"))
-              .add(LIST_PROJECT_IMAGES_REQUEST)
-              .add(LIST_GOOGLE_IMAGES_REQUEST)
-              .add(LIST_ZONES_REQ)
-              .add(LIST_MACHINE_TYPES_REQUEST)
               .add(LIST_INSTANCES_REQUEST)
-              .add(LIST_PROJECT_IMAGES_REQUEST)
-              .add(LIST_GOOGLE_IMAGES_REQUEST)
-              .add(LIST_ZONES_REQ)
-              .add(LIST_MACHINE_TYPES_REQUEST)
               .add(deleteFirewallRequest)
-              .add(GET_OPERATION_REQUEST)
+              .add(GET_GLOBAL_OPERATION_REQUEST)
               .add(deleteNetworkReqquest)
-              .add(GET_OPERATION_REQUEST)
+              .add(GET_GLOBAL_OPERATION_REQUEST)
               .build();
 
 
@@ -280,32 +278,24 @@ public class GoogleComputeEngineServiceExpectTest extends BaseGoogleComputeEngin
                       .Status.RUNNING.name()))
               .add(LIST_PROJECT_IMAGES_RESPONSE)
               .add(LIST_GOOGLE_IMAGES_RESPONSE)
-              .add(LIST_ZONES_RESPONSE)
+              .add(LIST_ZONES_SHORT_RESPONSE)
               .add(LIST_MACHINE_TYPES_RESPONSE)
               .add(TOKEN_RESPONSE)
               .add(SUCESSFULL_OPERATION_RESPONSE)
-              .add(GET_OPERATION_RESPONSE)
+              .add(GET_ZONE_OPERATION_RESPONSE)
               .add(getInstanceResponseForInstanceAndNetworkAndStatus("test-delete-networks", "test-network", Instance
                       .Status.TERMINATED.name()))
-              .add(LIST_PROJECT_IMAGES_RESPONSE)
-              .add(LIST_GOOGLE_IMAGES_RESPONSE)
-              .add(LIST_ZONES_RESPONSE)
-              .add(LIST_MACHINE_TYPES_RESPONSE)
               .add(getListInstancesResponseForSingleInstanceAndNetworkAndStatus("test-delete-networks",
                       "test-network", Instance
                       .Status.TERMINATED.name()))
-              .add(LIST_PROJECT_IMAGES_RESPONSE)
-              .add(LIST_GOOGLE_IMAGES_RESPONSE)
-              .add(LIST_ZONES_RESPONSE)
-              .add(LIST_MACHINE_TYPES_RESPONSE)
               .add(SUCESSFULL_OPERATION_RESPONSE)
-              .add(GET_OPERATION_RESPONSE)
+              .add(GET_GLOBAL_OPERATION_RESPONSE)
               .add(SUCESSFULL_OPERATION_RESPONSE)
-              .add(GET_OPERATION_RESPONSE)
+              .add(GET_GLOBAL_OPERATION_RESPONSE)
               .build();
 
       ComputeService client = orderedRequestsSendResponses(orderedRequests, orderedResponses);
-      client.destroyNode("test-delete-networks");
+      client.destroyNode("us-central1-a/test-delete-networks");
 
    }
 
@@ -316,9 +306,11 @@ public class GoogleComputeEngineServiceExpectTest extends BaseGoogleComputeEngin
               .put(requestForScopes(COMPUTE_READONLY_SCOPE), TOKEN_RESPONSE)
               .put(LIST_ZONES_REQ, LIST_ZONES_RESPONSE)
               .put(LIST_INSTANCES_REQUEST, LIST_INSTANCES_RESPONSE)
+              .put(LIST_EAST_INSTANCES_REQUEST, LIST_EAST_INSTANCES_RESPONSE)
               .put(LIST_PROJECT_IMAGES_REQUEST, LIST_PROJECT_IMAGES_RESPONSE)
               .put(LIST_GOOGLE_IMAGES_REQUEST, LIST_GOOGLE_IMAGES_RESPONSE)
               .put(LIST_MACHINE_TYPES_REQUEST, LIST_MACHINE_TYPES_RESPONSE)
+              .put(LIST_EAST_MACHINE_TYPES_REQUEST, LIST_EAST_MACHINE_TYPES_RESPONSE)
               .build();
 
       ComputeService apiWhenServersExist = requestsSendResponses(requestResponseMap);
@@ -331,7 +323,7 @@ public class GoogleComputeEngineServiceExpectTest extends BaseGoogleComputeEngin
 
       assertNotNull(apiWhenServersExist.listNodes());
       assertEquals(apiWhenServersExist.listNodes().size(), 1);
-      assertEquals(apiWhenServersExist.listNodes().iterator().next().getId(), "test-0");
+      assertEquals(apiWhenServersExist.listNodes().iterator().next().getId(), "us-central1-a/test-0");
       assertEquals(apiWhenServersExist.listNodes().iterator().next().getName(), "test-0");
    }
 
@@ -350,55 +342,47 @@ public class GoogleComputeEngineServiceExpectTest extends BaseGoogleComputeEngin
               .add(LIST_ZONES_REQ)
               .add(LIST_PROJECT_IMAGES_REQUEST)
               .add(LIST_GOOGLE_IMAGES_REQUEST)
+              .add(LIST_ZONES_REQ)
               .add(LIST_MACHINE_TYPES_REQUEST)
               .add(GET_NETWORK_REQUEST)
               .add(requestForScopes(COMPUTE_SCOPE))
               .add(INSERT_NETWORK_REQUEST)
-              .add(GET_OPERATION_REQUEST)
+              .add(GET_GLOBAL_OPERATION_REQUEST)
               .add(GET_NETWORK_REQUEST)
               .add(GET_FIREWALL_REQUEST)
               .add(INSERT_FIREWALL_REQUEST)
-              .add(GET_OPERATION_REQUEST)
+              .add(GET_GLOBAL_OPERATION_REQUEST)
               .add(LIST_INSTANCES_REQUEST)
               .add(LIST_PROJECT_IMAGES_REQUEST)
               .add(LIST_GOOGLE_IMAGES_REQUEST)
-              .add(LIST_ZONES_REQ)
               .add(LIST_MACHINE_TYPES_REQUEST)
               .add(createInstanceRequestForInstance("test-1", "jclouds-test", openSshKey))
-              .add(GET_OPERATION_REQUEST)
+              .add(GET_ZONE_OPERATION_REQUEST)
               .add(getInstanceRequestForInstance("test-1"))
-              .add(LIST_PROJECT_IMAGES_REQUEST)
-              .add(LIST_GOOGLE_IMAGES_REQUEST)
-              .add(LIST_ZONES_REQ)
-              .add(LIST_MACHINE_TYPES_REQUEST)
               .build();
 
       List<HttpResponse> orderedResponses = ImmutableList.<HttpResponse>builder()
               .add(TOKEN_RESPONSE)
-              .add(LIST_ZONES_RESPONSE)
+              .add(LIST_ZONES_SHORT_RESPONSE)
               .add(LIST_PROJECT_IMAGES_RESPONSE)
               .add(LIST_GOOGLE_IMAGES_RESPONSE)
+              .add(LIST_ZONES_SHORT_RESPONSE)
               .add(LIST_MACHINE_TYPES_RESPONSE)
               .add(HttpResponse.builder().statusCode(404).build())
               .add(TOKEN_RESPONSE)
               .add(SUCESSFULL_OPERATION_RESPONSE)
-              .add(GET_OPERATION_RESPONSE)
+              .add(GET_GLOBAL_OPERATION_RESPONSE)
               .add(GET_NETWORK_RESPONSE)
               .add(HttpResponse.builder().statusCode(404).build())
               .add(SUCESSFULL_OPERATION_RESPONSE)
-              .add(GET_OPERATION_RESPONSE)
+              .add(GET_GLOBAL_OPERATION_RESPONSE)
               .add(LIST_INSTANCES_RESPONSE)
               .add(LIST_PROJECT_IMAGES_RESPONSE)
               .add(LIST_GOOGLE_IMAGES_RESPONSE)
-              .add(LIST_ZONES_RESPONSE)
               .add(LIST_MACHINE_TYPES_RESPONSE)
               .add(SUCESSFULL_OPERATION_RESPONSE)
-              .add(GET_OPERATION_RESPONSE)
+              .add(GET_ZONE_OPERATION_RESPONSE)
               .add(getInstanceResponse)
-              .add(LIST_PROJECT_IMAGES_RESPONSE)
-              .add(LIST_GOOGLE_IMAGES_RESPONSE)
-              .add(LIST_ZONES_RESPONSE)
-              .add(LIST_MACHINE_TYPES_RESPONSE)
               .build();
 
 

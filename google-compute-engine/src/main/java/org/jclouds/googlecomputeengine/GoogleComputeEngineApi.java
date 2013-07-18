@@ -17,11 +17,15 @@
 package org.jclouds.googlecomputeengine;
 
 import java.io.Closeable;
+import java.util.Set;
 
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
+import com.google.inject.Provides;
 import org.jclouds.googlecomputeengine.features.*;
+import org.jclouds.location.Region;
+import org.jclouds.location.Zone;
 import org.jclouds.rest.annotations.Delegate;
 
 import com.google.common.annotations.Beta;
