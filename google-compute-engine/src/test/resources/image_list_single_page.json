@@ -40,6 +40,10 @@
          "description": "DEPRECATED. GCEL 10.04 LTS; Created Thu, 28 Jul 2011 16:45:51 +0000",
          "sourceType": "RAW",
          "preferredKernel": "https://www.googleapis.com/compute/v1beta15/projects/google/kernels/gce-20110728",
+         "deprecated": {
+            "state": "DELETED",
+            "replacement": "https://www.googleapis.com/compute/v1beta15/projects/google/global/images/gcel-10-04-v20130104"
+         },
          "rawDisk": {
             "source": "",
             "containerType": "TAR"

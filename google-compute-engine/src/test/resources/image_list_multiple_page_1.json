@@ -13,6 +13,10 @@
          "description": "DEPRECATED. CentOS 6.2 image; Created Mon, 26 Mar 2012 21:19:09 +0000",
          "sourceType": "RAW",
          "preferredKernel": "https://www.googleapis.com/compute/v1beta15/projects/google/kernels/gce-20120326",
+         "deprecated": {
+            "state": "DELETED",
+            "replacement": "https://www.googleapis.com/compute/v1beta15/projects/google/global/images/centos-6-v20130104"
+         },
          "rawDisk": {
             "source": "",
             "containerType": "TAR"
@@ -41,6 +45,10 @@
          "description": "CentOS 6.2; Created Mon, 11 Jun 2012 13:15:44 +0000",
          "sourceType": "RAW",
          "preferredKernel": "https://www.googleapis.com/compute/v1beta15/projects/google/kernels/gce-20120611",
+         "deprecated": {
+            "state": "DEPRECATED",
+            "replacement": "https://www.googleapis.com/compute/v1beta15/projects/debian-cloud/global/images/debian-7-wheezy-20130509"
+         },
          "rawDisk": {
             "source": "",
             "containerType": "TAR"

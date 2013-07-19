@@ -19,11 +19,14 @@ package org.jclouds.googlecomputeengine.features;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Properties;
 
+import com.google.common.base.Predicate;
 import org.jclouds.collect.PagedIterable;
 import org.jclouds.googlecomputeengine.GoogleComputeEngineApi;
+import org.jclouds.googlecomputeengine.domain.Image;
 import org.jclouds.googlecomputeengine.domain.Instance;
 import org.jclouds.googlecomputeengine.domain.InstanceTemplate;
 import org.jclouds.googlecomputeengine.internal.BaseGoogleComputeEngineApiLiveTest;
@@ -50,6 +53,25 @@ public class InstanceApiLiveTest extends BaseGoogleComputeEngineApiLiveTest {
    @Override
    protected GoogleComputeEngineApi create(Properties props, Iterable<Module> modules) {
       GoogleComputeEngineApi api = super.create(props, modules);
+      URI imageUri = api.getImageApiForProject("google")
+              .list(new ListOptions.Builder().filter("name eq gcel.*"))
+              .concat()
+              .filter(new Predicate<Image>() {
+                 @Override
+                 public boolean apply(Image input) {
+                    if (input.getDeprecated().isPresent()) {
+                       if (input.getDeprecated().get().getState().isPresent()) {
+                          if (!input.getDeprecated().get().getState().get().equals("DEPRECATED")) {
+                             return false;
+                          }
+                       }
+                    }
+                    return true;
+                 }
+              })
+              .first()
+              .get()
+              .getSelfLink();
       instance = InstanceTemplate.builder()
               .forMachineType(getDefaultMachineTypeUrl(userProject.get()))
               .addNetworkInterface(getNetworkUrl(userProject.get(), INSTANCE_NETWORK_NAME),
@@ -57,12 +79,7 @@ public class InstanceApiLiveTest extends BaseGoogleComputeEngineApiLiveTest {
               .addMetadata("mykey", "myvalue")
               .description("a description")
               .addDisk(InstanceTemplate.PersistentDisk.Mode.READ_WRITE, getDiskUrl(userProject.get(), DISK_NAME))
-              .image(api.getImageApiForProject("google")
-                      .list(new ListOptions.Builder().maxResults(1))
-                      .concat()
-                      .first()
-                      .get()
-                      .getSelfLink());
+              .image(imageUri);
 
       return api;
    }

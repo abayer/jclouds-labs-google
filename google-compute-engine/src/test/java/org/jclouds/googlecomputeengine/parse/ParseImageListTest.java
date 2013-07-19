@@ -56,6 +56,10 @@ public class ParseImageListTest extends BaseGoogleComputeEngineParseTest<ListPag
                       .sourceType("RAW")
                       .preferredKernel(URI.create("https://www.googleapis" +
                               ".com/compute/v1beta15/projects/google/kernels/gce-20120326"))
+                      .deprecated(Image.Deprecated.builder()
+                              .state("DEPRECATED")
+                              .replacement(URI.create("https://www.googleapis.com/compute/v1beta15/projects/google/global/images/centos-6-v20130104"))
+                              .build())
                       .rawDisk(
                               Image.RawDisk.builder()
                                       .source("")

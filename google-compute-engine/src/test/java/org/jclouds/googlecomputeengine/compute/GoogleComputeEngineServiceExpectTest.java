@@ -49,6 +49,8 @@ import static org.jclouds.googlecomputeengine.GoogleComputeEngineConstants.COMPU
 import static org.jclouds.googlecomputeengine.features.FirewallApiExpectTest.GET_FIREWALL_REQUEST;
 import static org.jclouds.googlecomputeengine.features.GlobalOperationApiExpectTest.GET_GLOBAL_OPERATION_REQUEST;
 import static org.jclouds.googlecomputeengine.features.GlobalOperationApiExpectTest.GET_GLOBAL_OPERATION_RESPONSE;
+import static org.jclouds.googlecomputeengine.features.ImageApiExpectTest.LIST_GOOGLE_IMAGES_REQUEST;
+import static org.jclouds.googlecomputeengine.features.ImageApiExpectTest.LIST_GOOGLE_IMAGES_RESPONSE;
 import static org.jclouds.googlecomputeengine.features.ImageApiExpectTest.LIST_PROJECT_IMAGES_REQUEST;
 import static org.jclouds.googlecomputeengine.features.ImageApiExpectTest.LIST_PROJECT_IMAGES_RESPONSE;
 import static org.jclouds.googlecomputeengine.features.InstanceApiExpectTest.LIST_CENTRAL1B_INSTANCES_REQUEST;
@@ -78,15 +80,6 @@ import static org.testng.Assert.assertNotNull;
 @Test(groups = "unit")
 public class GoogleComputeEngineServiceExpectTest extends BaseGoogleComputeEngineServiceExpectTest {
 
-   public static final HttpRequest LIST_GOOGLE_IMAGES_REQUEST = HttpRequest
-           .builder()
-           .method("GET")
-           .endpoint("https://www.googleapis.com/compute/v1beta15/projects/google/global/images")
-           .addHeader("Accept", "application/json")
-           .addHeader("Authorization", "Bearer " + TOKEN).build();
-
-   public static final HttpResponse LIST_GOOGLE_IMAGES_RESPONSE = HttpResponse.builder().statusCode(200)
-           .payload(staticPayloadFromResource("/image_list_single_page.json")).build();
 
    private HttpRequest INSERT_NETWORK_REQUEST = HttpRequest
            .builder()

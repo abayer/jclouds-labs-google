@@ -47,6 +47,17 @@ public class ImageApiExpectTest extends BaseGoogleComputeEngineApiExpectTest {
    public static final HttpResponse LIST_PROJECT_IMAGES_RESPONSE = HttpResponse.builder().statusCode(200)
            .payload(staticPayloadFromResource("/image_list.json")).build();
 
+   public static final HttpRequest LIST_GOOGLE_IMAGES_REQUEST = HttpRequest
+           .builder()
+           .method("GET")
+           .endpoint("https://www.googleapis.com/compute/v1beta15/projects/google/global/images")
+           .addHeader("Accept", "application/json")
+           .addHeader("Authorization", "Bearer " + TOKEN).build();
+
+   public static final HttpResponse LIST_GOOGLE_IMAGES_RESPONSE = HttpResponse.builder().statusCode(200)
+           .payload(staticPayloadFromResource("/image_list_single_page.json")).build();
+
+
    public void testGetImageResponseIs2xx() throws Exception {
       HttpRequest get = HttpRequest
               .builder()
