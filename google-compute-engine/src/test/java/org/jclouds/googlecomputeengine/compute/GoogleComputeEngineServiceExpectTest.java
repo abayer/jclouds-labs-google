@@ -21,6 +21,7 @@ import static java.util.logging.Logger.getAnonymousLogger;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.RunNodesException;
 import org.jclouds.compute.domain.Hardware;
@@ -127,6 +128,17 @@ public class GoogleComputeEngineServiceExpectTest extends BaseGoogleComputeEngin
    private HttpResponse SUCESSFULL_OPERATION_RESPONSE = HttpResponse.builder().statusCode(200)
            .payload(payloadFromResource("/operation.json")).build();
 
+   private HttpRequest SET_TAGS_REQUEST = HttpRequest.builder()
+           .method("POST")
+           .endpoint("https://www.googleapis.com/compute/v1beta15/projects/myproject/zones/us-central1-a/instances/test-1/setTags")
+           .addHeader("Accept", "application/json")
+           .addHeader("Authorization", "Bearer " + TOKEN)
+           .payload(payloadFromStringWithContentType("{\"items\":[\"aTag\"],\"fingerprint\":\"abcd\"}",
+                   MediaType.APPLICATION_JSON))
+           .build();
+
+   private HttpResponse SET_TAGS_RESPONSE = HttpResponse.builder().statusCode(200)
+           .payload(payloadFromResource("/operation.json")).build();
 
    private HttpResponse getInstanceResponseForInstanceAndNetworkAndStatus(String instanceName, String networkName,
                                                                           String status) throws
@@ -170,7 +182,7 @@ public class GoogleComputeEngineServiceExpectTest extends BaseGoogleComputeEngin
                       ".com/compute/v1beta15/projects/myproject/zones/us-central1-a/machineTypes/n1-standard-1\"," +
                       "\"image\":\"https://www.googleapis" +
                       ".com/compute/v1beta15/projects/google/global/images/gcel-12-04-v20121106\"," +
-                      "\"tags\":[],\"serviceAccounts\":[]," +
+                      "\"serviceAccounts\":[]," +
                       "\"networkInterfaces\":[{\"network\":\"https://www.googleapis" +
                       ".com/compute/v1beta15/projects/myproject/global/networks/" + networkName + "\"," +
                       "\"accessConfigs\":[{\"type\":\"ONE_TO_ONE_NAT\"}]}]," +
@@ -382,6 +394,9 @@ public class GoogleComputeEngineServiceExpectTest extends BaseGoogleComputeEngin
               .add(createInstanceRequestForInstance("test-1", "jclouds-test", openSshKey))
               .add(GET_ZONE_OPERATION_REQUEST)
               .add(getInstanceRequestForInstance("test-1"))
+              .add(SET_TAGS_REQUEST)
+              .add(GET_ZONE_OPERATION_REQUEST)
+              .add(getInstanceRequestForInstance("test-1"))
               .build();
 
       List<HttpResponse> orderedResponses = ImmutableList.<HttpResponse>builder()
@@ -407,13 +422,16 @@ public class GoogleComputeEngineServiceExpectTest extends BaseGoogleComputeEngin
               .add(SUCESSFULL_OPERATION_RESPONSE)
               .add(GET_ZONE_OPERATION_RESPONSE)
               .add(getInstanceResponse)
+              .add(SET_TAGS_RESPONSE)
+              .add(GET_ZONE_OPERATION_RESPONSE)
+              .add(getInstanceResponse)
               .build();
 
 
       ComputeService computeService = orderedRequestsSendResponses(orderedRequests, orderedResponses);
 
       GoogleComputeEngineTemplateOptions options = computeService.templateOptions().as(GoogleComputeEngineTemplateOptions.class);
-
+      options.tags(ImmutableSet.of("aTag"));
       getOnlyElement(computeService.createNodesInGroup("test", 1, options));
    }
 }

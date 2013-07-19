@@ -40,7 +40,6 @@ public class InstanceTemplate {
    protected String description;
    protected URI machineType;
    protected URI image;
-   protected Set<String> tags = Sets.newLinkedHashSet();
    protected Set<Instance.ServiceAccount> serviceAccounts = Sets.newLinkedHashSet();
 
    protected transient Set<PersistentDisk> disks = Sets.newLinkedHashSet();
@@ -94,23 +93,6 @@ public class InstanceTemplate {
     */
    public InstanceTemplate machineType(String machineTypeName) {
       this.machineTypeName = machineTypeName;
-      return this;
-   }
-
-   /**
-    * @see org.jclouds.googlecomputeengine.domain.Instance#getTags()
-    */
-   public InstanceTemplate addTag(String tag) {
-      this.tags.add(checkNotNull(tag, "tag"));
-      return this;
-   }
-
-   /**
-    * @see org.jclouds.googlecomputeengine.domain.Instance#getTags()
-    */
-   public InstanceTemplate tags(Set<String> tags) {
-      this.tags = Sets.newLinkedHashSet();
-      this.tags.addAll(checkNotNull(tags, "tags"));
       return this;
    }
 
@@ -263,13 +245,6 @@ public class InstanceTemplate {
    }
 
    /**
-    * @see org.jclouds.googlecomputeengine.domain.Instance#getTags()
-    */
-   public Set<String> getTags() {
-      return tags;
-   }
-
-   /**
     * @see org.jclouds.googlecomputeengine.domain.Instance#getName()
     */
    public String getName() {
@@ -301,7 +276,6 @@ public class InstanceTemplate {
                  .name(instanceTemplate.getName())
                  .description(instanceTemplate.getDescription())
                  .image(instanceTemplate.getImage())
-                 .tags(instanceTemplate.getTags())
                  .disks(instanceTemplate.getDisks())
                  .metadata(instanceTemplate.getMetadata())
                  .serviceAccounts(instanceTemplate.getServiceAccounts());
@@ -398,7 +372,6 @@ public class InstanceTemplate {
       if (object instanceof InstanceTemplate) {
          final InstanceTemplate other = InstanceTemplate.class.cast(object);
          return equal(description, other.description)
-                 && equal(tags, other.tags)
                  && equal(image, other.image)
                  && equal(disks, other.disks)
                  && equal(networkInterfaces, other.networkInterfaces)
@@ -414,7 +387,7 @@ public class InstanceTemplate {
     */
    @Override
    public int hashCode() {
-      return Objects.hashCode(description, tags, image, disks, networkInterfaces, metadata, serviceAccounts);
+      return Objects.hashCode(description, image, disks, networkInterfaces, metadata, serviceAccounts);
    }
 
    /**
@@ -424,8 +397,6 @@ public class InstanceTemplate {
       Objects.ToStringHelper toString = Objects.toStringHelper("")
               .omitNullValues();
       toString.add("description", description);
-      if (tags.size() > 0)
-         toString.add("tags", tags);
       if (disks.size() > 0)
          toString.add("disks", disks);
       if (metadata.size() > 0)

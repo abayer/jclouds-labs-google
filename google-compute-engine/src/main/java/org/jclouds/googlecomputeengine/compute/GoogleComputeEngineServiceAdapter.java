@@ -134,7 +134,6 @@ public class GoogleComputeEngineServiceAdapter implements ComputeServiceAdapter<
 
       ImmutableMap.Builder<String, String> metadataBuilder = metatadaFromTemplateOptions.apply(options);
       instanceTemplate.metadata(metadataBuilder.build());
-      instanceTemplate.tags(options.getTags());
       instanceTemplate.serviceAccounts(options.getServiceAccounts());
       instanceTemplate.image(checkNotNull(template.getImage().getUri(), "image URI is null"));
 
@@ -159,7 +158,7 @@ public class GoogleComputeEngineServiceAdapter implements ComputeServiceAdapter<
 
       if (options.getTags().size() > 0) {
          Operation tagsOperation = api.getInstanceApiForProject(userProject.get()).setTagsInZone(template.getLocation().getId(),
-                 name, instanceTemplate.getTags(), instance.get().getTags().getFingerprint());
+                 name, options.getTags(), instance.get().getTags().getFingerprint());
 
          waitOperationDone(tagsOperation);
 

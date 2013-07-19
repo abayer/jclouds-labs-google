@@ -165,7 +165,7 @@ public class GoogleComputeEngineParserModule extends AbstractModule {
             name(template.getName());
             description(template.getDescription());
             image(template.getImage());
-            tags(template.getTags());
+//            tags(template.getTags());
             serviceAccounts(template.getServiceAccounts());
             networkInterfaces(template.getNetworkInterfaces());
          }

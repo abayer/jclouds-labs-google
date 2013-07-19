@@ -55,9 +55,14 @@ public class InstanceApiLiveTest extends BaseGoogleComputeEngineApiLiveTest {
               .addNetworkInterface(getNetworkUrl(userProject.get(), INSTANCE_NETWORK_NAME),
                       Instance.NetworkInterface.AccessConfig.Type.ONE_TO_ONE_NAT)
               .addMetadata("mykey", "myvalue")
-              .addTag("atag")
               .description("a description")
-              .addDisk(InstanceTemplate.PersistentDisk.Mode.READ_WRITE, getDiskUrl(userProject.get(), DISK_NAME));
+              .addDisk(InstanceTemplate.PersistentDisk.Mode.READ_WRITE, getDiskUrl(userProject.get(), DISK_NAME))
+              .image(api.getImageApiForProject("google")
+                      .list(new ListOptions.Builder().maxResults(1))
+                      .concat()
+                      .first()
+                      .get()
+                      .getSelfLink());
 
       return api;
    }
@@ -74,7 +79,7 @@ public class InstanceApiLiveTest extends BaseGoogleComputeEngineApiLiveTest {
               (INSTANCE_NETWORK_NAME, IPV4_RANGE), TIME_WAIT);
 
       assertZoneOperationDoneSucessfully(api.getDiskApiForProject(userProject.get()).createInZone
-              ("instance-live-test-disk", 1, DEFAULT_ZONE_NAME), TIME_WAIT);
+              ("instance-live-test-disk", 10, DEFAULT_ZONE_NAME), TIME_WAIT);
 
       assertZoneOperationDoneSucessfully(api().createInZone(DEFAULT_ZONE_NAME, INSTANCE_NAME, instance), TIME_WAIT);
 
@@ -114,7 +119,6 @@ public class InstanceApiLiveTest extends BaseGoogleComputeEngineApiLiveTest {
 
    private void assertInstanceEquals(Instance result, InstanceTemplate expected) {
       assertEquals(result.getName(), expected.getName());
-      assertEquals(result.getTags(), expected.getTags());
       assertEquals(result.getMetadata(), expected.getMetadata());
    }
 }

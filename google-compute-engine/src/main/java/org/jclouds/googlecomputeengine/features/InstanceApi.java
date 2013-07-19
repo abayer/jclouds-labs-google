@@ -355,12 +355,11 @@ public interface InstanceApi {
                                Map<String, String> metadata);
 
    /**
-    * TODO add live and expect tests for setTags
     * Sets tags for an instance
     *
     * @param zone The zone the instance is in
     * @param instanceName the name of the instance
-    * @param tags A set of tags
+    * @param items A set of tags
     * @param fingerprint The current fingerprint for the tags
     * @return an Operations resource. To check on the status of an operation, poll the Operations resource returned
     *         to you, and look for the status field.
@@ -372,10 +371,11 @@ public interface InstanceApi {
    @Consumes(MediaType.APPLICATION_JSON)
    @Produces(MediaType.APPLICATION_JSON)
    @Fallback(NullOnNotFoundOr404.class)
+   @MapBinder(BindToJsonPayload.class)
    @Nullable
    Operation setTagsInZone(@PathParam("zone") String zone,
                            @PathParam("instance") String instanceName,
-                           @PayloadParam("items") Set<String> tags,
+                           @PayloadParam("items") Set<String> items,
                            @PayloadParam("fingerprint") String fingerprint);
 
    /**

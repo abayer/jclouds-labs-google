@@ -172,7 +172,6 @@ public class InstanceApiExpectTest extends BaseGoogleComputeEngineApiExpectTest 
                       ".com/compute/v1beta15/projects/google/global/images/gcel-12-04-v20121106"))
               .addDisk(InstanceTemplate.PersistentDisk.Mode.READ_WRITE,
                       create("https://www.googleapis.com/compute/v1beta15/projects/myproject/zones/us-central1-a/disks/test"))
-              .addTag("aTag")
               .addServiceAccount(Instance.ServiceAccount.builder().email("default").addScopes("myscope").build())
               .addMetadata("aKey", "aValue");
 
