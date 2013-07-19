@@ -28,6 +28,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import com.google.inject.Scopes;
 import org.jclouds.collect.Memoized;
 import org.jclouds.domain.Credentials;
 import org.jclouds.googlecomputeengine.GoogleComputeEngineApi;
@@ -47,6 +48,8 @@ import org.jclouds.http.annotation.ServerError;
 import org.jclouds.json.config.GsonModule.DateAdapter;
 import org.jclouds.json.config.GsonModule.Iso8601DateAdapter;
 import org.jclouds.location.Provider;
+import org.jclouds.location.suppliers.ImplicitLocationSupplier;
+import org.jclouds.location.suppliers.implicit.FirstZone;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.ConfiguresHttpApi;
 import org.jclouds.rest.config.HttpApiModule;
@@ -79,6 +82,7 @@ public class GoogleComputeEngineHttpApiModule extends HttpApiModule<GoogleComput
       }).annotatedWith(named("region")).to(RegionOperationDonePredicate.class);
       bind(new TypeLiteral<Predicate<AtomicReference<Operation>>>() {
       }).annotatedWith(named("zone")).to(ZoneOperationDonePredicate.class);
+      bind(ImplicitLocationSupplier.class).to(FirstZone.class).in(Scopes.SINGLETON);
       super.configure();
    }
 

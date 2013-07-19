@@ -198,7 +198,7 @@ public class GoogleComputeEngineParserModule extends AbstractModule {
          if (object.get("tags") != null) {
             JsonObject tags = (JsonObject) object.get("tags");
             if (tags.get("items") != null) {
-               JsonArray items = (JsonArray) object.get("items");
+               JsonArray items = (JsonArray) tags.get("items");
                for (JsonElement item : items) {
                   instanceBuilder.addTag(item.getAsString());
                }

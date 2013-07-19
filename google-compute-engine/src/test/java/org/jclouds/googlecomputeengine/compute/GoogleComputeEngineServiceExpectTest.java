@@ -25,6 +25,7 @@ import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.RunNodesException;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.domain.Location;
 import org.jclouds.googlecomputeengine.compute.options.GoogleComputeEngineTemplateOptions;
 import org.jclouds.googlecomputeengine.domain.Instance;
@@ -235,6 +236,8 @@ public class GoogleComputeEngineServiceExpectTest extends BaseGoogleComputeEngin
 
       Hardware smallest = client.templateBuilder().smallest().build().getHardware();
       assertEquals(defaultSize, smallest);
+
+      Hardware fastest = client.templateBuilder().fastest().build().getHardware();
 
       assertEquals(client.listHardwareProfiles().size(), 4);
       Template toMatch = client.templateBuilder()

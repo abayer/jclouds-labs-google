@@ -71,6 +71,8 @@ public class InstanceInZoneToNodeMetadata implements Function<InstanceInZone, No
       Image image = checkNotNull(imagesMap.get(checkNotNull(input.getImage(), "image")),
               "no image for %s. images: %s", input.getImage(), imagesMap.values());
 
+      System.out.println("tags: " + input.getTags());
+
       return new NodeMetadataBuilder()
               .id(SlashEncodedIds.fromTwoIds(checkNotNull(locations.get().get(input.getZone()), "location for %s", input.getZone()).getId(),
                       input.getName()).slashEncode())
