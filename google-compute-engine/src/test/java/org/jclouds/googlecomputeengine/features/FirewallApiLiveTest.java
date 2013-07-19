@@ -50,7 +50,7 @@ public class FirewallApiLiveTest extends BaseGoogleComputeEngineApiLiveTest {
    public void testInsertFirewall() {
 
       // need to create the network first
-      assertOperationDoneSucessfully(api.getNetworkApiForProject(userProject.get()).createInIPv4Range
+      assertGlobalOperationDoneSucessfully(api.getNetworkApiForProject(userProject.get()).createInIPv4Range
               (FIREWALL_NETWORK_NAME, IPV4_RANGE), TIME_WAIT);
 
       FirewallOptions firewall = new FirewallOptions()
@@ -62,7 +62,7 @@ public class FirewallApiLiveTest extends BaseGoogleComputeEngineApiLiveTest {
               .addSourceTag("tag1")
               .addTargetTag("tag2");
 
-      assertOperationDoneSucessfully(api().createInNetwork(FIREWALL_NAME, getNetworkUrl(userProject.get(),
+      assertGlobalOperationDoneSucessfully(api().createInNetwork(FIREWALL_NAME, getNetworkUrl(userProject.get(),
               FIREWALL_NETWORK_NAME), firewall), TIME_WAIT);
 
    }
@@ -83,7 +83,7 @@ public class FirewallApiLiveTest extends BaseGoogleComputeEngineApiLiveTest {
                               .build()));
 
 
-      assertOperationDoneSucessfully(api().update(FIREWALL_NAME, firewall), TIME_WAIT);
+      assertGlobalOperationDoneSucessfully(api().update(FIREWALL_NAME, firewall), TIME_WAIT);
 
    }
 
@@ -106,7 +106,7 @@ public class FirewallApiLiveTest extends BaseGoogleComputeEngineApiLiveTest {
               .addSourceTag("tag1")
               .addTargetTag("tag2");
 
-      assertOperationDoneSucessfully(api().update(FIREWALL_NAME, firewall), TIME_WAIT);
+      assertGlobalOperationDoneSucessfully(api().update(FIREWALL_NAME, firewall), TIME_WAIT);
 
    }
 
@@ -149,8 +149,8 @@ public class FirewallApiLiveTest extends BaseGoogleComputeEngineApiLiveTest {
    @Test(groups = "live", dependsOnMethods = "testListFirewall")
    public void testDeleteFirewall() {
 
-      assertOperationDoneSucessfully(api().delete(FIREWALL_NAME), TIME_WAIT);
-      assertOperationDoneSucessfully(api.getNetworkApiForProject(userProject.get()).delete
+      assertGlobalOperationDoneSucessfully(api().delete(FIREWALL_NAME), TIME_WAIT);
+      assertGlobalOperationDoneSucessfully(api.getNetworkApiForProject(userProject.get()).delete
               (FIREWALL_NETWORK_NAME), TIME_WAIT);
    }
 

@@ -51,7 +51,7 @@ public class InstanceApiLiveTest extends BaseGoogleComputeEngineApiLiveTest {
    protected GoogleComputeEngineApi create(Properties props, Iterable<Module> modules) {
       GoogleComputeEngineApi api = super.create(props, modules);
       instance = InstanceTemplate.builder()
-              .forMachineType(getDefaultMachineTypekUrl(userProject.get()))
+              .forMachineType(getDefaultMachineTypeUrl(userProject.get()))
               .addNetworkInterface(getNetworkUrl(userProject.get(), INSTANCE_NETWORK_NAME),
                       Instance.NetworkInterface.AccessConfig.Type.ONE_TO_ONE_NAT)
               .addMetadata("mykey", "myvalue")
@@ -70,13 +70,13 @@ public class InstanceApiLiveTest extends BaseGoogleComputeEngineApiLiveTest {
    public void testInsertInstance() {
 
       // need to create the network first
-      assertOperationDoneSucessfully(api.getNetworkApiForProject(userProject.get()).createInIPv4Range
+      assertGlobalOperationDoneSucessfully(api.getNetworkApiForProject(userProject.get()).createInIPv4Range
               (INSTANCE_NETWORK_NAME, IPV4_RANGE), TIME_WAIT);
 
-      assertOperationDoneSucessfully(api.getDiskApiForProject(userProject.get()).createInZone
+      assertZoneOperationDoneSucessfully(api.getDiskApiForProject(userProject.get()).createInZone
               ("instance-live-test-disk", 1, DEFAULT_ZONE_NAME), TIME_WAIT);
 
-      assertOperationDoneSucessfully(api().createInZone(DEFAULT_ZONE_NAME, INSTANCE_NAME, instance), TIME_WAIT);
+      assertZoneOperationDoneSucessfully(api().createInZone(DEFAULT_ZONE_NAME, INSTANCE_NAME, instance), TIME_WAIT);
 
    }
 
@@ -105,10 +105,10 @@ public class InstanceApiLiveTest extends BaseGoogleComputeEngineApiLiveTest {
    @Test(groups = "live", dependsOnMethods = "testListInstance")
    public void testDeleteInstance() {
 
-      assertOperationDoneSucessfully(api().deleteInZone(DEFAULT_ZONE_NAME, INSTANCE_NAME), TIME_WAIT);
-      assertOperationDoneSucessfully(api.getDiskApiForProject(userProject.get()).deleteInZone(DEFAULT_ZONE_NAME, DISK_NAME),
+      assertZoneOperationDoneSucessfully(api().deleteInZone(DEFAULT_ZONE_NAME, INSTANCE_NAME), TIME_WAIT);
+      assertZoneOperationDoneSucessfully(api.getDiskApiForProject(userProject.get()).deleteInZone(DEFAULT_ZONE_NAME, DISK_NAME),
               TIME_WAIT);
-      assertOperationDoneSucessfully(api.getNetworkApiForProject(userProject.get()).delete
+      assertGlobalOperationDoneSucessfully(api.getNetworkApiForProject(userProject.get()).delete
               (INSTANCE_NETWORK_NAME), TIME_WAIT);
    }
 

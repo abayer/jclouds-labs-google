@@ -19,17 +19,22 @@ package org.jclouds.googlecomputeengine.config;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Suppliers.compose;
 import static com.google.inject.name.Names.named;
+import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 
 import java.net.URI;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.collect.Memoized;
 import org.jclouds.domain.Credentials;
 import org.jclouds.googlecomputeengine.GoogleComputeEngineApi;
 import org.jclouds.googlecomputeengine.domain.Operation;
+import org.jclouds.googlecomputeengine.domain.Project;
 import org.jclouds.googlecomputeengine.domain.SlashEncodedIds;
+import org.jclouds.googlecomputeengine.features.ProjectApi;
 import org.jclouds.googlecomputeengine.handlers.GoogleComputeEngineErrorHandler;
 import org.jclouds.googlecomputeengine.predicates.GlobalOperationDonePredicate;
 import org.jclouds.googlecomputeengine.predicates.RegionOperationDonePredicate;
@@ -42,6 +47,7 @@ import org.jclouds.http.annotation.ServerError;
 import org.jclouds.json.config.GsonModule.DateAdapter;
 import org.jclouds.json.config.GsonModule.Iso8601DateAdapter;
 import org.jclouds.location.Provider;
+import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.ConfiguresHttpApi;
 import org.jclouds.rest.config.HttpApiModule;
 
@@ -52,6 +58,7 @@ import com.google.common.base.Supplier;
 import com.google.common.collect.Iterables;
 import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
+import org.jclouds.rest.suppliers.MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
 
 /**
  * Configures the GoogleCompute connection.
@@ -85,14 +92,19 @@ public class GoogleComputeEngineHttpApiModule extends HttpApiModule<GoogleComput
    @Provides
    @Singleton
    @UserProject
-   public Supplier<String> supplyProject(@org.jclouds.location.Provider final Supplier<Credentials> creds) {
-      return compose(new Function<Credentials, String>() {
-         public String apply(Credentials in) {
-            checkState(in.identity.indexOf("@") != 1, "identity should be in project_id@developer.gserviceaccount.com" +
-                    " format");
-            return Iterables.get(Splitter.on("@").split(in.identity), 0);
-         }
-      }, creds);
+   public Supplier<String> supplyProject(@org.jclouds.location.Provider final Supplier<Credentials> creds,
+                                         final GoogleComputeEngineApi api,
+                                         AtomicReference<AuthorizationException> authException,
+                                         @Named(PROPERTY_SESSION_INTERVAL) long seconds) {
+      return MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.create(authException,
+              compose(new Function<Credentials, String>() {
+                 public String apply(Credentials in) {
+                    checkState(in.identity.indexOf("@") != 1, "identity should be in project_id@developer.gserviceaccount.com" +
+                            " format");
+                    Project project = api.getProjectApi().get(Iterables.get(Splitter.on("@").split(in.identity), 0));
+                    return project.getName();
+                 }
+              }, creds), seconds, TimeUnit.SECONDS);
    }
 
    @Provides

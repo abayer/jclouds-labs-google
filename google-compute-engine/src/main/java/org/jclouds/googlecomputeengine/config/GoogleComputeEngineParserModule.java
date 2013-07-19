@@ -195,6 +195,15 @@ public class GoogleComputeEngineParserModule extends AbstractModule {
             }
 
          }
+         if (object.get("tags") != null) {
+            JsonObject tags = (JsonObject) object.get("tags");
+            if (tags.get("items") != null) {
+               JsonArray items = (JsonArray) object.get("items");
+               for (JsonElement item : items) {
+                  instanceBuilder.addTag(item.getAsString());
+               }
+            }
+         }
 
          return Instance.builder().fromInstance(instanceBuilder.build()).build();
       }
@@ -202,14 +211,14 @@ public class GoogleComputeEngineParserModule extends AbstractModule {
 
       private static class InstanceInternal extends Instance {
          @ConstructorProperties({
-                 "id", "creationTimestamp", "selfLink", "name", "description", "tags", "image", "machineType",
+                 "id", "creationTimestamp", "selfLink", "name", "description", "image", "machineType",
                  "status", "statusMessage", "zone", "networkInterfaces", "metadata", "serviceAccounts"
          })
          private InstanceInternal(String id, Date creationTimestamp, URI selfLink, String name, String description,
-                                  Set<String> tags, URI image, URI machineType, Status status, String statusMessage,
+                                  URI image, URI machineType, Status status, String statusMessage,
                                   URI zone, Set<NetworkInterface> networkInterfaces, Metadata metadata,
                                   Set<ServiceAccount> serviceAccounts) {
-            super(id, creationTimestamp, selfLink, name, description, tags, image, machineType,
+            super(id, creationTimestamp, selfLink, name, description, null, image, machineType,
                     status, statusMessage, zone, networkInterfaces, null, metadata, serviceAccounts);
          }
       }

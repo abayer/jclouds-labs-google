@@ -162,6 +162,19 @@ public class Instance extends Resource {
    /**
     * {@inheritDoc}
     */
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      Instance that = Instance.class.cast(obj);
+      return equal(this.kind, that.kind)
+              && equal(this.name, that.name)
+              && equal(this.zone, that.zone);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
    protected Objects.ToStringHelper string() {
       return super.string()
               .omitNullValues()
@@ -419,10 +432,9 @@ public class Instance extends Resource {
    }
 
    public static class PersistentAttachedDisk extends AttachedDisk {
-
       public enum Mode {
          READ_WRITE,
-         READ_ONLY
+         READ_ONLY;
       }
 
       @ConstructorProperties({"mode", "source", "deviceName", "index", "deleteOnTerminate"})

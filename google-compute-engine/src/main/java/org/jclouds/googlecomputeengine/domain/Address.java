@@ -16,6 +16,7 @@
  */
 package org.jclouds.googlecomputeengine.domain;
 
+import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Optional.fromNullable;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -83,6 +84,19 @@ public final class Address extends Resource {
     */
    public String getAddress() {
       return address;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      Address that = Address.class.cast(obj);
+      return equal(this.kind, that.kind)
+              && equal(this.name, that.name)
+              && equal(this.region, that.region);
    }
 
    /**

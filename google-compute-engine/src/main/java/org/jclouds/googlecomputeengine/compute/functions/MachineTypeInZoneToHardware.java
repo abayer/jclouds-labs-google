@@ -17,12 +17,16 @@
 package org.jclouds.googlecomputeengine.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Iterables.getOnlyElement;
+import static com.google.common.collect.Iterables.filter;
 
 import java.net.URI;
 import java.util.Map;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Inject;
 import org.jclouds.collect.Memoized;
@@ -33,6 +37,7 @@ import org.jclouds.compute.domain.Volume;
 import org.jclouds.compute.domain.internal.VolumeImpl;
 import org.jclouds.domain.Location;
 import org.jclouds.googlecomputeengine.domain.MachineType;
+import org.jclouds.googlecomputeengine.domain.MachineTypeInZone;
 import org.jclouds.googlecomputeengine.domain.SlashEncodedIds;
 
 /**
@@ -40,34 +45,39 @@ import org.jclouds.googlecomputeengine.domain.SlashEncodedIds;
  *
  * @author David Alves
  */
-public class MachineTypeToHardware implements Function<MachineType, Hardware> {
+public class MachineTypeInZoneToHardware implements Function<MachineTypeInZone, Hardware> {
 
    private final Supplier<Map<URI, ? extends Location>> locations;
 
    @Inject
-   public MachineTypeToHardware(@Memoized Supplier<Map<URI, ? extends Location>> locations) {
+   public MachineTypeInZoneToHardware(@Memoized Supplier<Map<URI, ? extends Location>> locations) {
       this.locations = locations;
    }
    @Override
-   public Hardware apply(MachineType input) {
+   public Hardware apply(final MachineTypeInZone input) {
+      Location location = checkNotNull(getOnlyElement(filter(locations.get().values(), new Predicate<Location>() {
+         @Override
+         public boolean apply(Location l) {
+            return l.getId().equals(input.getMachineType().getZone());
+         }
+      })), "location for %s", input.getMachineType().getZone());
       return new HardwareBuilder()
-              .id(SlashEncodedIds.fromTwoIds(checkNotNull(locations.get().get(input.getZone()),
-                      "location for %s",
-                      input.getZone()).getId(),
-                      input.getName()).slashEncode())
-              .name(input.getName())
+              .id(SlashEncodedIds.fromTwoIds(input.getMachineType().getZone(), input.getMachineType().getName()).slashEncode())
+              .location(location)
+              .name(input.getMachineType().getName())
               .hypervisor("kvm")
-              .processor(new Processor(input.getGuestCpus(), 1.0))
-              .providerId(input.getId())
-              .ram(input.getMemoryMb())
-              .uri(input.getSelfLink())
-              .volumes(collectVolumes(input))
+              .processor(new Processor(input.getMachineType().getGuestCpus(), 1.0))
+              .providerId(input.getMachineType().getId())
+              .ram(input.getMachineType().getMemoryMb())
+              .uri(input.getMachineType().getSelfLink())
+              .userMetadata(ImmutableMap.of("imageSpaceGb", Integer.toString(input.getMachineType().getImageSpaceGb())))
+              .volumes(collectVolumes(input.getMachineType()))
               .build();
    }
 
    private Iterable<Volume> collectVolumes(MachineType input) {
       ImmutableSet.Builder<Volume> volumes = ImmutableSet.builder();
-      for (MachineType.EphemeralDisk disk : input.getEphemeralDisks()) {
+      for (MachineType.ScratchDisk disk : input.getScratchDisks()) {
          volumes.add(new VolumeImpl(null, Volume.Type.LOCAL, new Integer(disk.getDiskGb()).floatValue(), null, true,
                  false));
       }

@@ -23,6 +23,7 @@ import java.beans.ConstructorProperties;
 import java.net.URI;
 import java.util.Date;
 
+import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -51,6 +52,19 @@ public final class Disk extends AbstractDisk {
     */
    public URI getZone() {
       return zone;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      Disk that = Disk.class.cast(obj);
+      return equal(this.kind, that.kind)
+              && equal(this.name, that.name)
+              && equal(this.zone, that.zone);
    }
 
    /**

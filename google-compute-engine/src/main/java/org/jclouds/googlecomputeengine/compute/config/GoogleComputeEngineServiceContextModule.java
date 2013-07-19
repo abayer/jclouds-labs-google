@@ -38,13 +38,8 @@ import org.jclouds.domain.Location;
 import org.jclouds.googlecomputeengine.GoogleComputeEngineApi;
 import org.jclouds.googlecomputeengine.compute.GoogleComputeEngineService;
 import org.jclouds.googlecomputeengine.compute.GoogleComputeEngineServiceAdapter;
-import org.jclouds.googlecomputeengine.compute.functions.BuildInstanceMetadata;
-import org.jclouds.googlecomputeengine.compute.functions.GoogleComputeEngineImageToImage;
-import org.jclouds.googlecomputeengine.compute.functions.InstanceInZoneToNodeMetadata;
-import org.jclouds.googlecomputeengine.compute.functions.MachineTypeToHardware;
-import org.jclouds.googlecomputeengine.compute.functions.OrphanedGroupsFromDeadNodes;
-import org.jclouds.googlecomputeengine.compute.functions.RegionToLocation;
-import org.jclouds.googlecomputeengine.compute.functions.ZoneToLocation;
+import org.jclouds.googlecomputeengine.compute.functions.*;
+import org.jclouds.googlecomputeengine.compute.functions.MachineTypeInZoneToHardware;
 import org.jclouds.googlecomputeengine.compute.options.GoogleComputeEngineTemplateOptions;
 import org.jclouds.googlecomputeengine.compute.predicates.AllNodesInGroupTerminated;
 import org.jclouds.googlecomputeengine.compute.strategy.CreateNodesWithGroupEncodedIntoNameThenAddToSet;
@@ -63,6 +58,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static com.google.common.base.Objects.toStringHelper;
 import static com.google.common.collect.Iterables.transform;
 import static com.google.common.collect.Maps.uniqueIndex;
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
@@ -71,7 +67,7 @@ import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
  * @author David Alves
  */
 public class GoogleComputeEngineServiceContextModule
-        extends ComputeServiceAdapterContextModule<InstanceInZone, MachineType, Image, Zone> {
+        extends ComputeServiceAdapterContextModule<InstanceInZone, MachineTypeInZone, Image, Zone> {
 
    @Override
    protected void configure() {
@@ -79,14 +75,14 @@ public class GoogleComputeEngineServiceContextModule
 
       bind(ComputeService.class).to(GoogleComputeEngineService.class);
 
-      bind(new TypeLiteral<ComputeServiceAdapter<InstanceInZone, MachineType, Image, Zone>>() {})
+      bind(new TypeLiteral<ComputeServiceAdapter<InstanceInZone, MachineTypeInZone, Image, Zone>>() {})
               .to(GoogleComputeEngineServiceAdapter.class);
 
       bind(new TypeLiteral<Function<InstanceInZone, NodeMetadata>>() {})
               .to(InstanceInZoneToNodeMetadata.class);
 
-      bind(new TypeLiteral<Function<MachineType, Hardware>>() {})
-              .to(MachineTypeToHardware.class);
+      bind(new TypeLiteral<Function<MachineTypeInZone, Hardware>>() {})
+              .to(MachineTypeInZoneToHardware.class);
 
       bind(new TypeLiteral<Function<Image, org.jclouds.compute.domain.Image>>() {})
               .to(GoogleComputeEngineImageToImage.class);
@@ -116,7 +112,7 @@ public class GoogleComputeEngineServiceContextModule
 
       bind(PrioritizeCredentialsFromTemplate.class).to(UseNodeCredentialsButOverrideFromTemplate.class);
 
-      install(new LocationsFromComputeServiceAdapterModule<InstanceInZone, MachineType, Image, Zone>() {});
+      install(new LocationsFromComputeServiceAdapterModule<InstanceInZone, MachineTypeInZone, Image, Zone>() {});
 
    }
 

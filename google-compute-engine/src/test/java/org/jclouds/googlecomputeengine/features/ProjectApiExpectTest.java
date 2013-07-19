@@ -39,20 +39,20 @@ public class ProjectApiExpectTest extends BaseGoogleComputeEngineApiExpectTest {
 
    public static final String PROJECTS_URL_PREFIX = "https://www.googleapis.com/compute/v1beta15/projects";
 
+   public static final HttpRequest GET_PROJECT_REQUEST = HttpRequest
+           .builder()
+           .method("GET")
+           .endpoint(PROJECTS_URL_PREFIX + "/myproject")
+           .addHeader("Accept", "application/json")
+           .addHeader("Authorization", "Bearer " + TOKEN).build();
+
+   public static final HttpResponse GET_PROJECT_RESPONSE = HttpResponse.builder().statusCode(200)
+           .payload(staticPayloadFromResource("/project.json")).build();
+
    public void testGetProjectResponseIs2xx() throws Exception {
-      HttpRequest getProjectRequest = HttpRequest
-              .builder()
-              .method("GET")
-              .endpoint(PROJECTS_URL_PREFIX + "/myproject")
-              .addHeader("Accept", "application/json")
-              .addHeader("Authorization", "Bearer " + TOKEN).build();
-
-      HttpResponse getProjectResponse = HttpResponse.builder().statusCode(200)
-              .payload(payloadFromResource("/project.json")).build();
-
       ProjectApi api = requestsSendResponses(requestForScopes(GoogleComputeEngineConstants.COMPUTE_READONLY_SCOPE),
-              TOKEN_RESPONSE, getProjectRequest,
-              getProjectResponse).getProjectApi();
+              TOKEN_RESPONSE, GET_PROJECT_REQUEST,
+              GET_PROJECT_RESPONSE).getProjectApi();
 
       assertEquals(api.get("myproject"), new ParseProjectTest().expected());
    }

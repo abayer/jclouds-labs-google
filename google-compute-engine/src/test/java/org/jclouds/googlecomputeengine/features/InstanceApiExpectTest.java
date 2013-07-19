@@ -16,6 +16,7 @@
  */
 package org.jclouds.googlecomputeengine.features;
 
+import com.google.common.collect.ImmutableMap;
 import org.jclouds.googlecomputeengine.domain.Instance;
 import org.jclouds.googlecomputeengine.domain.InstanceTemplate;
 import org.jclouds.googlecomputeengine.internal.BaseGoogleComputeEngineApiExpectTest;
@@ -33,6 +34,8 @@ import java.net.URI;
 import static java.net.URI.create;
 import static org.jclouds.googlecomputeengine.GoogleComputeEngineConstants.COMPUTE_READONLY_SCOPE;
 import static org.jclouds.googlecomputeengine.GoogleComputeEngineConstants.COMPUTE_SCOPE;
+import static org.jclouds.googlecomputeengine.features.ProjectApiExpectTest.GET_PROJECT_REQUEST;
+import static org.jclouds.googlecomputeengine.features.ProjectApiExpectTest.GET_PROJECT_RESPONSE;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 import static org.testng.AssertJUnit.assertNull;
@@ -66,16 +69,16 @@ public class InstanceApiExpectTest extends BaseGoogleComputeEngineApiExpectTest 
    public static final HttpResponse LIST_INSTANCES_RESPONSE = HttpResponse.builder().statusCode(200)
            .payload(staticPayloadFromResource("/instance_list.json")).build();
 
-   public static final HttpRequest LIST_EAST_INSTANCES_REQUEST = HttpRequest
+   public static final HttpRequest LIST_CENTRAL1B_INSTANCES_REQUEST = HttpRequest
            .builder()
            .method("GET")
            .endpoint("https://www.googleapis" +
-                   ".com/compute/v1beta15/projects/myproject/zones/us-east1-a/instances")
+                   ".com/compute/v1beta15/projects/myproject/zones/us-central1-b/instances")
            .addHeader("Accept", "application/json")
            .addHeader("Authorization", "Bearer " + TOKEN).build();
 
-   public static final HttpResponse LIST_EAST_INSTANCES_RESPONSE = HttpResponse.builder().statusCode(200)
-           .payload(staticPayloadFromResource("/instance_list_east_empty.json")).build();
+   public static final HttpResponse LIST_CENTRAL1B_INSTANCES_RESPONSE = HttpResponse.builder().statusCode(200)
+           .payload(staticPayloadFromResource("/instance_list_central1b_empty.json")).build();
 
    public static final HttpResponse CREATE_INSTANCE_RESPONSE = HttpResponse.builder().statusCode(200)
            .payload(staticPayloadFromResource("/zone_operation.json")).build();
@@ -129,9 +132,11 @@ public class InstanceApiExpectTest extends BaseGoogleComputeEngineApiExpectTest 
               .payload(payloadFromResourceWithContentType("/instance_insert_simple.json", MediaType.APPLICATION_JSON))
               .build();
 
-      InstanceApi api = requestsSendResponses(requestForScopes(COMPUTE_SCOPE),
+      InstanceApi api = requestsSendResponses(ImmutableMap.of(requestForScopes(COMPUTE_READONLY_SCOPE),
+              TOKEN_RESPONSE, GET_PROJECT_REQUEST, GET_PROJECT_RESPONSE,
+              requestForScopes(COMPUTE_SCOPE),
               TOKEN_RESPONSE, insert,
-              CREATE_INSTANCE_RESPONSE).getInstanceApiForProject("myproject");
+              CREATE_INSTANCE_RESPONSE)).getInstanceApiForProject("myproject");
 
       InstanceTemplate options = InstanceTemplate.builder().forMachineType("us-central1-a/n1-standard-1")
               .image(URI.create("https://www.googleapis.com/compute/v1beta15/projects/google/global/images/gcel-12-04-v20121106"))
@@ -154,8 +159,10 @@ public class InstanceApiExpectTest extends BaseGoogleComputeEngineApiExpectTest 
       HttpResponse insertInstanceResponse = HttpResponse.builder().statusCode(200)
               .payload(payloadFromResource("/zone_operation.json")).build();
 
-      InstanceApi api = requestsSendResponses(requestForScopes(COMPUTE_SCOPE),
-              TOKEN_RESPONSE, insert, insertInstanceResponse).getInstanceApiForProject("myproject");
+      InstanceApi api = requestsSendResponses(ImmutableMap.of(requestForScopes(COMPUTE_READONLY_SCOPE),
+              TOKEN_RESPONSE, GET_PROJECT_REQUEST, GET_PROJECT_RESPONSE,
+              requestForScopes(COMPUTE_SCOPE),
+              TOKEN_RESPONSE, insert, insertInstanceResponse)).getInstanceApiForProject("myproject");
 
       InstanceTemplate options = InstanceTemplate.builder().forMachineType("us-central1-a/n1-standard-1")
               .addNetworkInterface(URI.create("https://www.googleapis" +

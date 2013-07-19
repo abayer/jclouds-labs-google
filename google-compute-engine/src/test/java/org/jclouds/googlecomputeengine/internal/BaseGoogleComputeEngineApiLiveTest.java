@@ -25,6 +25,7 @@ import java.net.URI;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicReference;
 
+import com.google.inject.name.Names;
 import org.jclouds.apis.BaseApiLiveTest;
 import org.jclouds.googlecomputeengine.GoogleComputeEngineApi;
 import org.jclouds.googlecomputeengine.config.UserProject;
@@ -50,7 +51,7 @@ public class BaseGoogleComputeEngineApiLiveTest extends BaseApiLiveTest<GoogleCo
    protected static final String REGION_API_URL_SUFFIX = "/region/";
    protected static final String DEFAULT_REGION_NAME = "us-central1";
 
-   protected static final String NETWORK_API_URL_SUFFIX = "/networks/";
+   protected static final String NETWORK_API_URL_SUFFIX = "/global/networks/";
    protected static final String DEFAULT_NETWORK_NAME = "live-test-network";
 
    protected static final String MACHINE_TYPE_API_URL_SUFFIX = "/machineTypes/";
@@ -59,7 +60,9 @@ public class BaseGoogleComputeEngineApiLiveTest extends BaseApiLiveTest<GoogleCo
    protected static final String GOOGLE_PROJECT = "google";
 
    protected Supplier<String> userProject;
-   protected Predicate<AtomicReference<Operation>> operationDonePredicate;
+   protected Predicate<AtomicReference<Operation>> globalOperationDonePredicate;
+   protected Predicate<AtomicReference<Operation>> regionOperationDonePredicate;
+   protected Predicate<AtomicReference<Operation>> zoneOperationDonePredicate;
 
 
    public BaseGoogleComputeEngineApiLiveTest() {
@@ -70,20 +73,46 @@ public class BaseGoogleComputeEngineApiLiveTest extends BaseApiLiveTest<GoogleCo
       Injector injector = newBuilder().modules(modules).overrides(props).buildInjector();
       userProject = injector.getInstance(Key.get(new TypeLiteral<Supplier<String>>() {
       }, UserProject.class));
-      operationDonePredicate = injector.getInstance(Key.get(new TypeLiteral<Predicate<AtomicReference<Operation>>>() {
-      }));
+      globalOperationDonePredicate = injector.getInstance(Key.get(new TypeLiteral<Predicate<AtomicReference<Operation>>>() {
+      }, Names.named("global")));
+      regionOperationDonePredicate = injector.getInstance(Key.get(new TypeLiteral<Predicate<AtomicReference<Operation>>>() {
+      }, Names.named("region")));
+      zoneOperationDonePredicate = injector.getInstance(Key.get(new TypeLiteral<Predicate<AtomicReference<Operation>>>() {
+      }, Names.named("zone")));
       return injector.getInstance(GoogleComputeEngineApi.class);
    }
 
-   protected Operation assertOperationDoneSucessfully(Operation operation, long maxWaitSeconds) {
-      operation = waitOperationDone(operation, maxWaitSeconds);
+   protected Operation assertGlobalOperationDoneSucessfully(Operation operation, long maxWaitSeconds) {
+      operation = waitGlobalOperationDone(operation, maxWaitSeconds);
       assertEquals(operation.getStatus(), Operation.Status.DONE);
       assertTrue(operation.getErrors().isEmpty());
       return operation;
    }
 
-   protected Operation waitOperationDone(Operation operation, long maxWaitSeconds) {
-      return waitOperationDone(operationDonePredicate, operation, maxWaitSeconds);
+   protected Operation waitGlobalOperationDone(Operation operation, long maxWaitSeconds) {
+      return waitOperationDone(globalOperationDonePredicate, operation, maxWaitSeconds);
+   }
+
+   protected Operation assertRegionOperationDoneSucessfully(Operation operation, long maxWaitSeconds) {
+      operation = waitRegionOperationDone(operation, maxWaitSeconds);
+      assertEquals(operation.getStatus(), Operation.Status.DONE);
+      assertTrue(operation.getErrors().isEmpty());
+      return operation;
+   }
+
+   protected Operation waitRegionOperationDone(Operation operation, long maxWaitSeconds) {
+      return waitOperationDone(regionOperationDonePredicate, operation, maxWaitSeconds);
+   }
+
+   protected Operation assertZoneOperationDoneSucessfully(Operation operation, long maxWaitSeconds) {
+      operation = waitZoneOperationDone(operation, maxWaitSeconds);
+      assertEquals(operation.getStatus(), Operation.Status.DONE);
+      assertTrue(operation.getErrors().isEmpty());
+      return operation;
+   }
+
+   protected Operation waitZoneOperationDone(Operation operation, long maxWaitSeconds) {
+      return waitOperationDone(zoneOperationDonePredicate, operation, maxWaitSeconds);
    }
 
    protected URI getDefaultZoneUrl(String project) {
@@ -102,16 +131,18 @@ public class BaseGoogleComputeEngineApiLiveTest extends BaseApiLiveTest<GoogleCo
       return URI.create(API_URL_PREFIX + project + NETWORK_API_URL_SUFFIX + network);
    }
 
-   protected URI getDefaultMachineTypekUrl(String project) {
-      return gettMachineTypeUrl(project, DEFAULT_MACHINE_TYPE_NAME);
+   protected URI getDefaultMachineTypeUrl(String project) {
+      return getMachineTypeUrl(project, DEFAULT_MACHINE_TYPE_NAME);
    }
 
-   protected URI gettMachineTypeUrl(String project, String machineType) {
-      return URI.create(API_URL_PREFIX + project + MACHINE_TYPE_API_URL_SUFFIX + machineType);
+   protected URI getMachineTypeUrl(String project, String machineType) {
+      return URI.create(API_URL_PREFIX + project + ZONE_API_URL_SUFFIX
+              + DEFAULT_ZONE_NAME + MACHINE_TYPE_API_URL_SUFFIX + machineType);
    }
 
    protected URI getDiskUrl(String project, String diskName) {
-      return URI.create(API_URL_PREFIX + project + "/disks/" + diskName);
+      return URI.create(API_URL_PREFIX + project + ZONE_API_URL_SUFFIX
+              + DEFAULT_ZONE_NAME + "/disks/" + diskName);
    }
 
    protected static Operation waitOperationDone(Predicate<AtomicReference<Operation>> operationDonePredicate,

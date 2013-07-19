@@ -44,7 +44,10 @@
          }
       ]
    },
-   "tags": [
-      "aTag"
-   ]
+   "tags": {
+      "items": [
+         "aTag"
+      ],
+      "fingerprint": 5
+   }
 }

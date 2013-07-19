@@ -16,11 +16,14 @@
  */
 package org.jclouds.googlecomputeengine.compute;
 
+import static java.util.logging.Logger.getAnonymousLogger;
+
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.RunNodesException;
+import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.domain.Location;
 import org.jclouds.googlecomputeengine.compute.options.GoogleComputeEngineTemplateOptions;
@@ -46,15 +49,17 @@ import static org.jclouds.googlecomputeengine.features.GlobalOperationApiExpectT
 import static org.jclouds.googlecomputeengine.features.GlobalOperationApiExpectTest.GET_GLOBAL_OPERATION_RESPONSE;
 import static org.jclouds.googlecomputeengine.features.ImageApiExpectTest.LIST_PROJECT_IMAGES_REQUEST;
 import static org.jclouds.googlecomputeengine.features.ImageApiExpectTest.LIST_PROJECT_IMAGES_RESPONSE;
-import static org.jclouds.googlecomputeengine.features.InstanceApiExpectTest.LIST_EAST_INSTANCES_REQUEST;
-import static org.jclouds.googlecomputeengine.features.InstanceApiExpectTest.LIST_EAST_INSTANCES_RESPONSE;
+import static org.jclouds.googlecomputeengine.features.InstanceApiExpectTest.LIST_CENTRAL1B_INSTANCES_REQUEST;
+import static org.jclouds.googlecomputeengine.features.InstanceApiExpectTest.LIST_CENTRAL1B_INSTANCES_RESPONSE;
 import static org.jclouds.googlecomputeengine.features.InstanceApiExpectTest.LIST_INSTANCES_REQUEST;
 import static org.jclouds.googlecomputeengine.features.InstanceApiExpectTest.LIST_INSTANCES_RESPONSE;
-import static org.jclouds.googlecomputeengine.features.MachineTypeApiExpectTest.LIST_EAST_MACHINE_TYPES_REQUEST;
-import static org.jclouds.googlecomputeengine.features.MachineTypeApiExpectTest.LIST_EAST_MACHINE_TYPES_RESPONSE;
+import static org.jclouds.googlecomputeengine.features.MachineTypeApiExpectTest.LIST_CENTRAL1B_MACHINE_TYPES_REQUEST;
+import static org.jclouds.googlecomputeengine.features.MachineTypeApiExpectTest.LIST_CENTRAL1B_MACHINE_TYPES_RESPONSE;
 import static org.jclouds.googlecomputeengine.features.MachineTypeApiExpectTest.LIST_MACHINE_TYPES_REQUEST;
 import static org.jclouds.googlecomputeengine.features.MachineTypeApiExpectTest.LIST_MACHINE_TYPES_RESPONSE;
 import static org.jclouds.googlecomputeengine.features.NetworkApiExpectTest.GET_NETWORK_REQUEST;
+import static org.jclouds.googlecomputeengine.features.ProjectApiExpectTest.GET_PROJECT_REQUEST;
+import static org.jclouds.googlecomputeengine.features.ProjectApiExpectTest.GET_PROJECT_RESPONSE;
 import static org.jclouds.googlecomputeengine.features.ZoneOperationApiExpectTest.GET_ZONE_OPERATION_REQUEST;
 import static org.jclouds.googlecomputeengine.features.ZoneOperationApiExpectTest.GET_ZONE_OPERATION_RESPONSE;
 import static org.jclouds.googlecomputeengine.features.ZoneApiExpectTest.LIST_ZONES_REQ;
@@ -216,16 +221,25 @@ public class GoogleComputeEngineServiceExpectTest extends BaseGoogleComputeEngin
       ImmutableMap<HttpRequest, HttpResponse> requestResponseMap = ImmutableMap.
               <HttpRequest, HttpResponse>builder()
               .put(requestForScopes(COMPUTE_READONLY_SCOPE), TOKEN_RESPONSE)
+              .put(GET_PROJECT_REQUEST, GET_PROJECT_RESPONSE)
               .put(LIST_ZONES_REQ, LIST_ZONES_RESPONSE)
               .put(LIST_PROJECT_IMAGES_REQUEST, LIST_PROJECT_IMAGES_RESPONSE)
               .put(LIST_GOOGLE_IMAGES_REQUEST, LIST_GOOGLE_IMAGES_RESPONSE)
               .put(LIST_MACHINE_TYPES_REQUEST, LIST_MACHINE_TYPES_RESPONSE)
-              .put(LIST_EAST_MACHINE_TYPES_REQUEST, LIST_EAST_MACHINE_TYPES_RESPONSE)
+              .put(LIST_CENTRAL1B_MACHINE_TYPES_REQUEST, LIST_CENTRAL1B_MACHINE_TYPES_RESPONSE)
               .build();
 
       ComputeService client = requestsSendResponses(requestResponseMap);
       Template template = client.templateBuilder().build();
-      Template toMatch = client.templateBuilder().imageId(template.getImage().getId()).build();
+      Hardware defaultSize = client.templateBuilder().build().getHardware();
+
+      Hardware smallest = client.templateBuilder().smallest().build().getHardware();
+      assertEquals(defaultSize, smallest);
+
+      assertEquals(client.listHardwareProfiles().size(), 4);
+      Template toMatch = client.templateBuilder()
+              .imageId(template.getImage().getId())
+              .locationId(template.getLocation().getId()).build();
       assertEquals(toMatch.getImage(), template.getImage());
    }
 
@@ -255,6 +269,7 @@ public class GoogleComputeEngineServiceExpectTest extends BaseGoogleComputeEngin
 
       List<HttpRequest> orderedRequests = ImmutableList.<HttpRequest>builder()
               .add(requestForScopes(COMPUTE_READONLY_SCOPE))
+              .add(GET_PROJECT_REQUEST)
               .add(getInstanceRequestForInstance("test-delete-networks"))
               .add(LIST_PROJECT_IMAGES_REQUEST)
               .add(LIST_GOOGLE_IMAGES_REQUEST)
@@ -274,6 +289,7 @@ public class GoogleComputeEngineServiceExpectTest extends BaseGoogleComputeEngin
 
       List<HttpResponse> orderedResponses = ImmutableList.<HttpResponse>builder()
               .add(TOKEN_RESPONSE)
+              .add(GET_PROJECT_RESPONSE)
               .add(getInstanceResponseForInstanceAndNetworkAndStatus("test-delete-networks", "test-network", Instance
                       .Status.RUNNING.name()))
               .add(LIST_PROJECT_IMAGES_RESPONSE)
@@ -304,13 +320,14 @@ public class GoogleComputeEngineServiceExpectTest extends BaseGoogleComputeEngin
       ImmutableMap<HttpRequest, HttpResponse> requestResponseMap = ImmutableMap.
               <HttpRequest, HttpResponse>builder()
               .put(requestForScopes(COMPUTE_READONLY_SCOPE), TOKEN_RESPONSE)
+              .put(GET_PROJECT_REQUEST, GET_PROJECT_RESPONSE)
               .put(LIST_ZONES_REQ, LIST_ZONES_RESPONSE)
               .put(LIST_INSTANCES_REQUEST, LIST_INSTANCES_RESPONSE)
-              .put(LIST_EAST_INSTANCES_REQUEST, LIST_EAST_INSTANCES_RESPONSE)
+              .put(LIST_CENTRAL1B_INSTANCES_REQUEST, LIST_CENTRAL1B_INSTANCES_RESPONSE)
               .put(LIST_PROJECT_IMAGES_REQUEST, LIST_PROJECT_IMAGES_RESPONSE)
               .put(LIST_GOOGLE_IMAGES_REQUEST, LIST_GOOGLE_IMAGES_RESPONSE)
               .put(LIST_MACHINE_TYPES_REQUEST, LIST_MACHINE_TYPES_RESPONSE)
-              .put(LIST_EAST_MACHINE_TYPES_REQUEST, LIST_EAST_MACHINE_TYPES_RESPONSE)
+              .put(LIST_CENTRAL1B_MACHINE_TYPES_REQUEST, LIST_CENTRAL1B_MACHINE_TYPES_RESPONSE)
               .build();
 
       ComputeService apiWhenServersExist = requestsSendResponses(requestResponseMap);
@@ -339,6 +356,7 @@ public class GoogleComputeEngineServiceExpectTest extends BaseGoogleComputeEngin
 
       List<HttpRequest> orderedRequests = ImmutableList.<HttpRequest>builder()
               .add(requestForScopes(COMPUTE_READONLY_SCOPE))
+              .add(GET_PROJECT_REQUEST)
               .add(LIST_ZONES_REQ)
               .add(LIST_PROJECT_IMAGES_REQUEST)
               .add(LIST_GOOGLE_IMAGES_REQUEST)
@@ -363,6 +381,7 @@ public class GoogleComputeEngineServiceExpectTest extends BaseGoogleComputeEngin
 
       List<HttpResponse> orderedResponses = ImmutableList.<HttpResponse>builder()
               .add(TOKEN_RESPONSE)
+              .add(GET_PROJECT_RESPONSE)
               .add(LIST_ZONES_SHORT_RESPONSE)
               .add(LIST_PROJECT_IMAGES_RESPONSE)
               .add(LIST_GOOGLE_IMAGES_RESPONSE)

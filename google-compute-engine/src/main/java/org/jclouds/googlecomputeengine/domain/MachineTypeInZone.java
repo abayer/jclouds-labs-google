@@ -17,26 +17,21 @@
 package org.jclouds.googlecomputeengine.domain;
 
 import static com.google.common.base.Objects.equal;
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-
-import com.google.common.base.Objects;
-import com.google.common.base.Splitter;
-import com.google.common.collect.Iterables;
 
 /**
  * @author Adam Lowe
  */
-public class InstanceInZone extends SlashEncodedIds {
-   protected final Instance instance;
+public class MachineTypeInZone extends SlashEncodedIds {
+   protected final MachineType machineType;
 
-   public InstanceInZone(Instance instance, String zoneId) {
-      super(zoneId, checkNotNull(instance, "instance").getName());
-      this.instance = instance;
+   public MachineTypeInZone(MachineType machineType, String zoneId) {
+      super(zoneId, checkNotNull(machineType, "machineType").getName());
+      this.machineType = machineType;
    }
 
-   public Instance getInstance() {
-      return instance;
+   public MachineType getMachineType() {
+      return machineType;
    }
 
    /**
@@ -46,15 +41,15 @@ public class InstanceInZone extends SlashEncodedIds {
    public boolean equals(Object obj) {
       if (this == obj) return true;
       if (obj == null || getClass() != obj.getClass()) return false;
-      InstanceInZone that = InstanceInZone.class.cast(obj);
-      return equal(this.instance, that.instance)
+      MachineTypeInZone that = MachineTypeInZone.class.cast(obj);
+      return equal(this.machineType, that.machineType)
               && equal(this.firstId, that.firstId)
               && equal(this.secondId, that.secondId);
    }
 
    @Override
    public String toString() {
-      return "[instance=" + instance + ", zoneId=" + firstId + "]";
+      return "[machineType=" + machineType + ", zoneId=" + firstId + "]";
    }
 
 }

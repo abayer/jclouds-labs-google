@@ -50,7 +50,7 @@ public class DiskApiLiveTest extends BaseGoogleComputeEngineApiLiveTest {
    @Test(groups = "live")
    public void testInsertDisk() {
       Project project = api.getProjectApi().get(userProject.get());
-      assertOperationDoneSucessfully(api().createInZone(DISK_NAME, sizeGb, DEFAULT_ZONE_NAME), TIME_WAIT);
+      assertZoneOperationDoneSucessfully(api().createInZone(DISK_NAME, sizeGb, DEFAULT_ZONE_NAME), TIME_WAIT);
 
    }
 
@@ -79,7 +79,7 @@ public class DiskApiLiveTest extends BaseGoogleComputeEngineApiLiveTest {
    @Test(groups = "live", dependsOnMethods = "testListDisk")
    public void testDeleteDisk() {
 
-      assertOperationDoneSucessfully(api().deleteInZone(DEFAULT_ZONE_NAME, DISK_NAME), TIME_WAIT);
+      assertZoneOperationDoneSucessfully(api().deleteInZone(DEFAULT_ZONE_NAME, DISK_NAME), TIME_WAIT);
    }
 
    private void assertDiskEquals(Disk result) {

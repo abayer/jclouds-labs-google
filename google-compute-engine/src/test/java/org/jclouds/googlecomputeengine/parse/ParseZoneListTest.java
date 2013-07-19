@@ -53,9 +53,9 @@ public class ParseZoneListTest extends BaseGoogleComputeEngineParseTest<ListPage
                       .creationTimestamp(new SimpleDateFormatDateService().iso8601DateParse
                               ("2012-10-24T20:13:19.271"))
                       .selfLink(URI.create("https://www.googleapis" +
-                              ".com/compute/v1beta15/projects/myproject/zones/us-east1-a"))
-                      .name("us-east1-a")
-                      .description("us-east1-a")
+                              ".com/compute/v1beta15/projects/myproject/zones/us-central1-b"))
+                      .name("us-central1-b")
+                      .description("us-central1-b")
                       .status(Zone.Status.UP)
                       .addMaintenanceWindow(Zone.MaintenanceWindow.builder()
                               .name("2013-02-17-planned-outage")

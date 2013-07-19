@@ -44,14 +44,14 @@ public class ParseMachineTypeTest extends BaseGoogleComputeEngineParseTest<Machi
               .creationTimestamp(dateService.iso8601DateParse("2012-06-07T20:48:14.670"))
               .selfLink(URI.create("https://www.googleapis.com/compute/v1beta15/projects/myproject/zones/us-central1-a/machineTypes/n1" +
                       "-standard-1"))
-              .zone(URI.create("https://www.googleapis.com/compute/v1beta15/projects/myproject/zones/us-central1-a"))
+              .zone("us-central1-a")
               .name("n1-standard-1")
               .description("1 vCPU, 3.75 GB RAM, and a 10 GB ephemeral root disk")
               .guestCpus(1)
               .memoryMb(3840)
               .imageSpaceGb(10)
-              .addEphemeralDisk(1770)
-              .addEphemeralDisk(1770)
+              .addScratchDisk(1770)
+              .addScratchDisk(1770)
               .maximumPersistentDisks(16)
               .maximumPersistentDisksSizeGb(128)
               .build();

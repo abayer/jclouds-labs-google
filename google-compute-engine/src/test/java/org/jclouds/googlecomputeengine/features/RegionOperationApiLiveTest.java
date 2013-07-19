@@ -39,8 +39,8 @@ import org.testng.annotations.Test;
  */
 public class RegionOperationApiLiveTest extends BaseGoogleComputeEngineApiLiveTest {
 
-   private static final String METADATA_ITEM_KEY = "operationLiveTestTestProp";
-   private static final String METADATA_ITEM_VALUE = "operationLiveTestTestValue";
+   private static final String METADATA_ITEM_KEY = "regionOperationLiveTestTestProp";
+   private static final String METADATA_ITEM_VALUE = "regionOperationLiveTestTestValue";
    private Operation addOperation;
    private Operation deleteOperation;
 
@@ -49,27 +49,27 @@ public class RegionOperationApiLiveTest extends BaseGoogleComputeEngineApiLiveTe
    }
 
 
-   @Test(groups = "live")
+//   @Test(groups = "live")
    public void testCreateOperations() {
       //create some operations by adding and deleting metadata items
       // this will make sure there is stuff to listFirstPage
-      addOperation = assertOperationDoneSucessfully(addItemToMetadata(api.getProjectApi(),
+      addOperation = assertRegionOperationDoneSucessfully(addItemToMetadata(api.getProjectApi(),
               userProject.get(), METADATA_ITEM_KEY, METADATA_ITEM_VALUE), 20);
-      deleteOperation = assertOperationDoneSucessfully(deleteItemFromMetadata(api
+      deleteOperation = assertRegionOperationDoneSucessfully(deleteItemFromMetadata(api
               .getProjectApi(), userProject.get(), METADATA_ITEM_KEY), 20);
 
       assertNotNull(addOperation);
       assertNotNull(deleteOperation);
    }
 
-   @Test(groups = "live", dependsOnMethods = "testCreateOperations")
+//   @Test(groups = "live", dependsOnMethods = "testCreateOperations")
    public void testGetOperation() {
       Operation operation = api().getInRegion(DEFAULT_REGION_NAME, addOperation.getName());
       assertNotNull(operation);
       assertOperationEquals(operation, this.addOperation);
    }
 
-   @Test(groups = "live", dependsOnMethods = "testCreateOperations")
+//   @Test(groups = "live", dependsOnMethods = "testCreateOperations")
    public void testListOperationsWithFiltersAndPagination() {
       PagedIterable<Operation> operations = api().listInRegion(DEFAULT_REGION_NAME, new ListOptions.Builder()
               .filter("operationType eq setMetadata")

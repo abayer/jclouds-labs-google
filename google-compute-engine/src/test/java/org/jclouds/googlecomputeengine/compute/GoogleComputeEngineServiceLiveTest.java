@@ -16,9 +16,15 @@
  */
 package org.jclouds.googlecomputeengine.compute;
 
+import static java.lang.String.format;
+import static java.util.logging.Logger.getAnonymousLogger;
+import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
+import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.internal.BaseComputeServiceLiveTest;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.Test;

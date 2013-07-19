@@ -20,11 +20,13 @@ import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.util.concurrent.UncheckedTimeoutException;
 import com.google.inject.Inject;
 import org.jclouds.collect.Memoized;
+import org.jclouds.collect.PagedIterable;
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Template;
@@ -50,9 +52,8 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static com.google.common.collect.Iterables.contains;
-import static com.google.common.collect.Iterables.filter;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static com.google.common.collect.Iterables.*;
 import static org.jclouds.googlecomputeengine.GoogleComputeEngineConstants.GOOGLE_PROJECT;
 import static org.jclouds.googlecomputeengine.GoogleComputeEngineConstants.OPERATION_COMPLETE_INTERVAL;
 import static org.jclouds.googlecomputeengine.GoogleComputeEngineConstants.OPERATION_COMPLETE_TIMEOUT;
@@ -62,7 +63,7 @@ import static org.jclouds.util.Predicates2.retry;
 /**
  * @author David Alves
  */
-public class GoogleComputeEngineServiceAdapter implements ComputeServiceAdapter<InstanceInZone, MachineType, Image, Zone> {
+public class GoogleComputeEngineServiceAdapter implements ComputeServiceAdapter<InstanceInZone, MachineTypeInZone, Image, Zone> {
 
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
@@ -71,6 +72,7 @@ public class GoogleComputeEngineServiceAdapter implements ComputeServiceAdapter<
    private final GoogleComputeEngineApi api;
    private final Supplier<String> userProject;
    private final Supplier<Map<URI, ? extends Location>> zones;
+   private final Supplier<Map<URI, ? extends Hardware>> hardwareMap;
    private final Function<TemplateOptions, ImmutableMap.Builder<String, String>> metatadaFromTemplateOptions;
    private final Predicate<AtomicReference<Operation>> retryOperationDonePredicate;
    private final long operationCompleteCheckInterval;
@@ -84,7 +86,8 @@ public class GoogleComputeEngineServiceAdapter implements ComputeServiceAdapter<
                                             @Named("zone") Predicate<AtomicReference<Operation>> operationDonePredicate,
                                             @Named(OPERATION_COMPLETE_INTERVAL) Long operationCompleteCheckInterval,
                                             @Named(OPERATION_COMPLETE_TIMEOUT) Long operationCompleteCheckTimeout,
-                                            @Memoized Supplier<Map<URI, ? extends Location>> zones) {
+                                            @Memoized Supplier<Map<URI, ? extends Location>> zones,
+                                            @Memoized Supplier<Map<URI, ? extends Hardware>> hardwareMap) {
       this.api = checkNotNull(api, "google compute api");
       this.userProject = checkNotNull(userProject, "user project name");
       this.metatadaFromTemplateOptions = checkNotNull(metatadaFromTemplateOptions,
@@ -96,6 +99,7 @@ public class GoogleComputeEngineServiceAdapter implements ComputeServiceAdapter<
       this.retryOperationDonePredicate = retry(operationDonePredicate, operationCompleteCheckTimeout,
               operationCompleteCheckInterval, TimeUnit.MILLISECONDS);
       this.zones = checkNotNull(zones, "zones");
+      this.hardwareMap = checkNotNull(hardwareMap, "hardwareMap");
    }
 
    @Override
@@ -107,10 +111,18 @@ public class GoogleComputeEngineServiceAdapter implements ComputeServiceAdapter<
       GoogleComputeEngineTemplateOptions options = GoogleComputeEngineTemplateOptions.class.cast(template.getOptions()).clone();
       checkState(options.getNetwork().isPresent(), "network was not present in template options");
       Hardware hardware = checkNotNull(template.getHardware(), "hardware must be set");
-      URI machineType = checkNotNull(hardware.getUri(), "hardware uri must be set");
 
       InstanceTemplate instanceTemplate = InstanceTemplate.builder()
-              .forMachineType(machineType);
+              .forMachineType(hardware.getUri());
+
+      if (hardware.getUserMetadata().get("imageSpaceGb").equals("0")) {
+         // The machine needs a boot disk - create a 1GB drive for this purpose
+         // TODO need to delete it at end!
+         Operation operation = api.getDiskApiForProject(userProject.get()).createInZone(name + "-disk", 10,
+                 template.getLocation().getId());
+         waitOperationDone(operation);
+         instanceTemplate.addDisk(InstanceTemplate.PersistentDisk.Mode.READ_WRITE, operation.getTargetLink());
+      }
 
       if (options.isEnableNat()) {
          instanceTemplate.addNetworkInterface(options.getNetwork().get(), Type.ONE_TO_ONE_NAT);
@@ -152,12 +164,20 @@ public class GoogleComputeEngineServiceAdapter implements ComputeServiceAdapter<
 
 
    @Override
-   public Iterable<MachineType> listHardwareProfiles() {
-      ImmutableSet.Builder<MachineType> builder = ImmutableSet.builder();
-      for (final Location zone : zones.get().values()) {
-         builder.addAll(api.getMachineTypeApiForProject(userProject.get()).listInZone(zone.getId()).concat());
-      }
-      return builder.build();
+   public Iterable<MachineTypeInZone> listHardwareProfiles() {
+      return FluentIterable.from(zones.get().values())
+              .transformAndConcat(new Function<Location, ImmutableSet<MachineType>>() {
+         @Override
+         public ImmutableSet<MachineType> apply(Location input) {
+            return api.getMachineTypeApiForProject(userProject.get()).listInZone(input.getId()).concat().toSet();
+         }
+      }).transform(new Function<MachineType, MachineTypeInZone>() {
+
+         @Override
+         public MachineTypeInZone apply(MachineType arg0) {
+            return new MachineTypeInZone(arg0, arg0.getZone());
+         }
+      }).toSet();
    }
 
    @Override
@@ -190,18 +210,19 @@ public class GoogleComputeEngineServiceAdapter implements ComputeServiceAdapter<
 
    @Override
    public Iterable<InstanceInZone> listNodes() {
-      ImmutableSet.Builder<InstanceInZone> builder = ImmutableSet.builder();
-      for (final Location zone : zones.get().values()) {
-         builder.addAll(api.getInstanceApiForProject(userProject.get()).listInZone(zone.getId()).concat()
-                 .transform(new Function<Instance, InstanceInZone>() {
+      return FluentIterable.from(zones.get().values()).transformAndConcat(new Function<Location, ImmutableSet<InstanceInZone>>() {
+         @Override
+         public ImmutableSet<InstanceInZone> apply(final Location input) {
+            return api.getInstanceApiForProject(userProject.get()).listInZone(input.getId()).concat()
+                    .transform(new Function<Instance, InstanceInZone>() {
 
-                    @Override
-                    public InstanceInZone apply(Instance arg0) {
-                       return new InstanceInZone(arg0, zone.getId());
-                    }
-                 }));
-      }
-      return builder.build();
+                       @Override
+                       public InstanceInZone apply(Instance arg0) {
+                          return new InstanceInZone(arg0, input.getId());
+                       }
+                    }).toSet();
+         }
+      }).toSet();
    }
 
    @Override

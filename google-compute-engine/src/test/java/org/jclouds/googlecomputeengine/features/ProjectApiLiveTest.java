@@ -68,7 +68,7 @@ public class ProjectApiLiveTest extends BaseGoogleComputeEngineApiLiveTest {
    @Test(groups = "live", dependsOnMethods = "testGetProjectWhenExists")
    public void addItemToMetadata() {
       this.initialMetadataSize = project.getCommonInstanceMetadata().size();
-      assertOperationDoneSucessfully(addItemToMetadata(projectApi(), userProject.get(), METADATA_ITEM_KEY,
+      assertGlobalOperationDoneSucessfully(addItemToMetadata(projectApi(), userProject.get(), METADATA_ITEM_KEY,
               METADATA_ITEM_VALUE), 20);
       this.project = projectApi().get(userProject.get());
       assertNotNull(project);
@@ -80,7 +80,7 @@ public class ProjectApiLiveTest extends BaseGoogleComputeEngineApiLiveTest {
 
    @Test(groups = "live", dependsOnMethods = "addItemToMetadata")
    public void testDeleteItemFromMetadata() {
-      assertOperationDoneSucessfully(deleteItemFromMetadata(projectApi(), userProject.get(), METADATA_ITEM_KEY), 20);
+      assertGlobalOperationDoneSucessfully(deleteItemFromMetadata(projectApi(), userProject.get(), METADATA_ITEM_KEY), 20);
       this.project = projectApi().get(userProject.get());
       assertNotNull(project);
       assertFalse(project.getCommonInstanceMetadata().containsKey(METADATA_ITEM_KEY));

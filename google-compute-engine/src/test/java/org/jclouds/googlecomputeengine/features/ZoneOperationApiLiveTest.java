@@ -49,27 +49,27 @@ public class ZoneOperationApiLiveTest extends BaseGoogleComputeEngineApiLiveTest
    }
 
 
-   @Test(groups = "live")
+//   @Test(groups = "live")
    public void testCreateOperations() {
       //create some operations by adding and deleting metadata items
       // this will make sure there is stuff to listFirstPage
-      addOperation = assertOperationDoneSucessfully(addItemToMetadata(api.getProjectApi(),
+      addOperation = assertZoneOperationDoneSucessfully(addItemToMetadata(api.getProjectApi(),
               userProject.get(), METADATA_ITEM_KEY, METADATA_ITEM_VALUE), 20);
-      deleteOperation = assertOperationDoneSucessfully(deleteItemFromMetadata(api
+      deleteOperation = assertZoneOperationDoneSucessfully(deleteItemFromMetadata(api
               .getProjectApi(), userProject.get(), METADATA_ITEM_KEY), 20);
 
       assertNotNull(addOperation);
       assertNotNull(deleteOperation);
    }
 
-   @Test(groups = "live", dependsOnMethods = "testCreateOperations")
+//   @Test(groups = "live", dependsOnMethods = "testCreateOperations")
    public void testGetOperation() {
       Operation operation = api().getInZone(DEFAULT_ZONE_NAME, addOperation.getName());
       assertNotNull(operation);
       assertOperationEquals(operation, this.addOperation);
    }
 
-   @Test(groups = "live", dependsOnMethods = "testCreateOperations")
+//   @Test(groups = "live", dependsOnMethods = "testCreateOperations")
    public void testListOperationsWithFiltersAndPagination() {
       PagedIterable<Operation> operations = api().listInZone(DEFAULT_ZONE_NAME, new ListOptions.Builder()
               .filter("operationType eq setMetadata")
