@@ -40,7 +40,6 @@ public class DiskApiLiveTest extends BaseGoogleComputeEngineApiLiveTest {
    private static final String DISK_NAME = "disk-api-live-test-disk";
    private static final int TIME_WAIT = 10;
 
-   private URI zoneUrl;
    private int sizeGb = 1;
 
    private DiskApi api() {
@@ -85,7 +84,7 @@ public class DiskApiLiveTest extends BaseGoogleComputeEngineApiLiveTest {
    private void assertDiskEquals(Disk result) {
       assertEquals(result.getName(), DISK_NAME);
       assertEquals(result.getSizeGb(), sizeGb);
-      assertEquals(result.getZone(), zoneUrl);
+      assertEquals(result.getZone(), getDefaultZoneUrl(userProject.get()));
    }
 
 }
