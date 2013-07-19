@@ -238,11 +238,13 @@ public class GoogleComputeEngineServiceExpectTest extends BaseGoogleComputeEngin
       assertEquals(defaultSize, smallest);
 
       Hardware fastest = client.templateBuilder().fastest().build().getHardware();
+      assertNotNull(fastest);
 
       assertEquals(client.listHardwareProfiles().size(), 4);
+
       Template toMatch = client.templateBuilder()
               .imageId(template.getImage().getId())
-              .locationId(template.getLocation().getId()).build();
+              .build();
       assertEquals(toMatch.getImage(), template.getImage());
    }
 

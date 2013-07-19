@@ -361,6 +361,7 @@ public interface InstanceApi {
     * @param zone The zone the instance is in
     * @param instanceName the name of the instance
     * @param tags A set of tags
+    * @param fingerprint The current fingerprint for the tags
     * @return an Operations resource. To check on the status of an operation, poll the Operations resource returned
     *         to you, and look for the status field.
     */
@@ -374,7 +375,8 @@ public interface InstanceApi {
    @Nullable
    Operation setTagsInZone(@PathParam("zone") String zone,
                            @PathParam("instance") String instanceName,
-                           @PayloadParam("items") Set<String> tags);
+                           @PayloadParam("items") Set<String> tags,
+                           @PayloadParam("fingerprint") String fingerprint);
 
    /**
     * TODO live and expect tests for aggregatedList

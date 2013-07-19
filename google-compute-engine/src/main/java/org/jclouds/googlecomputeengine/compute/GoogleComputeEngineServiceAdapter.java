@@ -157,6 +157,22 @@ public class GoogleComputeEngineServiceAdapter implements ComputeServiceAdapter<
          }
       }, operationCompleteCheckTimeout, operationCompleteCheckInterval, MILLISECONDS).apply(instance);
 
+      if (options.getTags().size() > 0) {
+         Operation tagsOperation = api.getInstanceApiForProject(userProject.get()).setTagsInZone(template.getLocation().getId(),
+                 name, instanceTemplate.getTags(), instance.get().getTags().getFingerprint());
+
+         waitOperationDone(tagsOperation);
+
+         retry(new Predicate<AtomicReference<Instance>>() {
+            @Override
+            public boolean apply(AtomicReference<Instance> input) {
+               input.set(api.getInstanceApiForProject(userProject.get()).getInZone(template.getLocation().getId(),
+                       name));
+               return input.get() != null;
+            }
+         }, operationCompleteCheckTimeout, operationCompleteCheckInterval, MILLISECONDS).apply(instance);
+      }
+
       InstanceInZone instanceInZone = new InstanceInZone(instance.get(), template.getLocation().getId());
 
       return new NodeAndInitialCredentials<InstanceInZone>(instanceInZone, instanceInZone.slashEncode(), credentials);

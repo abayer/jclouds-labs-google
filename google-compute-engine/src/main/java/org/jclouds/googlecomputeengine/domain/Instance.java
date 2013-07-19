@@ -52,7 +52,7 @@ public class Instance extends Resource {
       TERMINATED
    }
 
-   protected final Set<String> tags;
+   protected final Tags tags;
    protected final URI image;
    protected final URI machineType;
    protected final Status status;
@@ -64,11 +64,11 @@ public class Instance extends Resource {
    protected final Set<ServiceAccount> serviceAccounts;
 
    protected Instance(String id, Date creationTimestamp, URI selfLink, String name, String description,
-                      Set<String> tags, URI image, URI machineType, Status status, String statusMessage,
+                      Tags tags, URI image, URI machineType, Status status, String statusMessage,
                       URI zone, Set<NetworkInterface> networkInterfaces, Set<AttachedDisk> disks,
                       Map<String, String> metadata, Set<ServiceAccount> serviceAccounts) {
       super(Kind.INSTANCE, id, creationTimestamp, selfLink, name, description);
-      this.tags = tags == null ? ImmutableSet.<String>of() : tags;
+      this.tags = checkNotNull(tags, "tags");
       this.image = checkNotNull(image, "image");
       this.machineType = checkNotNull(machineType, "machineType of %s", name);
       this.status = checkNotNull(status, "status");
@@ -86,7 +86,7 @@ public class Instance extends Resource {
     *
     * @return an optional set of tags applied to this instance.
     */
-   public Set<String> getTags() {
+   public Tags getTags() {
       return tags;
    }
 
@@ -208,7 +208,7 @@ public class Instance extends Resource {
 
    public static final class Builder extends Resource.Builder<Builder> {
 
-      private ImmutableSet.Builder<String> tags = ImmutableSet.builder();
+      private Tags tags;
       private URI image;
       private URI machineType;
       private Status status;
@@ -218,20 +218,13 @@ public class Instance extends Resource {
       private ImmutableSet.Builder<AttachedDisk> disks = ImmutableSet.builder();
       private ImmutableMap.Builder<String, String> metadata = ImmutableMap.builder();
       private ImmutableSet.Builder<ServiceAccount> serviceAccounts = ImmutableSet.builder();
+      private String tagsFingerprint;
 
       /**
        * @see Instance#getTags()
        */
-      public Builder addTag(String tag) {
-         this.tags.add(tag);
-         return this;
-      }
-
-      /**
-       * @see Instance#getTags()
-       */
-      public Builder tags(Set<String> tags) {
-         this.tags.addAll(tags);
+      public Builder tags(Tags tags) {
+         this.tags = tags;
          return this;
       }
 
@@ -347,7 +340,7 @@ public class Instance extends Resource {
 
       public Instance build() {
          return new Instance(super.id, super.creationTimestamp, super.selfLink, super.name,
-                 super.description, tags.build(), image, machineType, status, statusMessage, zone,
+                 super.description, tags, image, machineType, status, statusMessage, zone,
                  networkInterfaces.build(), disks.build(), metadata.build(), serviceAccounts.build());
       }
 
@@ -363,6 +356,119 @@ public class Instance extends Resource {
                  .disks(in.getDisks())
                  .metadata(in.getMetadata())
                  .serviceAccounts(in.getServiceAccounts());
+      }
+   }
+
+   /**
+    * Tags for an instance, with their fingerprint.
+    */
+   public static class Tags {
+      private final String fingerprint;
+      private final Set<String> tags;
+
+      @ConstructorProperties({"fingerprint", "items"})
+      public Tags(String fingerprint, Set<String> tags) {
+         this.fingerprint = checkNotNull(fingerprint);
+         this.tags = tags == null ? ImmutableSet.<String>of() : tags;
+      }
+
+      /**
+       * Used to identify valid sources or targets for network firewalls. Provided by the client when the instance is
+       * created. Each tag must be unique, must be 1-63 characters long, and comply with RFC1035.
+       *
+       * @return an optional set of tags applied to this instance.
+       */
+      public Set<String> getTags() {
+         return tags;
+      }
+
+      /**
+       * Gets the fingerprint for the tags - needed for updating them.
+       *
+       * @return the fingerprint string for the tags.
+       */
+      public String getFingerprint() {
+         return fingerprint;
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public int hashCode() {
+         return Objects.hashCode(fingerprint, tags);
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public boolean equals(Object obj) {
+         if (this == obj) return true;
+         if (obj == null || getClass() != obj.getClass()) return false;
+         Tags that = Tags.class.cast(obj);
+         return equal(this.tags, that.tags)
+                 && equal(this.fingerprint, that.fingerprint);
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      protected Objects.ToStringHelper string() {
+         return toStringHelper(this)
+                 .add("tags", tags)
+                 .add("fingerprint", fingerprint);
+      }
+
+      public static Builder builder() {
+         return new Builder();
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public String toString() {
+         return string().toString();
+      }
+
+      public static final class Builder {
+
+         private ImmutableSet.Builder<String> tags = ImmutableSet.builder();
+         private String fingerprint;
+
+         /**
+          * @see Tags#getTags()
+          */
+         public Builder addTag(String tag) {
+            this.tags.add(tag);
+            return this;
+         }
+
+         /**
+          * @see Tags#getTags()
+          */
+         public Builder tags(Set<String> tags) {
+            this.tags.addAll(tags);
+            return this;
+         }
+
+         /**
+          * @see org.jclouds.googlecomputeengine.domain.Instance.Tags#getFingerprint()
+          */
+         public Builder fingerprint(String fingerprint) {
+            this.fingerprint = fingerprint;
+            return this;
+         }
+
+         public Tags build() {
+            return new Tags(this.fingerprint, this.tags.build());
+         }
+
+         public Builder fromTags(Tags in) {
+            return this.fingerprint(in.getFingerprint())
+                    .tags(in.getTags());
+         }
       }
    }
 
