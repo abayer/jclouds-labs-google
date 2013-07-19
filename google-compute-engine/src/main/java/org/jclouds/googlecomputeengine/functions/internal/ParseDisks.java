@@ -44,7 +44,7 @@ public class ParseDisks extends ParseJson<ListPage<Disk>> {
       });
    }
 
-   public static class ToPagedIterable extends BaseToPagedIterable<Disk, ToPagedIterable> {
+   public static class ToPagedIterable extends BaseWithZoneToPagedIterable<Disk, ToPagedIterable> {
 
       private final GoogleComputeEngineApi api;
 
@@ -54,15 +54,15 @@ public class ParseDisks extends ParseJson<ListPage<Disk>> {
       }
 
       @Override
-      protected Function<Object, IterableWithMarker<Disk>> fetchNextPage(final String projectAndZoneName,
+      protected Function<Object, IterableWithMarker<Disk>> fetchNextPage(final String projectName,
+                                                                         final String zoneName,
                                                                          final ListOptions options) {
-         final SlashEncodedIds slashEncodedIds = SlashEncodedIds.fromSlashEncoded(projectAndZoneName);
          return new Function<Object, IterableWithMarker<Disk>>() {
 
             @Override
             public IterableWithMarker<Disk> apply(Object input) {
-               return api.getDiskApiForProject(slashEncodedIds.getFirstId())
-                       .listAtMarkerInZone(slashEncodedIds.getSecondId(), input.toString(), options);
+               return api.getDiskApiForProject(projectName)
+                       .listAtMarkerInZone(zoneName, input.toString(), options);
             }
          };
       }
