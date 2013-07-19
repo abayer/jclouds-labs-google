@@ -48,7 +48,6 @@ public class GoogleComputeEngineImageToImage implements Function<Image, org.jclo
               .providerId(image.getId())
               .description(image.getDescription().orNull())
               .status(Status.AVAILABLE)
-              .location(GOOGLE_PROVIDER_LOCATION)
               .uri(image.getSelfLink());
 
       List<String> splits = Lists.newArrayList(image.getName().split("-"));
