@@ -23,14 +23,14 @@ import static org.testng.Assert.assertNotNull;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
 import org.jclouds.collect.IterableWithMarker;
 import org.jclouds.collect.PagedIterable;
 import org.jclouds.googlecomputeengine.domain.Operation;
 import org.jclouds.googlecomputeengine.internal.BaseGoogleComputeEngineApiLiveTest;
 import org.jclouds.googlecomputeengine.options.ListOptions;
-import org.testng.annotations.Test;
+
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 
 /**
  * TODO actually get this working once we've added Address

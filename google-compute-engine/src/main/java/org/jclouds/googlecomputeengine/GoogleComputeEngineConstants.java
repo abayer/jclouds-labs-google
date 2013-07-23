@@ -16,10 +16,11 @@
  */
 package org.jclouds.googlecomputeengine;
 
-import com.google.common.annotations.Beta;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
+
+import com.google.common.annotations.Beta;
 
 /**
  * @author David Alves

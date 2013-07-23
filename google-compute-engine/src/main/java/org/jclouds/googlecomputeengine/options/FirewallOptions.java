@@ -16,11 +16,12 @@
  */
 package org.jclouds.googlecomputeengine.options;
 
-import com.google.common.collect.ImmutableSet;
-import org.jclouds.googlecomputeengine.domain.Firewall;
-
 import java.net.URI;
 import java.util.Set;
+
+import org.jclouds.googlecomputeengine.domain.Firewall;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Options to create a firewall.

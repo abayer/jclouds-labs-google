@@ -16,16 +16,17 @@
  */
 package org.jclouds.googlecomputeengine.parse;
 
+import static org.jclouds.googlecomputeengine.domain.Resource.Kind.MACHINE_TYPE_LIST;
+
+import java.net.URI;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.core.MediaType;
+
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.googlecomputeengine.domain.ListPage;
 import org.jclouds.googlecomputeengine.domain.MachineType;
 import org.jclouds.googlecomputeengine.internal.BaseGoogleComputeEngineParseTest;
-
-import javax.ws.rs.Consumes;
-import javax.ws.rs.core.MediaType;
-import java.net.URI;
-
-import static org.jclouds.googlecomputeengine.domain.Resource.Kind.MACHINE_TYPE_LIST;
 
 /**
  * @author David Alves

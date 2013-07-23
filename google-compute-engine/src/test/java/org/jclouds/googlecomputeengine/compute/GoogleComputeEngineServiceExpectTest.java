@@ -16,33 +16,6 @@
  */
 package org.jclouds.googlecomputeengine.compute;
 
-import static java.util.logging.Logger.getAnonymousLogger;
-
-import com.google.common.base.Throwables;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import org.jclouds.compute.ComputeService;
-import org.jclouds.compute.RunNodesException;
-import org.jclouds.compute.domain.Hardware;
-import org.jclouds.compute.domain.Template;
-import org.jclouds.compute.domain.TemplateBuilder;
-import org.jclouds.domain.Location;
-import org.jclouds.googlecomputeengine.compute.options.GoogleComputeEngineTemplateOptions;
-import org.jclouds.googlecomputeengine.domain.Instance;
-import org.jclouds.googlecomputeengine.features.InstanceApiExpectTest;
-import org.jclouds.googlecomputeengine.internal.BaseGoogleComputeEngineServiceExpectTest;
-import org.jclouds.http.HttpRequest;
-import org.jclouds.http.HttpResponse;
-import org.jclouds.util.Strings2;
-import org.testng.annotations.Test;
-
-import javax.ws.rs.core.MediaType;
-import java.io.IOException;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
-
 import static com.google.common.collect.Iterables.getOnlyElement;
 import static org.jclouds.googlecomputeengine.GoogleComputeEngineConstants.COMPUTE_READONLY_SCOPE;
 import static org.jclouds.googlecomputeengine.GoogleComputeEngineConstants.COMPUTE_SCOPE;
@@ -64,14 +37,40 @@ import static org.jclouds.googlecomputeengine.features.MachineTypeApiExpectTest.
 import static org.jclouds.googlecomputeengine.features.NetworkApiExpectTest.GET_NETWORK_REQUEST;
 import static org.jclouds.googlecomputeengine.features.ProjectApiExpectTest.GET_PROJECT_REQUEST;
 import static org.jclouds.googlecomputeengine.features.ProjectApiExpectTest.GET_PROJECT_RESPONSE;
-import static org.jclouds.googlecomputeengine.features.ZoneOperationApiExpectTest.GET_ZONE_OPERATION_REQUEST;
-import static org.jclouds.googlecomputeengine.features.ZoneOperationApiExpectTest.GET_ZONE_OPERATION_RESPONSE;
 import static org.jclouds.googlecomputeengine.features.ZoneApiExpectTest.LIST_ZONES_REQ;
 import static org.jclouds.googlecomputeengine.features.ZoneApiExpectTest.LIST_ZONES_RESPONSE;
 import static org.jclouds.googlecomputeengine.features.ZoneApiExpectTest.LIST_ZONES_SHORT_RESPONSE;
+import static org.jclouds.googlecomputeengine.features.ZoneOperationApiExpectTest.GET_ZONE_OPERATION_REQUEST;
+import static org.jclouds.googlecomputeengine.features.ZoneOperationApiExpectTest.GET_ZONE_OPERATION_RESPONSE;
 import static org.jclouds.util.Strings2.toStringAndClose;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
+
+import javax.ws.rs.core.MediaType;
+
+import org.jclouds.compute.ComputeService;
+import org.jclouds.compute.RunNodesException;
+import org.jclouds.compute.domain.Hardware;
+import org.jclouds.compute.domain.Template;
+import org.jclouds.domain.Location;
+import org.jclouds.googlecomputeengine.compute.options.GoogleComputeEngineTemplateOptions;
+import org.jclouds.googlecomputeengine.domain.Instance;
+import org.jclouds.googlecomputeengine.features.InstanceApiExpectTest;
+import org.jclouds.googlecomputeengine.internal.BaseGoogleComputeEngineServiceExpectTest;
+import org.jclouds.http.HttpRequest;
+import org.jclouds.http.HttpResponse;
+import org.jclouds.util.Strings2;
+import org.testng.annotations.Test;
+
+import com.google.common.base.Throwables;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 
 
 /**

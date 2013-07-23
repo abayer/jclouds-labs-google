@@ -22,15 +22,15 @@ import java.net.URI;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Supplier;
-import com.google.inject.Inject;
 import org.jclouds.collect.Memoized;
-import org.jclouds.domain.Location;
 import org.jclouds.googlecomputeengine.GoogleComputeEngineApi;
 import org.jclouds.googlecomputeengine.config.UserProject;
 import org.jclouds.googlecomputeengine.domain.Operation;
 import org.jclouds.googlecomputeengine.domain.Region;
+
+import com.google.common.base.Predicate;
+import com.google.common.base.Supplier;
+import com.google.inject.Inject;
 
 /**
  * Tests that a Global Operation is done, returning the completed Operation when it is.

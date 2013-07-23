@@ -17,7 +17,6 @@
 package org.jclouds.googlecomputeengine.options;
 
 import java.net.URI;
-import java.util.Date;
 
 /**
  * Options for attaching disks to instances.

@@ -17,15 +17,26 @@
 package org.jclouds.googlecomputeengine;
 
 import java.io.Closeable;
-import java.util.Set;
 
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
-import com.google.inject.Provides;
-import org.jclouds.googlecomputeengine.features.*;
-import org.jclouds.location.Region;
-import org.jclouds.location.Zone;
+import org.jclouds.googlecomputeengine.features.AddressApi;
+import org.jclouds.googlecomputeengine.features.DiskApi;
+import org.jclouds.googlecomputeengine.features.FirewallApi;
+import org.jclouds.googlecomputeengine.features.GlobalOperationApi;
+import org.jclouds.googlecomputeengine.features.ImageApi;
+import org.jclouds.googlecomputeengine.features.InstanceApi;
+import org.jclouds.googlecomputeengine.features.KernelApi;
+import org.jclouds.googlecomputeengine.features.MachineTypeApi;
+import org.jclouds.googlecomputeengine.features.NetworkApi;
+import org.jclouds.googlecomputeengine.features.ProjectApi;
+import org.jclouds.googlecomputeengine.features.RegionApi;
+import org.jclouds.googlecomputeengine.features.RegionOperationApi;
+import org.jclouds.googlecomputeengine.features.RouteApi;
+import org.jclouds.googlecomputeengine.features.SnapshotApi;
+import org.jclouds.googlecomputeengine.features.ZoneApi;
+import org.jclouds.googlecomputeengine.features.ZoneOperationApi;
 import org.jclouds.rest.annotations.Delegate;
 
 import com.google.common.annotations.Beta;

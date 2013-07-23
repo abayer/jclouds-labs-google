@@ -16,24 +16,6 @@
  */
 package org.jclouds.googlecomputeengine.features;
 
-import com.google.common.base.Function;
-import com.google.common.collect.ImmutableSet;
-import org.jclouds.googlecomputeengine.domain.Firewall;
-import org.jclouds.googlecomputeengine.internal.BaseGoogleComputeEngineApiExpectTest;
-import org.jclouds.googlecomputeengine.options.FirewallOptions;
-import org.jclouds.googlecomputeengine.parse.ParseFirewallListTest;
-import org.jclouds.googlecomputeengine.parse.ParseFirewallTest;
-import org.jclouds.googlecomputeengine.parse.ParseOperationTest;
-import org.jclouds.http.HttpRequest;
-import org.jclouds.http.HttpResponse;
-import org.jclouds.io.Payload;
-import org.testng.annotations.Test;
-
-import javax.ws.rs.core.MediaType;
-import java.io.IOException;
-import java.net.URI;
-import java.util.Set;
-
 import static com.google.common.base.Joiner.on;
 import static com.google.common.collect.Iterables.transform;
 import static java.lang.String.format;
@@ -45,6 +27,26 @@ import static org.jclouds.util.Strings2.toStringAndClose;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 import static org.testng.AssertJUnit.assertNull;
+
+import java.io.IOException;
+import java.net.URI;
+import java.util.Set;
+
+import javax.ws.rs.core.MediaType;
+
+import org.jclouds.googlecomputeengine.domain.Firewall;
+import org.jclouds.googlecomputeengine.internal.BaseGoogleComputeEngineApiExpectTest;
+import org.jclouds.googlecomputeengine.options.FirewallOptions;
+import org.jclouds.googlecomputeengine.parse.ParseFirewallListTest;
+import org.jclouds.googlecomputeengine.parse.ParseFirewallTest;
+import org.jclouds.googlecomputeengine.parse.ParseOperationTest;
+import org.jclouds.http.HttpRequest;
+import org.jclouds.http.HttpResponse;
+import org.jclouds.io.Payload;
+import org.testng.annotations.Test;
+
+import com.google.common.base.Function;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * @author David Alves

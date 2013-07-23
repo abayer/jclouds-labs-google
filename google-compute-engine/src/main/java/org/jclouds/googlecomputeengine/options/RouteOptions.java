@@ -20,7 +20,6 @@ import java.net.URI;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
-import org.jclouds.googlecomputeengine.domain.Route;
 
 /**
  * TODO Tests for RouteOptions

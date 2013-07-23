@@ -16,9 +16,6 @@
  */
 package org.jclouds.googlecomputeengine.config;
 
-import com.google.common.base.Function;
-import com.google.common.base.Supplier;
-import com.google.inject.TypeLiteral;
 import org.jclouds.oauth.v2.config.OAuthModule;
 import org.jclouds.oauth.v2.domain.OAuthCredentials;
 import org.jclouds.oauth.v2.domain.Token;
@@ -28,6 +25,10 @@ import org.jclouds.oauth.v2.functions.FetchToken;
 import org.jclouds.oauth.v2.functions.OAuthCredentialsSupplier;
 import org.jclouds.oauth.v2.functions.SignOrProduceMacForToken;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
+
+import com.google.common.base.Function;
+import com.google.common.base.Supplier;
+import com.google.inject.TypeLiteral;
 
 /**
  * Overrides OAuthModule leaving TypeAdapters bindings out.

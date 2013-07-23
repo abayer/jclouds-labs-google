@@ -16,9 +16,9 @@
  */
 package org.jclouds.googlecomputeengine.options;
 
-import org.jclouds.http.options.BaseHttpRequestOptions;
-
 import static com.google.common.base.Preconditions.checkNotNull;
+
+import org.jclouds.http.options.BaseHttpRequestOptions;
 
 /**
  * Allows to optionally specify a filter, max results and a page token for <code>listFirstPage()</code> REST methods.

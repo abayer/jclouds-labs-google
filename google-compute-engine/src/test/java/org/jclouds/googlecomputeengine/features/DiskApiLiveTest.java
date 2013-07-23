@@ -19,7 +19,6 @@ package org.jclouds.googlecomputeengine.features;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
-import java.net.URI;
 import java.util.List;
 
 import org.jclouds.collect.PagedIterable;

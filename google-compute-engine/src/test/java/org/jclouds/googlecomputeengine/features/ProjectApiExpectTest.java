@@ -16,6 +16,11 @@
  */
 package org.jclouds.googlecomputeengine.features;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
+
+import javax.ws.rs.core.MediaType;
+
 import org.jclouds.googlecomputeengine.GoogleComputeEngineConstants;
 import org.jclouds.googlecomputeengine.internal.BaseGoogleComputeEngineApiExpectTest;
 import org.jclouds.googlecomputeengine.parse.ParseMetadataTest;
@@ -24,11 +29,6 @@ import org.jclouds.googlecomputeengine.parse.ParseProjectTest;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.testng.annotations.Test;
-
-import javax.ws.rs.core.MediaType;
-
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNull;
 
 
 /**

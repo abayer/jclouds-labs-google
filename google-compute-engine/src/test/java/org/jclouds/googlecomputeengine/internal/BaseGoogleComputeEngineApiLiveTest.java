@@ -25,7 +25,6 @@ import java.net.URI;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicReference;
 
-import com.google.inject.name.Names;
 import org.jclouds.apis.BaseApiLiveTest;
 import org.jclouds.googlecomputeengine.GoogleComputeEngineApi;
 import org.jclouds.googlecomputeengine.config.UserProject;
@@ -37,6 +36,7 @@ import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
+import com.google.inject.name.Names;
 
 
 /**

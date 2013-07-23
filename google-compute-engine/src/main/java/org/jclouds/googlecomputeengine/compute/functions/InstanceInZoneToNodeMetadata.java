@@ -16,9 +16,14 @@
  */
 package org.jclouds.googlecomputeengine.compute.functions;
 
-import com.google.common.base.Function;
-import com.google.common.base.Supplier;
-import com.google.common.collect.ImmutableSet;
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.net.URI;
+import java.util.Map;
+import java.util.Set;
+
+import javax.inject.Inject;
+
 import org.jclouds.collect.Memoized;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
@@ -30,13 +35,9 @@ import org.jclouds.googlecomputeengine.domain.Instance;
 import org.jclouds.googlecomputeengine.domain.InstanceInZone;
 import org.jclouds.googlecomputeengine.domain.SlashEncodedIds;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import java.net.URI;
-import java.util.Map;
-import java.util.Set;
-
-import static com.google.common.base.Preconditions.checkNotNull;
+import com.google.common.base.Function;
+import com.google.common.base.Supplier;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Transforms a google compute domain Instance into a generic NodeMetatada object.

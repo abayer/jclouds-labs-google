@@ -16,18 +16,6 @@
  */
 package org.jclouds.googlecomputeengine.features;
 
-import org.jclouds.date.internal.SimpleDateFormatDateService;
-import org.jclouds.googlecomputeengine.domain.ListPage;
-import org.jclouds.googlecomputeengine.domain.Operation;
-import org.jclouds.googlecomputeengine.domain.Resource;
-import org.jclouds.googlecomputeengine.internal.BaseGoogleComputeEngineApiExpectTest;
-import org.jclouds.googlecomputeengine.options.ListOptions;
-import org.jclouds.googlecomputeengine.parse.ParseOperationListTest;
-import org.jclouds.googlecomputeengine.parse.ParseOperationTest;
-import org.jclouds.http.HttpRequest;
-import org.jclouds.http.HttpResponse;
-import org.testng.annotations.Test;
-
 import static org.jclouds.googlecomputeengine.GoogleComputeEngineConstants.COMPUTE_READONLY_SCOPE;
 import static org.jclouds.googlecomputeengine.GoogleComputeEngineConstants.COMPUTE_SCOPE;
 import static org.testng.Assert.assertEquals;
@@ -35,6 +23,16 @@ import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
 import java.net.URI;
+
+import org.jclouds.date.internal.SimpleDateFormatDateService;
+import org.jclouds.googlecomputeengine.domain.ListPage;
+import org.jclouds.googlecomputeengine.domain.Operation;
+import org.jclouds.googlecomputeengine.domain.Resource;
+import org.jclouds.googlecomputeengine.internal.BaseGoogleComputeEngineApiExpectTest;
+import org.jclouds.googlecomputeengine.options.ListOptions;
+import org.jclouds.http.HttpRequest;
+import org.jclouds.http.HttpResponse;
+import org.testng.annotations.Test;
 
 /**
  * @author David Alves

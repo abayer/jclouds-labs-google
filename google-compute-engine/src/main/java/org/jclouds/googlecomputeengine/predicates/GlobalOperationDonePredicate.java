@@ -16,16 +16,17 @@
  */
 package org.jclouds.googlecomputeengine.predicates;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Supplier;
-import com.google.inject.Inject;
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.util.concurrent.atomic.AtomicReference;
+
 import org.jclouds.googlecomputeengine.GoogleComputeEngineApi;
 import org.jclouds.googlecomputeengine.config.UserProject;
 import org.jclouds.googlecomputeengine.domain.Operation;
 
-import java.util.concurrent.atomic.AtomicReference;
-
-import static com.google.common.base.Preconditions.checkNotNull;
+import com.google.common.base.Predicate;
+import com.google.common.base.Supplier;
+import com.google.inject.Inject;
 
 /**
  * Tests that a Global Operation is done, returning the completed Operation when it is.

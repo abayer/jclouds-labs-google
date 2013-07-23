@@ -18,11 +18,6 @@ package org.jclouds.googlecomputeengine.options;
 
 import java.net.URI;
 import java.util.Date;
-import java.util.Set;
-
-import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableSet;
-import org.jclouds.googlecomputeengine.domain.Firewall;
 
 /**
  * Options to set the deprecation status of a resource. Currently only for images.

@@ -20,8 +20,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import javax.inject.Inject;
 
-import com.google.common.base.Function;
-import com.google.inject.TypeLiteral;
 import org.jclouds.collect.IterableWithMarker;
 import org.jclouds.googlecomputeengine.GoogleComputeEngineApi;
 import org.jclouds.googlecomputeengine.domain.ListPage;
@@ -29,6 +27,9 @@ import org.jclouds.googlecomputeengine.domain.Route;
 import org.jclouds.googlecomputeengine.options.ListOptions;
 import org.jclouds.http.functions.ParseJson;
 import org.jclouds.json.Json;
+
+import com.google.common.base.Function;
+import com.google.inject.TypeLiteral;
 
 /**
  * @author Andrew Bayer

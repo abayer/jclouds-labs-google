@@ -35,7 +35,11 @@ import org.jclouds.googlecomputeengine.functions.internal.ParseRegions;
 import org.jclouds.googlecomputeengine.options.ListOptions;
 import org.jclouds.oauth.v2.config.OAuthScopes;
 import org.jclouds.oauth.v2.filters.OAuthAuthenticator;
-import org.jclouds.rest.annotations.*;
+import org.jclouds.rest.annotations.Fallback;
+import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.ResponseParser;
+import org.jclouds.rest.annotations.SkipEncoding;
+import org.jclouds.rest.annotations.Transform;
 
 /**
  * Provides access to Regions via their REST API.

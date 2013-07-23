@@ -16,13 +16,14 @@
  */
 package org.jclouds.googlecomputeengine.parse;
 
-import org.jclouds.date.internal.SimpleDateFormatDateService;
-import org.jclouds.googlecomputeengine.domain.Network;
-import org.jclouds.googlecomputeengine.internal.BaseGoogleComputeEngineParseTest;
+import java.net.URI;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.core.MediaType;
-import java.net.URI;
+
+import org.jclouds.date.internal.SimpleDateFormatDateService;
+import org.jclouds.googlecomputeengine.domain.Network;
+import org.jclouds.googlecomputeengine.internal.BaseGoogleComputeEngineParseTest;
 
 /**
  * @author David Alves

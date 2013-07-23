@@ -16,21 +16,21 @@
  */
 package org.jclouds.googlecomputeengine.features;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
+import static org.jclouds.googlecomputeengine.features.ProjectApiLiveTest.addItemToMetadata;
+import static org.jclouds.googlecomputeengine.features.ProjectApiLiveTest.deleteItemFromMetadata;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.jclouds.collect.IterableWithMarker;
 import org.jclouds.collect.PagedIterable;
 import org.jclouds.googlecomputeengine.domain.Operation;
 import org.jclouds.googlecomputeengine.internal.BaseGoogleComputeEngineApiLiveTest;
 import org.jclouds.googlecomputeengine.options.ListOptions;
-import org.testng.annotations.Test;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
-import static org.jclouds.googlecomputeengine.features.ProjectApiLiveTest.addItemToMetadata;
-import static org.jclouds.googlecomputeengine.features.ProjectApiLiveTest.deleteItemFromMetadata;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 
 /**
  * TODO actually get this working with instance creation so we can set metadata etc

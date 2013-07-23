@@ -16,16 +16,17 @@
  */
 package org.jclouds.googlecomputeengine.parse;
 
+import static org.jclouds.googlecomputeengine.domain.Firewall.Rule.IPProtocol;
+
+import java.net.URI;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.core.MediaType;
+
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.googlecomputeengine.domain.Firewall;
 import org.jclouds.googlecomputeengine.internal.BaseGoogleComputeEngineParseTest;
 import org.testng.annotations.Test;
-
-import javax.ws.rs.Consumes;
-import javax.ws.rs.core.MediaType;
-import java.net.URI;
-
-import static org.jclouds.googlecomputeengine.domain.Firewall.Rule.IPProtocol;
 
 /**
  * @author David Alves

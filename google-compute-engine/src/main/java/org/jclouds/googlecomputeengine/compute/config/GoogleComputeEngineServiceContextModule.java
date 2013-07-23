@@ -16,15 +16,19 @@
  */
 package org.jclouds.googlecomputeengine.compute.config;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Function;
-import com.google.common.base.Optional;
-import com.google.common.base.Predicate;
-import com.google.common.base.Supplier;
-import com.google.common.collect.ImmutableMap;
-import com.google.inject.Injector;
-import com.google.inject.Provides;
-import com.google.inject.TypeLiteral;
+import static com.google.common.collect.Iterables.transform;
+import static com.google.common.collect.Maps.uniqueIndex;
+import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
+
+import java.net.URI;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
+
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.jclouds.collect.Memoized;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceAdapter;
@@ -38,30 +42,37 @@ import org.jclouds.domain.Location;
 import org.jclouds.googlecomputeengine.GoogleComputeEngineApi;
 import org.jclouds.googlecomputeengine.compute.GoogleComputeEngineService;
 import org.jclouds.googlecomputeengine.compute.GoogleComputeEngineServiceAdapter;
-import org.jclouds.googlecomputeengine.compute.functions.*;
+import org.jclouds.googlecomputeengine.compute.functions.BuildInstanceMetadata;
+import org.jclouds.googlecomputeengine.compute.functions.GoogleComputeEngineImageToImage;
+import org.jclouds.googlecomputeengine.compute.functions.InstanceInZoneToNodeMetadata;
 import org.jclouds.googlecomputeengine.compute.functions.MachineTypeInZoneToHardware;
+import org.jclouds.googlecomputeengine.compute.functions.OrphanedGroupsFromDeadNodes;
+import org.jclouds.googlecomputeengine.compute.functions.RegionToLocation;
+import org.jclouds.googlecomputeengine.compute.functions.ZoneToLocation;
 import org.jclouds.googlecomputeengine.compute.options.GoogleComputeEngineTemplateOptions;
 import org.jclouds.googlecomputeengine.compute.predicates.AllNodesInGroupTerminated;
 import org.jclouds.googlecomputeengine.compute.strategy.CreateNodesWithGroupEncodedIntoNameThenAddToSet;
 import org.jclouds.googlecomputeengine.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.googlecomputeengine.compute.strategy.UseNodeCredentialsButOverrideFromTemplate;
 import org.jclouds.googlecomputeengine.config.UserProject;
-import org.jclouds.googlecomputeengine.domain.*;
+import org.jclouds.googlecomputeengine.domain.Image;
+import org.jclouds.googlecomputeengine.domain.Instance;
+import org.jclouds.googlecomputeengine.domain.InstanceInZone;
+import org.jclouds.googlecomputeengine.domain.MachineTypeInZone;
+import org.jclouds.googlecomputeengine.domain.Region;
+import org.jclouds.googlecomputeengine.domain.Zone;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.suppliers.MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
-import java.net.URI;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicReference;
-
-import static com.google.common.base.Objects.toStringHelper;
-import static com.google.common.collect.Iterables.transform;
-import static com.google.common.collect.Maps.uniqueIndex;
-import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Function;
+import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
+import com.google.common.base.Supplier;
+import com.google.common.collect.ImmutableMap;
+import com.google.inject.Injector;
+import com.google.inject.Provides;
+import com.google.inject.TypeLiteral;
 
 /**
  * @author David Alves

@@ -23,7 +23,6 @@ import java.net.URI;
 import java.util.List;
 import java.util.Properties;
 
-import com.google.common.base.Predicate;
 import org.jclouds.collect.PagedIterable;
 import org.jclouds.googlecomputeengine.GoogleComputeEngineApi;
 import org.jclouds.googlecomputeengine.domain.Image;
@@ -33,6 +32,7 @@ import org.jclouds.googlecomputeengine.internal.BaseGoogleComputeEngineApiLiveTe
 import org.jclouds.googlecomputeengine.options.ListOptions;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.inject.Module;

@@ -16,11 +16,11 @@
  */
 package org.jclouds.googlecomputeengine.domain;
 
-import com.google.common.annotations.Beta;
-
 import java.beans.ConstructorProperties;
 import java.net.URI;
 import java.util.Date;
+
+import com.google.common.annotations.Beta;
 
 /**
  * Represents a kernel.

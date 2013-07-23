@@ -19,9 +19,6 @@ package org.jclouds.googlecomputeengine.functions.internal;
 import static com.google.common.base.Predicates.instanceOf;
 import static com.google.common.collect.Iterables.tryFind;
 
-import com.google.common.annotations.Beta;
-import com.google.common.base.Function;
-import com.google.common.base.Optional;
 import org.jclouds.collect.IterableWithMarker;
 import org.jclouds.collect.PagedIterable;
 import org.jclouds.collect.PagedIterables;
@@ -30,6 +27,10 @@ import org.jclouds.googlecomputeengine.options.ListOptions;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.InvocationContext;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
+
+import com.google.common.annotations.Beta;
+import com.google.common.base.Function;
+import com.google.common.base.Optional;
 
 /**
  * @author Adrian Cole

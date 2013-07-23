@@ -17,6 +17,7 @@
 package org.jclouds.googlecomputeengine.parse;
 
 import java.net.URI;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.core.MediaType;
 

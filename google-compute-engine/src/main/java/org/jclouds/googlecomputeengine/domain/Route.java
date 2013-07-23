@@ -32,7 +32,6 @@ import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import org.jclouds.javax.annotation.Nullable;
 
 /**
  * Represents a route resource.
