@@ -81,10 +81,10 @@ public class InstanceInZoneToNodeMetadata implements Function<InstanceInZone, No
               .imageId(image.getId())
               .location(checkNotNull(locations.get().get(input.getZone()), "location for %s", input.getZone()))
               .hardware(checkNotNull(hardwares.get().get(input.getMachineType()), "hardware type for %s",
-                              input.getMachineType().toString()))
+                      input.getMachineType().toString()))
               .operatingSystem(image.getOperatingSystem())
               .status(toPortableNodeStatus.get(input.getStatus()))
-              .tags(input.getTags().getTags())
+              .tags(input.getTags().getItems())
               .uri(input.getSelfLink())
               .userMetadata(input.getMetadata())
               .group(nodeNamingConvention.groupInUniqueNameOrNull(input.getName()))

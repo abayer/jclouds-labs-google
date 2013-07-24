@@ -34,6 +34,7 @@ import com.google.common.base.Optional;
 
 /**
  * @author Adrian Cole
+ * @author Andrew Bayer
  */
 @Beta
 public abstract class BaseWithZoneToPagedIterable<T, I extends BaseWithZoneToPagedIterable<T, I>> implements

@@ -83,7 +83,7 @@ public final class Firewall extends Resource {
    }
 
    /**
-    * @return a list of instance tags which this rule applies to. One or both of sourceRanges and sourceTags may be
+    * @return a list of instance items which this rule applies to. One or both of sourceRanges and sourceTags may be
     *         set; an inbound connection is allowed if either the range or the tag of the source matches.
     */
    public Set<String> getSourceTags() {
@@ -93,7 +93,7 @@ public final class Firewall extends Resource {
    /**
     * If no targetTags are specified, the firewall rule applies to all instances on the specified network.
     *
-    * @return a list of instance tags indicating sets of instances located on network which may make network
+    * @return a list of instance items indicating sets of instances located on network which may make network
     *         connections as specified in allowed.
     */
    public Set<String> getTargetTags() {

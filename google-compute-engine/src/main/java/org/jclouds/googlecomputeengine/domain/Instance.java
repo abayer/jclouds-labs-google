@@ -69,7 +69,7 @@ public class Instance extends Resource {
                       URI zone, Set<NetworkInterface> networkInterfaces, Set<AttachedDisk> disks,
                       Map<String, String> metadata, Set<ServiceAccount> serviceAccounts) {
       super(Kind.INSTANCE, id, creationTimestamp, selfLink, name, description);
-      this.tags = checkNotNull(tags, "tags");
+      this.tags = checkNotNull(tags, "items");
       this.image = checkNotNull(image, "image");
       this.machineType = checkNotNull(machineType, "machineType of %s", name);
       this.status = checkNotNull(status, "status");
@@ -85,7 +85,7 @@ public class Instance extends Resource {
     * Used to identify valid sources or targets for network firewalls. Provided by the client when the instance is
     * created. Each tag must be unique, must be 1-63 characters long, and comply with RFC1035.
     *
-    * @return an optional set of tags applied to this instance.
+    * @return an optional set of items applied to this instance.
     */
    public Tags getTags() {
       return tags;
@@ -179,7 +179,7 @@ public class Instance extends Resource {
    protected Objects.ToStringHelper string() {
       return super.string()
               .omitNullValues()
-              .add("tags", tags)
+              .add("items", tags)
               .add("image", image)
               .add("machineType", machineType)
               .add("status", status)
@@ -365,28 +365,28 @@ public class Instance extends Resource {
     */
    public static class Tags {
       private final String fingerprint;
-      private final Set<String> tags;
+      private final Set<String> items;
 
       @ConstructorProperties({"fingerprint", "items"})
-      public Tags(String fingerprint, Set<String> tags) {
+      public Tags(String fingerprint, @Nullable Set<String> items) {
          this.fingerprint = checkNotNull(fingerprint);
-         this.tags = tags == null ? ImmutableSet.<String>of() : tags;
+         this.items = items == null ? ImmutableSet.<String>of() : items;
       }
 
       /**
        * Used to identify valid sources or targets for network firewalls. Provided by the client when the instance is
        * created. Each tag must be unique, must be 1-63 characters long, and comply with RFC1035.
        *
-       * @return an optional set of tags applied to this instance.
+       * @return an optional set of items applied to this instance.
        */
-      public Set<String> getTags() {
-         return tags;
+      public Set<String> getItems() {
+         return items;
       }
 
       /**
-       * Gets the fingerprint for the tags - needed for updating them.
+       * Gets the fingerprint for the items - needed for updating them.
        *
-       * @return the fingerprint string for the tags.
+       * @return the fingerprint string for the items.
        */
       public String getFingerprint() {
          return fingerprint;
@@ -397,7 +397,7 @@ public class Instance extends Resource {
        */
       @Override
       public int hashCode() {
-         return Objects.hashCode(fingerprint, tags);
+         return Objects.hashCode(fingerprint, items);
       }
 
       /**
@@ -408,7 +408,7 @@ public class Instance extends Resource {
          if (this == obj) return true;
          if (obj == null || getClass() != obj.getClass()) return false;
          Tags that = Tags.class.cast(obj);
-         return equal(this.tags, that.tags)
+         return equal(this.items, that.items)
                  && equal(this.fingerprint, that.fingerprint);
       }
 
@@ -417,7 +417,7 @@ public class Instance extends Resource {
        */
       protected Objects.ToStringHelper string() {
          return toStringHelper(this)
-                 .add("tags", tags)
+                 .add("items", items)
                  .add("fingerprint", fingerprint);
       }
 
@@ -435,22 +435,22 @@ public class Instance extends Resource {
 
       public static final class Builder {
 
-         private ImmutableSet.Builder<String> tags = ImmutableSet.builder();
+         private ImmutableSet.Builder<String> items = ImmutableSet.builder();
          private String fingerprint;
 
          /**
-          * @see Tags#getTags()
+          * @see Tags#getItems()
           */
-         public Builder addTag(String tag) {
-            this.tags.add(tag);
+         public Builder addItem(String item) {
+            this.items.add(item);
             return this;
          }
 
          /**
-          * @see Tags#getTags()
+          * @see Tags#getItems()
           */
-         public Builder tags(Set<String> tags) {
-            this.tags.addAll(tags);
+         public Builder items(Set<String> items) {
+            this.items.addAll(items);
             return this;
          }
 
@@ -463,12 +463,12 @@ public class Instance extends Resource {
          }
 
          public Tags build() {
-            return new Tags(this.fingerprint, this.tags.build());
+            return new Tags(this.fingerprint, this.items.build());
          }
 
          public Builder fromTags(Tags in) {
             return this.fingerprint(in.getFingerprint())
-                    .tags(in.getTags());
+                    .items(in.getItems());
          }
       }
    }

@@ -53,7 +53,7 @@ public final class Route extends Resource {
    private final Set<Warning> warnings;
 
    @ConstructorProperties({
-           "id", "creationTimestamp", "selfLink", "name", "description", "network", "tags",
+           "id", "creationTimestamp", "selfLink", "name", "description", "network", "items",
            "destRange", "priority", "nextHopInstance", "nextHopIp", "nextHopNetwork",
            "nextHopGateway", "warnings"
    })
@@ -81,7 +81,7 @@ public final class Route extends Resource {
    }
 
    /**
-    * @return The set of instance tags to which this route applies.
+    * @return The set of instance items to which this route applies.
     */
    public Set<String> getTags() {
       return tags;
@@ -144,7 +144,7 @@ public final class Route extends Resource {
    protected Objects.ToStringHelper string() {
       return super.string()
               .add("network", network)
-              .add("tags", tags)
+              .add("items", tags)
               .add("destRange", destRange)
               .add("priority", priority)
               .add("nextHopInstance", nextHopInstance)

@@ -37,7 +37,7 @@ import com.google.common.collect.Lists;
 public class DiskApiLiveTest extends BaseGoogleComputeEngineApiLiveTest {
 
    private static final String DISK_NAME = "disk-api-live-test-disk";
-   private static final int TIME_WAIT = 10;
+   private static final int TIME_WAIT = 30;
 
    private int sizeGb = 1;
 

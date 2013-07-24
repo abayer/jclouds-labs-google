@@ -145,7 +145,7 @@ public class InstanceApiExpectTest extends BaseGoogleComputeEngineApiExpectTest 
               .addNetworkInterface(URI.create("https://www.googleapis" +
                       ".com/compute/v1beta15/projects/myproject/global/networks/default"));
 
-      assertEquals(api.createInZone("us-central1-a", "test-1", options), new ParseOperationTest().expected());
+      assertEquals(api.createInZone("test-1", "us-central1-a", options), new ParseOperationTest().expected());
    }
 
    public void testInsertInstanceResponseIs2xxAllOptions() {
@@ -177,7 +177,7 @@ public class InstanceApiExpectTest extends BaseGoogleComputeEngineApiExpectTest 
               .addServiceAccount(Instance.ServiceAccount.builder().email("default").addScopes("myscope").build())
               .addMetadata("aKey", "aValue");
 
-      assertEquals(api.createInZone("us-central1-a", "test-0", options),
+      assertEquals(api.createInZone("test-0", "us-central1-a", options),
               new ParseOperationTest().expected());
    }
 

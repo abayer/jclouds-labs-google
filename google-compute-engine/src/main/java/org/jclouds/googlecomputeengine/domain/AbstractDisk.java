@@ -18,7 +18,6 @@ package org.jclouds.googlecomputeengine.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.beans.ConstructorProperties;
 import java.net.URI;
 import java.util.Date;
 
@@ -37,10 +36,6 @@ public abstract class AbstractDisk extends Resource {
    protected final Integer sizeGb;
    protected final String status;
 
-   @ConstructorProperties({
-           "id", "creationTimestamp", "selfLink", "name", "description", "sizeGb",
-           "status"
-   })
    protected AbstractDisk(Kind kind, String id, Date creationTimestamp, URI selfLink, String name, String description,
                         Integer sizeGb, String status) {
       super(kind, id, creationTimestamp, selfLink, name, description);
@@ -106,12 +101,6 @@ public abstract class AbstractDisk extends Resource {
        */
       public T status(String status) {
          this.status = status;
-         return self();
-      }
-
-
-      @Override
-      protected T self() {
          return self();
       }
 

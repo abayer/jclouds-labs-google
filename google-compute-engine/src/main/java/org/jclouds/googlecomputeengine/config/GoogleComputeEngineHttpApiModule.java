@@ -94,15 +94,16 @@ public class GoogleComputeEngineHttpApiModule extends HttpApiModule<GoogleComput
    @Provides
    @Singleton
    @UserProject
-   public Supplier<String> supplyProject(@org.jclouds.location.Provider final Supplier<Credentials> creds,
+   public Supplier<String> supplyProject(@Provider final Supplier<Credentials> creds,
                                          final GoogleComputeEngineApi api,
                                          AtomicReference<AuthorizationException> authException,
                                          @Named(PROPERTY_SESSION_INTERVAL) long seconds) {
       return MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.create(authException,
               compose(new Function<Credentials, String>() {
                  public String apply(Credentials in) {
-                    checkState(in.identity.indexOf("@") != 1, "identity should be in project_id@developer.gserviceaccount.com" +
-                            " format");
+                    checkState(in.identity.indexOf("@") != 1,
+                            "identity should be in project_id@developer.gserviceaccount.com format");
+
                     Project project = api.getProjectApi().get(Iterables.get(Splitter.on("@").split(in.identity), 0));
                     return project.getName();
                  }
@@ -118,8 +119,8 @@ public class GoogleComputeEngineHttpApiModule extends HttpApiModule<GoogleComput
          @Override
          public URI apply(String input) {
             SlashEncodedIds slashEncodedIds = SlashEncodedIds.fromSlashEncoded(input);
-            return Uris.uriBuilder(endpoint.get()).appendPath("/projects/").appendPath(userProject.get()).appendPath
-                    ("/zones/").appendPath(slashEncodedIds.getFirstId())
+            return Uris.uriBuilder(endpoint.get()).appendPath("/projects/").appendPath(userProject.get())
+                    .appendPath("/zones/").appendPath(slashEncodedIds.getFirstId())
                     .appendPath("/machineTypes/").appendPath(slashEncodedIds.getSecondId()).build();
          }
       };
@@ -133,8 +134,8 @@ public class GoogleComputeEngineHttpApiModule extends HttpApiModule<GoogleComput
       return new Function<String, URI>() {
          @Override
          public URI apply(String input) {
-            return Uris.uriBuilder(endpoint.get()).appendPath("/projects/").appendPath(userProject.get()).appendPath
-                    ("/global/networks/").appendPath(input).build();
+            return Uris.uriBuilder(endpoint.get()).appendPath("/projects/").appendPath(userProject.get())
+                    .appendPath("/global/networks/").appendPath(input).build();
          }
       };
    }
@@ -147,8 +148,8 @@ public class GoogleComputeEngineHttpApiModule extends HttpApiModule<GoogleComput
       return new Function<String, URI>() {
          @Override
          public URI apply(String input) {
-            return Uris.uriBuilder(endpoint.get()).appendPath("/projects/").appendPath(userProject.get()).appendPath
-                    ("/zones/").appendPath(input).build();
+            return Uris.uriBuilder(endpoint.get()).appendPath("/projects/").appendPath(userProject.get())
+                    .appendPath("/zones/").appendPath(input).build();
          }
       };
    }
@@ -161,8 +162,8 @@ public class GoogleComputeEngineHttpApiModule extends HttpApiModule<GoogleComput
       return new Function<String, URI>() {
          @Override
          public URI apply(String input) {
-            return Uris.uriBuilder(endpoint.get()).appendPath("/projects/").appendPath(userProject.get()).appendPath
-                    ("/regions/").appendPath(input).build();
+            return Uris.uriBuilder(endpoint.get()).appendPath("/projects/").appendPath(userProject.get())
+                    .appendPath("/regions/").appendPath(input).build();
          }
       };
    }

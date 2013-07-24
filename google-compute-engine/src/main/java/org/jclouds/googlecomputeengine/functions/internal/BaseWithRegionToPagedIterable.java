@@ -34,6 +34,7 @@ import com.google.common.base.Optional;
 
 /**
  * @author Adrian Cole
+ * @author Andrew Bayer
  */
 @Beta
 public abstract class BaseWithRegionToPagedIterable<T, I extends BaseWithRegionToPagedIterable<T, I>> implements

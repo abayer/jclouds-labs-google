@@ -28,7 +28,7 @@ import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.HardwareBuilder;
 import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.domain.Volume;
-import org.jclouds.compute.domain.internal.VolumeImpl;
+import org.jclouds.compute.domain.VolumeBuilder;
 import org.jclouds.domain.Location;
 import org.jclouds.googlecomputeengine.domain.MachineType;
 import org.jclouds.googlecomputeengine.domain.MachineTypeInZone;
@@ -54,14 +54,20 @@ public class MachineTypeInZoneToHardware implements Function<MachineTypeInZone, 
    public MachineTypeInZoneToHardware(@Memoized Supplier<Map<URI, ? extends Location>> locations) {
       this.locations = locations;
    }
+
    @Override
    public Hardware apply(final MachineTypeInZone input) {
-      Location location = checkNotNull(getOnlyElement(filter(locations.get().values(), new Predicate<Location>() {
+      Iterable<? extends Location> zonesForMachineType = filter(locations.get().values(), new Predicate<Location>() {
          @Override
          public boolean apply(Location l) {
             return l.getId().equals(input.getMachineType().getZone());
          }
-      })), "location for %s", input.getMachineType().getZone());
+      });
+
+      Location location = checkNotNull(getOnlyElement(zonesForMachineType),
+              "location for %s",
+              input.getMachineType().getZone());
+
       return new HardwareBuilder()
               .id(SlashEncodedIds.fromTwoIds(input.getMachineType().getZone(), input.getMachineType().getName()).slashEncode())
               .location(location)
@@ -79,8 +85,11 @@ public class MachineTypeInZoneToHardware implements Function<MachineTypeInZone, 
    private Iterable<Volume> collectVolumes(MachineType input) {
       ImmutableSet.Builder<Volume> volumes = ImmutableSet.builder();
       for (MachineType.ScratchDisk disk : input.getScratchDisks()) {
-         volumes.add(new VolumeImpl(null, Volume.Type.LOCAL, new Integer(disk.getDiskGb()).floatValue(), null, true,
-                 false));
+         volumes.add(new VolumeBuilder()
+                 .type(Volume.Type.LOCAL)
+                 .size(new Integer(disk.getDiskGb()).floatValue())
+                 .bootDevice(true)
+                 .durable(false).build());
       }
       return volumes.build();
    }

@@ -132,7 +132,7 @@ public class ZoneOperationApiExpectTest extends BaseGoogleComputeEngineApiExpect
       zoneOperationApi.deleteInZone("us-central1-a", "operation-1352178598164-4cdcc9d031510-4aa46279");
    }
 
-   public void testLisOperationWithNoOptionsResponseIs2xx() {
+   public void testListOperationWithNoOptionsResponseIs2xx() {
       HttpRequest get = HttpRequest
               .builder()
               .method("GET")

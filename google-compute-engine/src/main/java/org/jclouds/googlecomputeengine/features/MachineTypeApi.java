@@ -95,7 +95,7 @@ public interface MachineTypeApi {
     * By default the list as a maximum size of 100, if no options are provided or ListOptions#getMaxResults() has not
     * been set.
     *
-    * @param zone        The zone to list in.
+    * @param zone        The name of the zone to list in.
     * @param marker      marks the beginning of the next list page
     * @param listOptions listing options
     * @return a page of the list

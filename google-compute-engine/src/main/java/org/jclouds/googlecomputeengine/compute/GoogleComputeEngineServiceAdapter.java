@@ -120,6 +120,8 @@ public class GoogleComputeEngineServiceAdapter implements ComputeServiceAdapter<
       checkState(options.getNetwork().isPresent(), "network was not present in template options");
       Hardware hardware = checkNotNull(template.getHardware(), "hardware must be set");
 
+      checkNotNull(hardware.getUri(), "hardware must have a URI");
+
       InstanceTemplate instanceTemplate = InstanceTemplate.builder()
               .forMachineType(hardware.getUri());
 
@@ -146,7 +148,7 @@ public class GoogleComputeEngineServiceAdapter implements ComputeServiceAdapter<
       instanceTemplate.image(checkNotNull(template.getImage().getUri(), "image URI is null"));
 
       Operation operation = api.getInstanceApiForProject(userProject.get())
-              .createInZone(template.getLocation().getId(), name, instanceTemplate);
+              .createInZone(name, template.getLocation().getId(), instanceTemplate);
 
       if (options.shouldBlockUntilRunning()) {
          waitOperationDone(operation);
@@ -254,8 +256,8 @@ public class GoogleComputeEngineServiceAdapter implements ComputeServiceAdapter<
       return filter(listNodes(), new Predicate<InstanceInZone>() {
 
          @Override
-         public boolean apply(InstanceInZone instance) {
-            return contains(ids, instance.getInstance().getName());
+         public boolean apply(InstanceInZone instanceInZone) {
+            return contains(ids, instanceInZone.getInstance().getName());
          }
       });
    }

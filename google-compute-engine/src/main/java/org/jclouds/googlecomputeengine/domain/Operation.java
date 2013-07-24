@@ -27,6 +27,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.jclouds.http.HttpResponse;
+import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Objects;
@@ -68,7 +69,7 @@ public class Operation extends Resource {
                        URI targetLink, String targetId, String clientOperationId, Status status,
                        String statusMessage, String user, Integer progress, Date insertTime, Date startTime,
                        Date endTime, Integer httpErrorStatusCode, String httpErrorMessage, String operationType,
-                       List<Error> errors, URI region, URI zone) {
+                       @Nullable List<Error> errors, URI region, URI zone) {
       super(Kind.OPERATION, id, creationTimestamp, selfLink, name, description);
       this.targetLink = checkNotNull(targetLink, "targetLink of %s", name);
       this.targetId = fromNullable(targetId);

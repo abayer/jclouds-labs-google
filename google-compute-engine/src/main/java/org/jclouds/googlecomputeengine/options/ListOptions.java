@@ -65,7 +65,7 @@ public class ListOptions extends BaseHttpRequestOptions {
    }
 
    /**
-    * Sets Maximum count of results to be returned. Maximum and default value is 100. Acceptable values are 0 to
+    * Sets Maximum count of results to be returned. Maximum and default value is 100. Acceptable items are 0 to
     * 100, inclusive. (Default: 100)
     */
    public ListOptions maxResults(Integer maxResults) {

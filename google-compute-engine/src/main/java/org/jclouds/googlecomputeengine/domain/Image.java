@@ -54,7 +54,6 @@ public final class Image extends Resource {
       this.preferredKernel = fromNullable(preferredKernel);
       this.rawDisk = checkNotNull(rawDisk, "rawDisk of %s", name);
       this.deprecated = fromNullable(deprecated);
-      ;
    }
 
    /**

@@ -89,9 +89,10 @@ public interface InstanceApi {
    /**
     * Creates a instance resource in the specified project using the data included in the request.
     *
+    *
     * @param instanceName this name of the instance to be created
-    * @param template the instance template
     * @param zone the name of the zone where the instance will be created
+    * @param template the instance template
     * @return an Operation resource. To check on the status of an operation, poll the Operations resource returned to
     *         you, and look for the status field.
     */
@@ -102,8 +103,7 @@ public interface InstanceApi {
    @Path("/zones/{zone}/instances")
    @OAuthScopes({COMPUTE_SCOPE})
    @MapBinder(InstanceBinder.class)
-   Operation createInZone(@PathParam("zone") String zone,
-                          @PayloadParam("name") String instanceName,
+   Operation createInZone(@PayloadParam("name") String instanceName, @PathParam("zone") String zone,
                           @PayloadParam("template") InstanceTemplate template);
                           
 
@@ -356,12 +356,12 @@ public interface InstanceApi {
                                Map<String, String> metadata);
 
    /**
-    * Sets tags for an instance
+    * Sets items for an instance
     *
     * @param zone The zone the instance is in
     * @param instanceName the name of the instance
-    * @param items A set of tags
-    * @param fingerprint The current fingerprint for the tags
+    * @param items A set of items
+    * @param fingerprint The current fingerprint for the items
     * @return an Operations resource. To check on the status of an operation, poll the Operations resource returned
     *         to you, and look for the status field.
     */

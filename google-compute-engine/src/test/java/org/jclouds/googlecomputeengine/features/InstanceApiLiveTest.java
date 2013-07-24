@@ -59,14 +59,12 @@ public class InstanceApiLiveTest extends BaseGoogleComputeEngineApiLiveTest {
               .filter(new Predicate<Image>() {
                  @Override
                  public boolean apply(Image input) {
-                    if (input.getDeprecated().isPresent()) {
-                       if (input.getDeprecated().get().getState().isPresent()) {
-                          if (!input.getDeprecated().get().getState().get().equals("DEPRECATED")) {
-                             return false;
-                          }
-                       }
+                    // filter out only images with deprecation state other than "DEPRECATED"
+                    if (input.getDeprecated().isPresent() && input.getDeprecated().get().getState().isPresent()) {
+                       return input.getDeprecated().get().getState().get().equals("DEPRECATED");
                     }
                     return true;
+
                  }
               })
               .first()
@@ -98,7 +96,7 @@ public class InstanceApiLiveTest extends BaseGoogleComputeEngineApiLiveTest {
       assertZoneOperationDoneSucessfully(api.getDiskApiForProject(userProject.get()).createInZone
               ("instance-live-test-disk", 10, DEFAULT_ZONE_NAME), TIME_WAIT);
 
-      assertZoneOperationDoneSucessfully(api().createInZone(DEFAULT_ZONE_NAME, INSTANCE_NAME, instance), TIME_WAIT);
+      assertZoneOperationDoneSucessfully(api().createInZone(INSTANCE_NAME, DEFAULT_ZONE_NAME, instance), TIME_WAIT);
 
    }
 

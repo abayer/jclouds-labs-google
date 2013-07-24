@@ -56,7 +56,7 @@ public final class Address extends Resource {
    }
 
    /**
-    * @return The status of the address. Valid values are RESERVED and IN USE.
+    * @return The status of the address. Valid items are RESERVED and IN USE.
     *   A reserved address is currently available to the project and can be
     *   used by a resource. An in-use address is currently being used by a resource.
     */
