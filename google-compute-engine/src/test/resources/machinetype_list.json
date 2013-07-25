@@ -3,7 +3,21 @@
    "id": "projects/myproject/machineTypes",
    "selfLink": "https://www.googleapis.com/compute/v1beta15/projects/myproject/zones/us-central1-a/machineTypes",
    "items": [
-      {
+       {
+           "kind": "compute#machineType",
+           "id": "4618642685664990776",
+           "creationTimestamp": "2013-04-25T13:32:49.088-07:00",
+           "name": "f1-micro",
+           "description": "1 vCPU (shared physical core) and 0.6 GB RAM",
+           "guestCpus": 1,
+           "memoryMb": 614,
+           "imageSpaceGb": 0,
+           "maximumPersistentDisks": 4,
+           "maximumPersistentDisksSizeGb": "3072",
+           "zone": "us-central1-a",
+           "selfLink": "https://www.googleapis.com/compute/v1beta15/projects/myproject/zones/us-central1-a/machineTypes/f1-micro"
+       },
+       {
          "kind": "compute#machineType",
          "id": "12907738072351752276",
          "creationTimestamp": "2012-06-07T20:48:14.670",

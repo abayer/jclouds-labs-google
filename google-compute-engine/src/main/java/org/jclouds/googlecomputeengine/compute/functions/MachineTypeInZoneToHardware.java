@@ -26,6 +26,7 @@ import java.util.Map;
 import org.jclouds.collect.Memoized;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.HardwareBuilder;
+import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.domain.Volume;
 import org.jclouds.compute.domain.VolumeBuilder;
@@ -36,6 +37,7 @@ import org.jclouds.googlecomputeengine.domain.SlashEncodedIds;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -68,6 +70,7 @@ public class MachineTypeInZoneToHardware implements Function<MachineTypeInZone, 
               "location for %s",
               input.getMachineType().getZone());
 
+      // TODO Figure out a robust way to deal with machineTypes with imageSizeGb==0 rather than just blocking them.
       return new HardwareBuilder()
               .id(SlashEncodedIds.fromTwoIds(input.getMachineType().getZone(), input.getMachineType().getName()).slashEncode())
               .location(location)
@@ -79,6 +82,9 @@ public class MachineTypeInZoneToHardware implements Function<MachineTypeInZone, 
               .uri(input.getMachineType().getSelfLink())
               .userMetadata(ImmutableMap.of("imageSpaceGb", Integer.toString(input.getMachineType().getImageSpaceGb())))
               .volumes(collectVolumes(input.getMachineType()))
+              .supportsImage(input.getMachineType().getImageSpaceGb() > 0
+                      ? Predicates.<Image>alwaysTrue()
+                      : Predicates.<Image>alwaysFalse())
               .build();
    }
 

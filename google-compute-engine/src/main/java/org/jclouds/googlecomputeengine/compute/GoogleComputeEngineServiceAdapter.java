@@ -125,15 +125,6 @@ public class GoogleComputeEngineServiceAdapter implements ComputeServiceAdapter<
       InstanceTemplate instanceTemplate = InstanceTemplate.builder()
               .forMachineType(hardware.getUri());
 
-      if (hardware.getUserMetadata().get("imageSpaceGb").equals("0")) {
-         // The machine needs a boot disk - create a 1GB drive for this purpose
-         // TODO need to delete it at end!
-         Operation operation = api.getDiskApiForProject(userProject.get()).createInZone(name + "-disk", 10,
-                 template.getLocation().getId());
-         waitOperationDone(operation);
-         instanceTemplate.addDisk(InstanceTemplate.PersistentDisk.Mode.READ_WRITE, operation.getTargetLink());
-      }
-
       if (options.isEnableNat()) {
          instanceTemplate.addNetworkInterface(options.getNetwork().get(), Type.ONE_TO_ONE_NAT);
       } else {
