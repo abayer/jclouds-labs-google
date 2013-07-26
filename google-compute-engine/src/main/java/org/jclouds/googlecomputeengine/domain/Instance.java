@@ -69,7 +69,7 @@ public class Instance extends Resource {
                       URI zone, Set<NetworkInterface> networkInterfaces, Set<AttachedDisk> disks,
                       Map<String, String> metadata, Set<ServiceAccount> serviceAccounts) {
       super(Kind.INSTANCE, id, creationTimestamp, selfLink, name, description);
-      this.tags = checkNotNull(tags, "items");
+      this.tags = checkNotNull(tags, "tags");
       this.image = checkNotNull(image, "image");
       this.machineType = checkNotNull(machineType, "machineType of %s", name);
       this.status = checkNotNull(status, "status");

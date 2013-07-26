@@ -16,8 +16,7 @@
  */
 package org.jclouds.googlecomputeengine.features;
 
-import static org.jclouds.googlecomputeengine.features.ProjectApiLiveTest.addItemToMetadata;
-import static org.jclouds.googlecomputeengine.features.ProjectApiLiveTest.deleteItemFromMetadata;
+import static org.jclouds.googlecomputeengine.features.DiskApiLiveTest.TIME_WAIT;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
@@ -28,19 +27,17 @@ import org.jclouds.collect.PagedIterable;
 import org.jclouds.googlecomputeengine.domain.Operation;
 import org.jclouds.googlecomputeengine.internal.BaseGoogleComputeEngineApiLiveTest;
 import org.jclouds.googlecomputeengine.options.ListOptions;
+import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
 /**
- * TODO actually get this working with instance creation so we can set metadata etc
- *
- * @author David Alves
+ * @author Andrew Bayer
  */
 public class ZoneOperationApiLiveTest extends BaseGoogleComputeEngineApiLiveTest {
 
-   private static final String METADATA_ITEM_KEY = "operationLiveTestTestProp";
-   private static final String METADATA_ITEM_VALUE = "operationLiveTestTestValue";
+   private static final String DISK_NAME = "zone-operations-api-live-test-disk";
    private Operation addOperation;
    private Operation deleteOperation;
 
@@ -48,28 +45,29 @@ public class ZoneOperationApiLiveTest extends BaseGoogleComputeEngineApiLiveTest
       return api.getZoneOperationApiForProject(userProject.get());
    }
 
+   private DiskApi diskApi() {
+      return api.getDiskApiForProject(userProject.get());
+   }
 
-//   @Test(groups = "live")
+   @Test(groups = "live")
    public void testCreateOperations() {
-      //create some operations by adding and deleting metadata items
+      //create some operations by creating and deleting a disk
       // this will make sure there is stuff to listFirstPage
-      addOperation = assertZoneOperationDoneSucessfully(addItemToMetadata(api.getProjectApi(),
-              userProject.get(), METADATA_ITEM_KEY, METADATA_ITEM_VALUE), 20);
-      deleteOperation = assertZoneOperationDoneSucessfully(deleteItemFromMetadata(api
-              .getProjectApi(), userProject.get(), METADATA_ITEM_KEY), 20);
+      addOperation = assertZoneOperationDoneSucessfully(diskApi().createInZone(DISK_NAME, 1, DEFAULT_ZONE_NAME), TIME_WAIT);
+      deleteOperation = assertZoneOperationDoneSucessfully(diskApi().deleteInZone(DEFAULT_ZONE_NAME, DISK_NAME), TIME_WAIT);
 
       assertNotNull(addOperation);
       assertNotNull(deleteOperation);
    }
 
-//   @Test(groups = "live", dependsOnMethods = "testCreateOperations")
+   @Test(groups = "live", dependsOnMethods = "testCreateOperations")
    public void testGetOperation() {
       Operation operation = api().getInZone(DEFAULT_ZONE_NAME, addOperation.getName());
       assertNotNull(operation);
       assertOperationEquals(operation, this.addOperation);
    }
 
-//   @Test(groups = "live", dependsOnMethods = "testCreateOperations")
+   @Test(groups = "live", dependsOnMethods = "testCreateOperations")
    public void testListOperationsWithFiltersAndPagination() {
       PagedIterable<Operation> operations = api().listInZone(DEFAULT_ZONE_NAME, new ListOptions.Builder()
               .filter("operationType eq setMetadata")

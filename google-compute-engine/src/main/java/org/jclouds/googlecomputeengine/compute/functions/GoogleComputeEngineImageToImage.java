@@ -65,7 +65,9 @@ public class GoogleComputeEngineImageToImage implements Function<Image, org.jclo
       String version = on(".").join(limit(skip(splits, 1), splits.size() - 2));
       osBuilder.version(version);
 
-      builder.userMetadata(ImmutableMap.of("deprecatedState", image.getDeprecated().get().getState().get()));
+      if (image.getDeprecated().isPresent()) {
+         builder.userMetadata(ImmutableMap.of("deprecatedState", image.getDeprecated().get().getState().orNull()));
+      }
       builder.version(getLast(splits));
       return builder.operatingSystem(osBuilder.build()).build();
    }

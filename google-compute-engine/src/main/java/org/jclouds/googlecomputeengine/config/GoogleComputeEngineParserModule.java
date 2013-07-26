@@ -201,7 +201,7 @@ public class GoogleComputeEngineParserModule extends AbstractModule {
 
       private static class InstanceInternal extends Instance {
          @ConstructorProperties({
-                 "id", "creationTimestamp", "selfLink", "name", "description", "items", "image", "machineType",
+                 "id", "creationTimestamp", "selfLink", "name", "description", "tags", "image", "machineType",
                  "status", "statusMessage", "zone", "networkInterfaces", "metadata", "serviceAccounts"
          })
          private InstanceInternal(String id, Date creationTimestamp, URI selfLink, String name, String description,
