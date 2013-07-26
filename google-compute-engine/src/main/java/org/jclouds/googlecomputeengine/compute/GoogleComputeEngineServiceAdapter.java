@@ -181,19 +181,22 @@ public class GoogleComputeEngineServiceAdapter implements ComputeServiceAdapter<
 
    @Override
    public Iterable<MachineTypeInZone> listHardwareProfiles() {
-      return FluentIterable.from(zones.get().values())
-              .transformAndConcat(new Function<Location, ImmutableSet<MachineType>>() {
-         @Override
-         public ImmutableSet<MachineType> apply(Location input) {
-            return api.getMachineTypeApiForProject(userProject.get()).listInZone(input.getId()).concat().toSet();
-         }
-      }).transform(new Function<MachineType, MachineTypeInZone>() {
+      ImmutableSet.Builder<MachineTypeInZone> builder = ImmutableSet.builder();
 
-         @Override
-         public MachineTypeInZone apply(MachineType arg0) {
-            return new MachineTypeInZone(arg0, arg0.getZone());
-         }
-      }).toSet();
+      for (final Location zone : zones.get().values()) {
+         builder.addAll(api.getMachineTypeApiForProject(userProject.get())
+                 .listInZone(zone.getId())
+                 .concat()
+                 .transform(new Function<MachineType, MachineTypeInZone>() {
+
+                    @Override
+                    public MachineTypeInZone apply(MachineType arg0) {
+                       return new MachineTypeInZone(arg0, arg0.getZone());
+                    }
+                 }));
+      }
+
+      return builder.build();
    }
 
    @Override
