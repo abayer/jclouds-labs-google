@@ -25,7 +25,6 @@ import org.jclouds.collect.IterableWithMarker;
 import org.jclouds.googlecomputeengine.GoogleComputeEngineApi;
 import org.jclouds.googlecomputeengine.domain.Address;
 import org.jclouds.googlecomputeengine.domain.ListPage;
-import org.jclouds.googlecomputeengine.domain.SlashEncodedIds;
 import org.jclouds.googlecomputeengine.options.ListOptions;
 import org.jclouds.http.functions.ParseJson;
 import org.jclouds.json.Json;
@@ -45,7 +44,7 @@ public class ParseAddresses extends ParseJson<ListPage<Address>> {
       });
    }
 
-   public static class ToPagedIterable extends BaseToPagedIterable<Address, ToPagedIterable> {
+   public static class ToPagedIterable extends BaseWithRegionToPagedIterable<Address, ToPagedIterable> {
 
       private final GoogleComputeEngineApi api;
 
@@ -55,15 +54,15 @@ public class ParseAddresses extends ParseJson<ListPage<Address>> {
       }
 
       @Override
-      protected Function<Object, IterableWithMarker<Address>> fetchNextPage(final String projectAndRegionName,
+      protected Function<Object, IterableWithMarker<Address>> fetchNextPage(final String projectName,
+                                                                            final String regionName,
                                                                          final ListOptions options) {
-         final SlashEncodedIds slashEncodedIds = SlashEncodedIds.fromSlashEncoded(projectAndRegionName);
          return new Function<Object, IterableWithMarker<Address>>() {
 
             @Override
             public IterableWithMarker<Address> apply(Object input) {
-               return api.getAddressApiForProject(slashEncodedIds.getFirstId())
-                       .listAtMarkerInRegion(slashEncodedIds.getSecondId(), input.toString(), options);
+               return api.getAddressApiForProject(projectName)
+                       .listAtMarkerInRegion(regionName, input.toString(), options);
             }
          };
       }

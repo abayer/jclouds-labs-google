@@ -52,6 +52,7 @@ import org.jclouds.rest.annotations.Transform;
 import org.jclouds.rest.binders.BindToJsonPayload;
 
 /**
+ * TODO Live tests for Address.
  * Provides access to Addresses via their REST API.
  *
  * @author Andrew Bayer

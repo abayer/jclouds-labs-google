@@ -46,30 +46,30 @@ public final class Route extends Resource {
    private final Set<String> tags;
    private final String destRange;
    private final Integer priority;
-   private final String nextHopInstance;
-   private final String nextHopIp;
-   private final String nextHopNetwork;
-   private final String nextHopGateway;
+   private final Optional<URI> nextHopInstance;
+   private final Optional<String> nextHopIp;
+   private final Optional<URI> nextHopNetwork;
+   private final Optional<URI> nextHopGateway;
    private final Set<Warning> warnings;
 
    @ConstructorProperties({
-           "id", "creationTimestamp", "selfLink", "name", "description", "network", "items",
+           "id", "creationTimestamp", "selfLink", "name", "description", "network", "tags",
            "destRange", "priority", "nextHopInstance", "nextHopIp", "nextHopNetwork",
            "nextHopGateway", "warnings"
    })
    private Route(String id, Date creationTimestamp, URI selfLink, String name, String description,
                  URI network, Set<String> tags, String destRange, Integer priority,
-                 String nextHopInstance, String nextHopIp, String nextHopNetwork,
-                 String nextHopGateway, Set<Warning> warnings) {
+                 URI nextHopInstance, String nextHopIp, URI nextHopNetwork,
+                 URI nextHopGateway, Set<Warning> warnings) {
       super(Kind.ROUTE, id, creationTimestamp, selfLink, name, description);
       this.network = checkNotNull(network, "network for %name", name);
       this.tags = tags == null ? ImmutableSet.<String>of() : tags;
       this.destRange = checkNotNull(destRange, "destination range for %name", name);
       this.priority = checkNotNull(priority, "priority of %name", name);
-      this.nextHopInstance = checkNotNull(nextHopInstance, "next hop instance for %name", name);
-      this.nextHopIp = checkNotNull(nextHopIp, "next hop IP for %name", name);
-      this.nextHopNetwork = checkNotNull(nextHopNetwork, "next hop network for %name", name);
-      this.nextHopGateway = checkNotNull(nextHopGateway, "next hop gateway for %name", name);
+      this.nextHopInstance = fromNullable(nextHopInstance);
+      this.nextHopIp = fromNullable(nextHopIp);
+      this.nextHopNetwork = fromNullable(nextHopNetwork);
+      this.nextHopGateway = fromNullable(nextHopGateway);
       this.warnings = warnings == null ? ImmutableSet.<Warning>of() : warnings;
    }
 
@@ -106,28 +106,28 @@ public final class Route extends Resource {
    /**
     * @return The fully-qualified URL to an instance that should handle matching packets.
     */
-   public String getNextHopInstance() {
+   public Optional<URI> getNextHopInstance() {
       return nextHopInstance;
    }
 
    /**
     * @return The network IP address of an instance that should handle matching packets.
     */
-   public String getNextHopIp() {
+   public Optional<String> getNextHopIp() {
       return nextHopIp;
    }
 
    /**
     * @return The URL of the local network if it should handle matching packets.
     */
-   public String getNextHopNetwork() {
+   public Optional<URI> getNextHopNetwork() {
       return nextHopNetwork;
    }
 
    /**
     * @return The URL to a gateway that should handle matching packets. Currently, this is only the internet gateway.
     */
-   public String getNextHopGateway() {
+   public Optional<URI> getNextHopGateway() {
       return nextHopGateway;
    }
 
@@ -144,13 +144,13 @@ public final class Route extends Resource {
    protected Objects.ToStringHelper string() {
       return super.string()
               .add("network", network)
-              .add("items", tags)
+              .add("tags", tags)
               .add("destRange", destRange)
               .add("priority", priority)
-              .add("nextHopInstance", nextHopInstance)
-              .add("nextHopIp", nextHopIp)
-              .add("nextHopNetwork", nextHopNetwork)
-              .add("nextHopGateway", nextHopGateway)
+              .add("nextHopInstance", nextHopInstance.orNull())
+              .add("nextHopIp", nextHopIp.orNull())
+              .add("nextHopNetwork", nextHopNetwork.orNull())
+              .add("nextHopGateway", nextHopGateway.orNull())
               .add("warnings", warnings);
    }
 
@@ -176,10 +176,10 @@ public final class Route extends Resource {
       private ImmutableSet.Builder<String> tags = ImmutableSet.builder();
       private String destRange;
       private Integer priority;
-      private String nextHopInstance;
+      private URI nextHopInstance;
       private String nextHopIp;
-      private String nextHopNetwork;
-      private String nextHopGateway;
+      private URI nextHopNetwork;
+      private URI nextHopGateway;
       private ImmutableSet.Builder<Warning> warnings = ImmutableSet.builder();
 
 
@@ -226,7 +226,7 @@ public final class Route extends Resource {
       /**
        * @see Route#getNextHopInstance()
        */
-      public Builder nextHopInstance(String nextHopInstance) {
+      public Builder nextHopInstance(URI nextHopInstance) {
          this.nextHopInstance = nextHopInstance;
          return this;
       }
@@ -242,7 +242,7 @@ public final class Route extends Resource {
       /**
        * @see Route#getNextHopNetwork()
        */
-      public Builder nextHopNetwork(String nextHopNetwork) {
+      public Builder nextHopNetwork(URI nextHopNetwork) {
          this.nextHopNetwork = nextHopNetwork;
          return this;
       }
@@ -250,7 +250,7 @@ public final class Route extends Resource {
       /**
        * @see Route#getNextHopGateway()
        */
-      public Builder nextHopGateway(String nextHopGateway) {
+      public Builder nextHopGateway(URI nextHopGateway) {
          this.nextHopGateway = nextHopGateway;
          return this;
       }
@@ -290,9 +290,10 @@ public final class Route extends Resource {
                  .tags(in.getTags())
                  .destRange(in.getDestRange())
                  .priority(in.getPriority())
-                 .nextHopInstance(in.getNextHopInstance())
-                 .nextHopIp(in.getNextHopIp())
-                 .nextHopNetwork(in.getNextHopNetwork())
+                 .nextHopInstance(in.getNextHopInstance().orNull())
+                 .nextHopIp(in.getNextHopIp().orNull())
+                 .nextHopNetwork(in.getNextHopNetwork().orNull())
+                 .nextHopGateway(in.getNextHopGateway().orNull())
                  .warnings(in.getWarnings());
       }
    }
