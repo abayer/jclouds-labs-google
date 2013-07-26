@@ -28,7 +28,7 @@ import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 
 /**
- * TODO Some tests for Snapshots
+ * TODO Live tests for Snapshots
  * A Persistent Disk Snapshot resource.
  *
  * @author Andrew Bayer

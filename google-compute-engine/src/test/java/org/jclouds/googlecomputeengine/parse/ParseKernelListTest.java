@@ -22,9 +22,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.date.internal.SimpleDateFormatDateService;
-import org.jclouds.googlecomputeengine.domain.Kernel;
-import org.jclouds.googlecomputeengine.domain.ListPage;
-import org.jclouds.googlecomputeengine.domain.Resource;
+import org.jclouds.googlecomputeengine.domain.*;
 import org.jclouds.googlecomputeengine.internal.BaseGoogleComputeEngineParseTest;
 import org.testng.annotations.Test;
 
@@ -64,7 +62,12 @@ public class ParseKernelListTest extends BaseGoogleComputeEngineParseTest<ListPa
                               .selfLink(URI.create("https://www.googleapis" +
                                       ".com/compute/v1beta15/projects/google/global/kernels/gce-20110728"))
                               .name("gce-20110728")
-                              .description("DEPRECATED. Created Thu, 28 Jul 2011 16:44:38 +0000").build()
+                              .description("DEPRECATED. Created Thu, 28 Jul 2011 16:44:38 +0000")
+                              .deprecated(org.jclouds.googlecomputeengine.domain.Deprecated.builder()
+                                      .state("OBSOLETE")
+                                      .replacement(URI.create("https://www.googleapis.com/compute/v1beta15/projects/google/global/kernels/gce-v20130603"))
+                                      .build())
+                              .build()
               )).build();
    }
 }
