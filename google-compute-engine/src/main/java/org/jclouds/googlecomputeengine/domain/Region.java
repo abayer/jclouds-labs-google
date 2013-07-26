@@ -44,18 +44,18 @@ public final class Region extends Resource {
    }
 
    private final Status status;
-   private final Set<String> availableZones;
+   private final Set<URI> zones;
 
    @ConstructorProperties({
            "id", "creationTimestamp", "selfLink", "name", "description", "status",
-           "availableZones"
+           "zones"
    })
    private Region(String id, Date creationTimestamp, URI selfLink, String name, String description,
-                  Status status, Set<String> availableZones) {
+                  Status status, Set<URI> zones) {
       super(Kind.REGION, id, creationTimestamp, selfLink, name, description);
       this.status = checkNotNull(status, "status of %name", name);
-      this.availableZones = availableZones == null ? ImmutableSet.<String>of() : ImmutableSet
-              .copyOf(availableZones);
+      this.zones = zones == null ? ImmutableSet.<URI>of() : ImmutableSet
+              .copyOf(zones);
    }
 
    /**
@@ -69,8 +69,8 @@ public final class Region extends Resource {
     * @return the zones that can be used in this region.
     */
    @Nullable
-   public Set<String> getAvailableZones() {
-      return availableZones;
+   public Set<URI> getZones() {
+      return zones;
    }
 
    /**
@@ -79,7 +79,7 @@ public final class Region extends Resource {
    protected Objects.ToStringHelper string() {
       return super.string()
               .add("status", status)
-              .add("availableZones", availableZones);
+              .add("zones", zones);
    }
 
    /**
@@ -101,7 +101,7 @@ public final class Region extends Resource {
    public static final class Builder extends Resource.Builder<Builder> {
 
       private Status status;
-      private ImmutableSet.Builder<String> availableZones = ImmutableSet.builder();
+      private ImmutableSet.Builder<URI> zones = ImmutableSet.builder();
 
       /**
        * @see org.jclouds.googlecomputeengine.domain.Region#getStatus()
@@ -112,18 +112,18 @@ public final class Region extends Resource {
       }
 
       /**
-       * @see Region#getAvailableZones() ()
+       * @see Region#getZones()
        */
-      public Builder availableZone(String availableZone) {
-         this.availableZones.add(checkNotNull(availableZone, "availableZone"));
+      public Builder zone(URI zone) {
+         this.zones.add(checkNotNull(zone, "zone"));
          return this;
       }
 
       /**
-       * @see Region#getAvailableZones() ()
+       * @see Region#getZones()
        */
-      public Builder availableZones(Set<String> availableZones) {
-         this.availableZones.addAll(checkNotNull(availableZones, "availableZones"));
+      public Builder zones(Set<URI> zones) {
+         this.zones.addAll(checkNotNull(zones, "zones"));
          return this;
       }
 
@@ -134,13 +134,13 @@ public final class Region extends Resource {
 
       public Region build() {
          return new Region(super.id, super.creationTimestamp, super.selfLink, super.name,
-                 super.description, status, availableZones.build());
+                 super.description, status, zones.build());
       }
 
       public Builder fromRegion(Region in) {
          return super.fromResource(in)
                  .status(in.getStatus())
-                 .availableZones(in.getAvailableZones());
+                 .zones(in.getZones());
       }
    }
 
