@@ -136,6 +136,7 @@ public class FirewallOptions {
     */
    public FirewallOptions sourceTags(Set<String> sourceTags) {
       this.sourceTags = ImmutableSet.builder();
+      this.sourceTags.addAll(sourceTags);
       return this;
    }
 

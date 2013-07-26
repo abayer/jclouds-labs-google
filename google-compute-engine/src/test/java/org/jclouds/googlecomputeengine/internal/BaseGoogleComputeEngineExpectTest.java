@@ -153,6 +153,17 @@ public class BaseGoogleComputeEngineExpectTest<T> extends BaseRestApiExpectTest<
       return props;
    }
 
+   @Override
+   protected HttpRequestComparisonType compareHttpRequestAsType(HttpRequest input) {
+      HttpRequestComparisonType reqType = HttpRequestComparisonType.DEFAULT;
+      if (input.getPayload() != null) {
+         if (input.getPayload().getContentMetadata().getContentType().equals(MediaType.APPLICATION_JSON)) {
+            reqType = HttpRequestComparisonType.JSON;
+         }
+      }
+      return reqType;
+   }
+
    protected HttpRequest requestForScopes(String... scopes) {
       String claims = String.format(CLAIMS_TEMPLATE, Joiner.on(",").join(scopes));
 

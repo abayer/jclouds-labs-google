@@ -37,6 +37,7 @@ public class RouteOptions {
    private String nextHopIp;
    private URI nextHopNetwork;
    private URI nextHopGateway;
+   private String description;
    private Integer priority;
 
    private ImmutableSet.Builder<String> tags = ImmutableSet.builder();
@@ -53,6 +54,36 @@ public class RouteOptions {
     */
    public RouteOptions name(String name) {
       this.name = name;
+      return this;
+   }
+
+   /**
+    * @see org.jclouds.googlecomputeengine.domain.Route#getDescription()
+    */
+   public String getDescription() {
+      return description;
+   }
+
+   /**
+    * @see org.jclouds.googlecomputeengine.domain.Route#getDescription()
+    */
+   public RouteOptions description(String description) {
+      this.description = description;
+      return this;
+   }
+
+   /**
+    * @see org.jclouds.googlecomputeengine.domain.Route#getDestRange()
+    */
+   public String getDestRange() {
+      return destRange;
+   }
+
+   /**
+    * @see org.jclouds.googlecomputeengine.domain.Route#getDestRange()
+    */
+   public RouteOptions destRange(String destRange) {
+      this.destRange = destRange;
       return this;
    }
 

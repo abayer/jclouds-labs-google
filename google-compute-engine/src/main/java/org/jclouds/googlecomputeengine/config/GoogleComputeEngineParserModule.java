@@ -33,6 +33,7 @@ import org.jclouds.googlecomputeengine.domain.InstanceTemplate;
 import org.jclouds.googlecomputeengine.domain.Operation;
 import org.jclouds.googlecomputeengine.domain.Project;
 import org.jclouds.googlecomputeengine.options.FirewallOptions;
+import org.jclouds.googlecomputeengine.options.RouteOptions;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.oauth.v2.domain.ClaimSet;
 import org.jclouds.oauth.v2.domain.Header;
@@ -76,6 +77,7 @@ public class GoogleComputeEngineParserModule extends AbstractModule {
               .put(Instance.class, new InstanceTypeAdapter())
               .put(InstanceTemplate.class, new InstanceTemplateTypeAdapter())
               .put(FirewallOptions.class, new FirewallOptionsTypeAdapter())
+              .put(RouteOptions.class, new RouteOptionsTypeAdapter())
               .put(Rule.class, new RuleTypeAdapter())
               .build();
    }
@@ -319,6 +321,46 @@ public class GoogleComputeEngineParserModule extends AbstractModule {
             firewall.add("allowed", rules);
          }
          return firewall;
+      }
+   }
+
+   @Singleton
+   private static class RouteOptionsTypeAdapter implements JsonSerializer<RouteOptions> {
+
+      @Override
+      public JsonElement serialize(RouteOptions src, Type typeOfSrc, JsonSerializationContext context) {
+         JsonObject route = new JsonObject();
+         if (src.getName() != null) {
+            route.addProperty("name", src.getName());
+         }
+         if (src.getNetwork() != null) {
+            route.addProperty("network", src.getNetwork().toString());
+         }
+         if (src.getNextHopGateway() != null) {
+            route.addProperty("nextHopGateway", src.getNextHopGateway().toString());
+         }
+         if (src.getNextHopInstance() != null) {
+            route.addProperty("nextHopInstance", src.getNextHopInstance().toString());
+         }
+         if (src.getNextHopNetwork() != null) {
+            route.addProperty("nextHopNetwork", src.getNextHopNetwork().toString());
+         }
+         if (src.getDestRange() != null) {
+            route.addProperty("destRange", src.getDestRange());
+         }
+         if (src.getDescription() != null) {
+            route.addProperty("description", src.getDescription());
+         }
+         if (src.getPriority() != null) {
+            route.addProperty("priority", src.getPriority());
+         }
+         if (src.getNextHopIp() != null) {
+            route.addProperty("nextHopIp", src.getNextHopIp());
+         }
+         if (!src.getTags().isEmpty()) {
+            route.add("tags", buildArrayOfStrings(src.getTags()));
+         }
+         return route;
       }
    }
 

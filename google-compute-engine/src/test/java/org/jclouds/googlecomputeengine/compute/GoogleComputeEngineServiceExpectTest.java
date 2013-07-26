@@ -98,7 +98,7 @@ public class GoogleComputeEngineServiceExpectTest extends BaseGoogleComputeEngin
            .addHeader("Authorization", "Bearer " + TOKEN)
            .payload(payloadFromStringWithContentType("{\"name\":\"jclouds-test\",\"network\":\"https://www.googleapis" +
                    ".com/compute/v1beta15/projects/myproject/global/networks/jclouds-test\"," +
-                   "\"sourceRanges\":[\"10.0.0.0/8\",\"0.0.0.0/0\"],\"allowed\":[{\"IPProtocol\":\"tcp\"," +
+                   "\"sourceRanges\":[\"10.0.0.0/8\",\"0.0.0.0/0\"],\"sourceTags\":[\"aTag\"],\"allowed\":[{\"IPProtocol\":\"tcp\"," +
                    "\"ports\":[\"22\"]}," +
                    "{\"IPProtocol\":\"udp\",\"ports\":[\"22\"]}]}",
                    MediaType.APPLICATION_JSON))

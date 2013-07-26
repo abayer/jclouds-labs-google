@@ -54,7 +54,7 @@ import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.annotations.Transform;
 
 /**
- * TODO Live and expect tests for all the Route stuff
+ * TODO Live tests for all the Route stuff
  * Provides access to Routes via their REST API.
  *
  * @author Andrew Bayer
