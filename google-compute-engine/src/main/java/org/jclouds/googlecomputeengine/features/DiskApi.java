@@ -188,11 +188,12 @@ public interface DiskApi {
    PagedIterable<Disk> listInZone(@PathParam("zone") String zone, ListOptions options);
 
    /**
-    * TODO live and expect tests for DiskApi#createSnapshot
+    * TODO live tests for DiskApi#createSnapshot - probably in snapshot tests, though.
     * Create a snapshot of a given disk in a zone.
     *
     * @param zone the zone the disk is in.
     * @param diskName the name of the disk.
+    * @param snapshotName the name for the snapshot to be craeted.
     *
     * @return an Operation resource. To check on the status of an operation, poll the Operations resource returned to
     *         you, and look for the status field.
@@ -203,9 +204,11 @@ public interface DiskApi {
    @Path("/zones/{zone}/disks/{disk}/createSnapshot")
    @OAuthScopes(COMPUTE_SCOPE)
    @Fallback(NullOnNotFoundOr404.class)
+   @MapBinder(BindToJsonPayload.class)
    @Nullable
    Operation createSnapshotInZone(@PathParam("zone") String zone,
-                                  @PathParam("disk") String diskName);
+                                  @PathParam("disk") String diskName,
+                                  @PayloadParam("name") String snapshotName);
 
    /**
     * @see DiskApi#aggregatedListAtMarker(String, org.jclouds.googlecomputeengine.options.ListOptions)

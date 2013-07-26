@@ -92,6 +92,47 @@ public class DiskApiExpectTest extends BaseGoogleComputeEngineApiExpectTest {
       assertEquals(api.createInZone("testimage1", 1, "us-central1-a"), new ParseOperationTest().expected());
    }
 
+   public void testCreateSnapshotResponseIs2xx() {
+      HttpRequest createSnapshotRequest = HttpRequest
+              .builder()
+              .method("POST")
+              .endpoint("https://www.googleapis.com/compute/v1beta15/projects/myproject/zones/us-central1-a/disks"
+                      + "/testimage1/createSnapshot")
+              .addHeader("Accept", "application/json")
+              .addHeader("Authorization", "Bearer " + TOKEN)
+              .payload(payloadFromResourceWithContentType("/disk_create_snapshot.json", MediaType.APPLICATION_JSON))
+              .build();
+
+      HttpResponse createSnapshotResponse = HttpResponse.builder().statusCode(200)
+              .payload(payloadFromResource("/zone_operation.json")).build();
+
+      DiskApi api = requestsSendResponses(requestForScopes(COMPUTE_SCOPE),
+              TOKEN_RESPONSE, createSnapshotRequest,
+              createSnapshotResponse).getDiskApiForProject("myproject");
+
+      assertEquals(api.createSnapshotInZone("us-central1-a", "testimage1", "test-snap"), new ParseOperationTest().expected());
+   }
+
+   public void testCreateSnapshotResponseIs4xx() {
+      HttpRequest createSnapshotRequest = HttpRequest
+              .builder()
+              .method("POST")
+              .endpoint("https://www.googleapis.com/compute/v1beta15/projects/myproject/zones/us-central1-a/disks"
+                      + "/testimage1/createSnapshot")
+              .addHeader("Accept", "application/json")
+              .addHeader("Authorization", "Bearer " + TOKEN)
+              .payload(payloadFromResourceWithContentType("/disk_create_snapshot.json", MediaType.APPLICATION_JSON))
+              .build();
+
+      HttpResponse createSnapshotResponse = HttpResponse.builder().statusCode(404).build();
+
+      DiskApi api = requestsSendResponses(requestForScopes(COMPUTE_SCOPE),
+              TOKEN_RESPONSE, createSnapshotRequest,
+              createSnapshotResponse).getDiskApiForProject("myproject");
+
+      assertNull(api.createSnapshotInZone("us-central1-a", "testimage1", "test-snap"));
+   }
+
    public void testDeleteDiskResponseIs2xx() {
       HttpRequest delete = HttpRequest
               .builder()
