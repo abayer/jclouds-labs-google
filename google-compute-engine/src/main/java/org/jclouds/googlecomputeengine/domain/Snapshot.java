@@ -41,7 +41,7 @@ public final class Snapshot extends AbstractDisk {
    private final String sourceDiskId;
 
    @ConstructorProperties({
-           "id", "creationTimestamp", "selfLink", "name", "description", "sizeGb",
+           "id", "creationTimestamp", "selfLink", "name", "description", "diskSizeGb",
            "status", "sourceDisk", "sourceDiskId"
    })
    private Snapshot(String id, Date creationTimestamp, URI selfLink, String name, String description,

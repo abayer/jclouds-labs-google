@@ -93,7 +93,7 @@ public interface SnapshotApi {
    @Named("Snapshots:list")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
-   @Path("/global/napshots")
+   @Path("/global/snapshots")
    @OAuthScopes(COMPUTE_READONLY_SCOPE)
    @ResponseParser(ParseSnapshots.class)
    @Fallback(EmptyIterableWithMarkerOnNotFoundOr404.class)

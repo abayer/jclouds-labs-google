@@ -41,14 +41,15 @@ public class ParseSnapshotTest extends BaseGoogleComputeEngineParseTest<Snapshot
    @Consumes(MediaType.APPLICATION_JSON)
    public Snapshot expected() {
       return Snapshot.builder()
-              .id("13050421646334304999")
-              .sourceDiskId("13050421646334304115")
-              .creationTimestamp(new SimpleDateFormatDateService().iso8601DateParse("2012-11-25T01:38:48.306"))
-              .sourceDisk(URI.create("https://www.googleapis.com/compute/v1beta15/projects/myproject/zones/us-central1-a/disks/testimage1"))
-              .selfLink(URI.create("https://www.googleapis.com/compute/v1beta15/projects/myproject/global/snapshots/testsnap1"))
-              .name("testsnap1")
-              .sizeGb(1)
+              .selfLink(URI.create("https://www.googleapis.com/compute/v1beta15/projects/myproject/global/snapshots/test-snap"))
+              .id("9734455566806191190")
+              .creationTimestamp(new SimpleDateFormatDateService().iso8601DateParse("2013-07-26T12:54:23.173-07:00"))
               .status("READY")
+              .sizeGb(10)
+              .sourceDisk(URI.create("https://www.googleapis.com/compute/v1beta15/projects/myproject/zones/us-central1-a/disks/testimage1"))
+              .name("test-snap")
+              .description("")
+              .sourceDiskId("8243603669926824540")
               .build();
    }
 }
