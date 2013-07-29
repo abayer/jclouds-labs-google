@@ -22,6 +22,7 @@ import static org.testng.Assert.assertNull;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.googlecomputeengine.GoogleComputeEngineConstants;
+import org.jclouds.googlecomputeengine.domain.Metadata;
 import org.jclouds.googlecomputeengine.internal.BaseGoogleComputeEngineApiExpectTest;
 import org.jclouds.googlecomputeengine.parse.ParseMetadataTest;
 import org.jclouds.googlecomputeengine.parse.ParseOperationTest;
@@ -90,8 +91,8 @@ public class ProjectApiExpectTest extends BaseGoogleComputeEngineApiExpectTest {
       ProjectApi api = requestsSendResponses(requestForScopes(GoogleComputeEngineConstants.COMPUTE_SCOPE),
               TOKEN_RESPONSE, setMetadata,
               setMetadataResponse).getProjectApi();
-
-      assertEquals(api.setCommonInstanceMetadata("myproject", new ParseMetadataTest().expected()),
+      Metadata expected = new ParseMetadataTest().expected();
+      assertEquals(api.setCommonInstanceMetadata("myproject", expected.getItems(), expected.getFingerprint()),
               new ParseOperationTest().expected());
    }
 

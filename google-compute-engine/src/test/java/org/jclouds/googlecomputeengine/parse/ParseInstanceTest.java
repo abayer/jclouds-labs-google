@@ -23,6 +23,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.googlecomputeengine.domain.Instance;
+import org.jclouds.googlecomputeengine.domain.Metadata;
 import org.jclouds.googlecomputeengine.internal.BaseGoogleComputeEngineParseTest;
 
 import com.google.common.collect.ImmutableMap;
@@ -71,7 +72,10 @@ public class ParseInstanceTest extends BaseGoogleComputeEngineParseTest<Instance
                               .build()
               )
               .tags(Instance.Tags.builder().fingerprint("abcd").addItem("aTag").build())
-              .metadata(ImmutableMap.of("aKey", "aValue"))
+              .metadata(Metadata.builder()
+                      .items(ImmutableMap.of("aKey", "aValue"))
+                      .fingerprint("efgh")
+                      .build())
               .addServiceAccount(Instance.ServiceAccount.builder().email("default").addScopes("myscope").build())
               .build();
    }

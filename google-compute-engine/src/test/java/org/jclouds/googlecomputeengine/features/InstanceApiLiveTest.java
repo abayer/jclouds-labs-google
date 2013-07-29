@@ -134,6 +134,6 @@ public class InstanceApiLiveTest extends BaseGoogleComputeEngineApiLiveTest {
 
    private void assertInstanceEquals(Instance result, InstanceTemplate expected) {
       assertEquals(result.getName(), expected.getName());
-      assertEquals(result.getMetadata(), expected.getMetadata());
+      assertEquals(result.getMetadata().getItems(), expected.getMetadata());
    }
 }

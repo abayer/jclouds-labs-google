@@ -260,7 +260,7 @@ public interface InstanceApi {
                                                        @PathParam("instance") String instanceName);
 
    /**
-    * TODO add live and expect tests for reset
+    * TODO add live tests for reset
     * Hard-resets the instance.
     *
     * @param zone         the zone the instance is in
@@ -324,7 +324,7 @@ public interface InstanceApi {
                               @QueryParam("deviceName") String deviceName);
 
    /**
-    * TODO add live and expect tests for setMetadata
+    * TODO add live tests for setMetadata
     * Sets metadata for an instance using the data included in the request.
     * <p/>
     * NOTE: This *sets* metadata items on the project (vs *adding* items to metadata),
@@ -339,6 +339,8 @@ public interface InstanceApi {
     * @param zone The zone the instance is in
     * @param instanceName The name of the instance
     * @param metadata the metadata to set
+    * @param fingerprint The current fingerprint for the items
+    *
     * @return an Operations resource. To check on the status of an operation, poll the Operations resource returned
     *         to you, and look for the status field.
     */
@@ -349,11 +351,12 @@ public interface InstanceApi {
    @Consumes(MediaType.APPLICATION_JSON)
    @Produces(MediaType.APPLICATION_JSON)
    @Fallback(NullOnNotFoundOr404.class)
+   @MapBinder(MetadataBinder.class)
    @Nullable
    Operation setMetadataInZone(@PathParam("zone") String zone,
                                @PathParam("instance") String instanceName,
-                               @BinderParam(MetadataBinder.class)
-                               Map<String, String> metadata);
+                               @PayloadParam("items") Map<String, String> metadata,
+                               @PayloadParam("fingerprint") String fingerprint);
 
    /**
     * Sets items for an instance

@@ -244,4 +244,81 @@ public class InstanceApiExpectTest extends BaseGoogleComputeEngineApiExpectTest 
       assertTrue(api.listInZone("us-central1-a").concat().isEmpty());
    }
 
+   public void testSetInstanceMetadataResponseIs2xx() {
+      HttpRequest setMetadata = HttpRequest
+              .builder()
+              .method("POST")
+              .endpoint("https://www.googleapis" +
+                      ".com/compute/v1beta15/projects/myproject/zones/us-central1-a/instances/test-1/setMetadata")
+              .addHeader("Accept", "application/json")
+              .addHeader("Authorization", "Bearer " + TOKEN)
+              .payload(payloadFromResourceWithContentType("/instance_set_metadata.json", MediaType.APPLICATION_JSON))
+              .build();
+
+      HttpResponse setMetadataResponse = HttpResponse.builder().statusCode(200)
+              .payload(payloadFromResource("/zone_operation.json")).build();
+
+      InstanceApi api = requestsSendResponses(requestForScopes(COMPUTE_SCOPE),
+              TOKEN_RESPONSE, setMetadata, setMetadataResponse).getInstanceApiForProject("myproject");
+
+      assertEquals(api.setMetadataInZone("us-central1-a", "test-1", ImmutableMap.of("foo", "bar"), "efgh"),
+              new ParseOperationTest().expected());
+   }
+
+   public void testSetInstanceMetadataResponseIs4xx() {
+      HttpRequest setMetadata = HttpRequest
+              .builder()
+              .method("POST")
+              .endpoint("https://www.googleapis" +
+                      ".com/compute/v1beta15/projects/myproject/zones/us-central1-a/instances/test-1/setMetadata")
+              .addHeader("Accept", "application/json")
+              .addHeader("Authorization", "Bearer " + TOKEN)
+              .payload(payloadFromResourceWithContentType("/instance_set_metadata.json", MediaType.APPLICATION_JSON))
+              .build();
+
+      HttpResponse setMetadataResponse = HttpResponse.builder().statusCode(404).build();
+
+      InstanceApi api = requestsSendResponses(requestForScopes(COMPUTE_SCOPE),
+              TOKEN_RESPONSE, setMetadata, setMetadataResponse).getInstanceApiForProject("myproject");
+
+      assertNull(api.setMetadataInZone("us-central1-a", "test-1", ImmutableMap.of("foo", "bar"), "efgh"));
+   }
+
+   public void testResetInstanceResponseIs2xx() {
+      HttpRequest reset = HttpRequest
+              .builder()
+              .method("POST")
+              .endpoint("https://www.googleapis" +
+                      ".com/compute/v1beta15/projects/myproject/zones/us-central1-a/instances/test-1/reset")
+              .addHeader("Accept", "application/json")
+              .addHeader("Authorization", "Bearer " + TOKEN).build();
+
+      HttpResponse resetResponse = HttpResponse.builder().statusCode(200)
+              .payload(payloadFromResource("/zone_operation.json")).build();
+
+      InstanceApi api = requestsSendResponses(requestForScopes(COMPUTE_SCOPE),
+              TOKEN_RESPONSE, reset, resetResponse).getInstanceApiForProject("myproject");
+
+      assertEquals(api.resetInZone("us-central1-a", "test-1"),
+              new ParseOperationTest().expected());
+   }
+
+   public void testResetInstanceResponseIs4xx() {
+      HttpRequest reset = HttpRequest
+              .builder()
+              .method("POST")
+              .endpoint("https://www.googleapis" +
+                      ".com/compute/v1beta15/projects/myproject/zones/us-central1-a/instances/test-1/reset")
+              .addHeader("Accept", "application/json")
+              .addHeader("Authorization", "Bearer " + TOKEN).build();
+
+      HttpResponse resetResponse = HttpResponse.builder().statusCode(404).build();
+
+      InstanceApi api = requestsSendResponses(requestForScopes(COMPUTE_SCOPE),
+              TOKEN_RESPONSE, reset, resetResponse).getInstanceApiForProject("myproject");
+
+      assertNull(api.resetInZone("us-central1-a", "test-1"));
+   }
+
+
 }

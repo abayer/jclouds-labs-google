@@ -197,6 +197,7 @@ public class RouteOptions {
     */
    public RouteOptions tags(Set<String> tags) {
       this.tags = ImmutableSet.builder();
+      this.tags.addAll(tags);
       return this;
    }
 

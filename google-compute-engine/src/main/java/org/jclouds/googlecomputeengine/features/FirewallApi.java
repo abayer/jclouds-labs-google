@@ -140,7 +140,7 @@ public interface FirewallApi {
    /**
     * Deletes the specified image resource.
     *
-    * @param imageName name of the firewall resource to delete.
+    * @param firewallName name of the firewall resource to delete.
     * @return an Operation resource. To check on the status of an operation, poll the Operations resource returned to
     *         you, and look for the status field.  If the image did not exist the result is null.
     */

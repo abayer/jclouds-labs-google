@@ -22,6 +22,7 @@ import java.util.Date;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.googlecomputeengine.domain.Metadata;
 import org.jclouds.googlecomputeengine.domain.Project;
 import org.jclouds.googlecomputeengine.internal.BaseGoogleComputeEngineParseTest;
 import org.testng.annotations.Test;
@@ -48,11 +49,13 @@ public class ParseProjectTest extends BaseGoogleComputeEngineParseTest<Project> 
               .selfLink(URI.create("https://www.googleapis.com/compute/v1beta15/projects/myproject"))
               .name("myproject")
               .description("")
-              .commonInstanceMetadata(
-                      ImmutableMap.<String, String>builder()
+              .commonInstanceMetadata(Metadata.builder()
+                      .items(ImmutableMap.<String, String>builder()
                               .put("propA", "valueA")
                               .put("propB", "valueB")
                               .build())
+                      .fingerprint("efgh")
+                      .build())
               .addQuota("INSTANCES", 0, 8)
               .addQuota("CPUS", 0, 8)
               .addQuota("EPHEMERAL_ADDRESSES", 0, 8)

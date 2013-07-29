@@ -23,14 +23,12 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.beans.ConstructorProperties;
 import java.net.URI;
 import java.util.Date;
-import java.util.Map;
 import java.util.Set;
 
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Objects;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -42,15 +40,14 @@ import com.google.common.collect.ImmutableSet;
 @Beta
 public class Project extends Resource {
 
-   private final Map<String, String> commonInstanceMetadata;
+   private final Metadata commonInstanceMetadata;
    private final Set<Quota> quotas;
    private final Set<String> externalIpAddresses;
 
    protected Project(String id, Date creationTimestamp, URI selfLink, String name, String description,
-                     Map<String, String> commonInstanceMetadata, Set<Quota> quotas, Set<String> externalIpAddresses) {
+                     Metadata commonInstanceMetadata, Set<Quota> quotas, Set<String> externalIpAddresses) {
       super(Kind.PROJECT, id, creationTimestamp, selfLink, name, description);
-      this.commonInstanceMetadata = commonInstanceMetadata == null ? ImmutableMap.<String,
-              String>of() : ImmutableMap.copyOf(commonInstanceMetadata);
+      this.commonInstanceMetadata = checkNotNull(commonInstanceMetadata, "commonInstanceMetadata");
       this.quotas = quotas == null ? ImmutableSet.<Quota>of() : ImmutableSet.copyOf(quotas);
       this.externalIpAddresses = externalIpAddresses == null ? ImmutableSet.<String>of() : ImmutableSet.copyOf
               (externalIpAddresses);
@@ -59,7 +56,7 @@ public class Project extends Resource {
    /**
     * @return metadata key/value pairs available to all instances contained in this project.
     */
-   public Map<String, String> getCommonInstanceMetadata() {
+   public Metadata getCommonInstanceMetadata() {
       return commonInstanceMetadata;
    }
 
@@ -106,23 +103,15 @@ public class Project extends Resource {
 
    public static final class Builder extends Resource.Builder<Builder> {
 
-      private ImmutableMap.Builder<String, String> commonInstanceMetadata = ImmutableMap.builder();
+      private Metadata commonInstanceMetadata;
       private ImmutableSet.Builder<Quota> quotas = ImmutableSet.builder();
       private ImmutableSet.Builder<String> externalIpAddresses = ImmutableSet.builder();
 
       /**
        * @see Project#getCommonInstanceMetadata()
        */
-      public Builder addCommonInstanceMetadata(String key, String value) {
-         this.commonInstanceMetadata.put(key, value);
-         return this;
-      }
-
-      /**
-       * @see Project#getCommonInstanceMetadata()
-       */
-      public Builder commonInstanceMetadata(Map<String, String> commonInstanceMetadata) {
-         this.commonInstanceMetadata.putAll(checkNotNull(commonInstanceMetadata, "commonInstanceMetadata"));
+      public Builder commonInstanceMetadata(Metadata commonInstanceMetadata) {
+         this.commonInstanceMetadata = commonInstanceMetadata;
          return this;
       }
 
@@ -165,7 +154,7 @@ public class Project extends Resource {
 
       public Project build() {
          return new Project(super.id, super.creationTimestamp, super.selfLink, super.name,
-                 super.description, commonInstanceMetadata.build(), quotas.build(), externalIpAddresses.build());
+                 super.description, commonInstanceMetadata, quotas.build(), externalIpAddresses.build());
       }
 
       public Builder fromProject(Project in) {

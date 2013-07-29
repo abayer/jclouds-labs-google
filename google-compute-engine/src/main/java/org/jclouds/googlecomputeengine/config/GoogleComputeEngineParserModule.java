@@ -30,6 +30,7 @@ import javax.inject.Singleton;
 import org.jclouds.googlecomputeengine.domain.Firewall;
 import org.jclouds.googlecomputeengine.domain.Instance;
 import org.jclouds.googlecomputeengine.domain.InstanceTemplate;
+import org.jclouds.googlecomputeengine.domain.Metadata;
 import org.jclouds.googlecomputeengine.domain.Operation;
 import org.jclouds.googlecomputeengine.domain.Project;
 import org.jclouds.googlecomputeengine.options.FirewallOptions;
@@ -40,7 +41,6 @@ import org.jclouds.oauth.v2.domain.Header;
 import org.jclouds.oauth.v2.json.ClaimSetTypeAdapter;
 import org.jclouds.oauth.v2.json.HeaderTypeAdapter;
 
-import com.google.common.collect.ForwardingMap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Range;
 import com.google.gson.JsonArray;
@@ -153,8 +153,11 @@ public class GoogleComputeEngineParserModule extends AbstractModule {
 
          // deal with metadata
          if (src.getMetadata() != null && !src.getMetadata().isEmpty()) {
-            JsonObject metadata = (JsonObject) context.serialize(new Metadata(src.getMetadata()));
-            instance.add("metadata", metadata);
+            Metadata metadata = Metadata.builder()
+                    .items(src.getMetadata())
+                    .build();
+            JsonObject metadataJson = (JsonObject) context.serialize(metadata);
+            instance.add("metadata", metadataJson);
             return instance;
          }
 
@@ -235,7 +238,8 @@ public class GoogleComputeEngineParserModule extends AbstractModule {
                builder.put(object.get("key").getAsString(), object.get("value").getAsString());
             }
          }
-         return new Metadata(builder.build());
+         String fingerprint = metadata.getAsJsonPrimitive("fingerprint").getAsString();
+         return new Metadata(fingerprint, builder.build());
       }
 
       @Override
@@ -243,30 +247,21 @@ public class GoogleComputeEngineParserModule extends AbstractModule {
          JsonObject metadataObject = new JsonObject();
          metadataObject.add("kind", new JsonPrimitive("compute#metadata"));
          JsonArray items = new JsonArray();
-         for (Map.Entry<String, String> entry : src.entrySet()) {
+         for (Map.Entry<String, String> entry : src.getItems().entrySet()) {
             JsonObject object = new JsonObject();
             object.addProperty("key", entry.getKey());
             object.addProperty("value", entry.getValue());
             items.add(object);
          }
          metadataObject.add("items", items);
+         if (src.getFingerprint() != null) {
+            metadataObject.addProperty("fingerprint", src.getFingerprint());
+         }
          return metadataObject;
       }
    }
 
-   public static class Metadata extends ForwardingMap<String, String> {
 
-      private final Map<String, String> delegate;
-
-      public Metadata(Map<String, String> delegate) {
-         this.delegate = delegate;
-      }
-
-      @Override
-      protected Map<String, String> delegate() {
-         return delegate;
-      }
-   }
 
    @Singleton
    private static class ProjectTypeAdapter implements JsonDeserializer<Project> {

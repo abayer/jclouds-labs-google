@@ -47,7 +47,8 @@
                   "key": "aKey",
                   "value": "aValue"
                }
-            ]
+            ],
+            "fingerprint": "efgh"
          },
          "tags": {
             "items": [

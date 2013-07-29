@@ -86,7 +86,7 @@ public class InstanceInZoneToNodeMetadata implements Function<InstanceInZone, No
               .status(toPortableNodeStatus.get(input.getStatus()))
               .tags(input.getTags().getItems())
               .uri(input.getSelfLink())
-              .userMetadata(input.getMetadata())
+              .userMetadata(input.getMetadata().getItems())
               .group(nodeNamingConvention.groupInUniqueNameOrNull(input.getName()))
               .privateAddresses(collectPrivateAddresses(input))
               .publicAddresses(collectPublicAddresses(input))

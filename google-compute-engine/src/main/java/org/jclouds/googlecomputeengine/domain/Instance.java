@@ -24,7 +24,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.beans.ConstructorProperties;
 import java.net.URI;
 import java.util.Date;
-import java.util.Map;
 import java.util.Set;
 
 import org.jclouds.javax.annotation.Nullable;
@@ -32,7 +31,6 @@ import org.jclouds.javax.annotation.Nullable;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -61,13 +59,13 @@ public class Instance extends Resource {
    protected final URI zone;
    protected final Set<NetworkInterface> networkInterfaces;
    protected final Set<AttachedDisk> disks;
-   protected final Map<String, String> metadata;
+   protected final Metadata metadata;
    protected final Set<ServiceAccount> serviceAccounts;
 
    protected Instance(String id, Date creationTimestamp, URI selfLink, String name, String description,
                       Tags tags, URI image, URI machineType, Status status, String statusMessage,
                       URI zone, Set<NetworkInterface> networkInterfaces, Set<AttachedDisk> disks,
-                      Map<String, String> metadata, Set<ServiceAccount> serviceAccounts) {
+                      Metadata metadata, Set<ServiceAccount> serviceAccounts) {
       super(Kind.INSTANCE, id, creationTimestamp, selfLink, name, description);
       this.tags = checkNotNull(tags, "tags");
       this.image = checkNotNull(image, "image");
@@ -77,7 +75,7 @@ public class Instance extends Resource {
       this.zone = checkNotNull(zone, "zone of %s", name);
       this.networkInterfaces = networkInterfaces == null ? ImmutableSet.<NetworkInterface>of() : networkInterfaces;
       this.disks = disks == null ? ImmutableSet.<AttachedDisk>of() : disks;
-      this.metadata = metadata == null ? ImmutableMap.<String, String>of() : metadata;
+      this.metadata = checkNotNull(metadata, "metadata");
       this.serviceAccounts = serviceAccounts == null ? ImmutableSet.<ServiceAccount>of() : serviceAccounts;
    }
 
@@ -148,7 +146,7 @@ public class Instance extends Resource {
    /**
     * @return metadata for this instance
     */
-   public Map<String, String> getMetadata() {
+   public Metadata getMetadata() {
       return metadata;
    }
 
@@ -215,11 +213,11 @@ public class Instance extends Resource {
       private Status status;
       private String statusMessage;
       private URI zone;
+      private Metadata metadata;
       private ImmutableSet.Builder<NetworkInterface> networkInterfaces = ImmutableSet.builder();
       private ImmutableSet.Builder<AttachedDisk> disks = ImmutableSet.builder();
-      private ImmutableMap.Builder<String, String> metadata = ImmutableMap.builder();
       private ImmutableSet.Builder<ServiceAccount> serviceAccounts = ImmutableSet.builder();
-      private String tagsFingerprint;
+
 
       /**
        * @see Instance#getTags()
@@ -304,16 +302,8 @@ public class Instance extends Resource {
       /**
        * @see Instance#getMetadata()
        */
-      public Builder metadata(Map<String, String> metadata) {
-         this.metadata = new ImmutableMap.Builder<String, String>().putAll(metadata);
-         return this;
-      }
-
-      /**
-       * @see Instance#getMetadata()
-       */
-      public Builder addMetadata(String key, String value) {
-         this.metadata.put(checkNotNull(key, "key"), checkNotNull(value, "value of %s", key));
+      public Builder metadata(Metadata metadata) {
+         this.metadata = metadata;
          return this;
       }
 
@@ -342,7 +332,7 @@ public class Instance extends Resource {
       public Instance build() {
          return new Instance(super.id, super.creationTimestamp, super.selfLink, super.name,
                  super.description, tags, image, machineType, status, statusMessage, zone,
-                 networkInterfaces.build(), disks.build(), metadata.build(), serviceAccounts.build());
+                 networkInterfaces.build(), disks.build(), metadata, serviceAccounts.build());
       }
 
       public Builder fromInstance(Instance in) {
@@ -359,6 +349,9 @@ public class Instance extends Resource {
                  .serviceAccounts(in.getServiceAccounts());
       }
    }
+
+
+
 
    /**
     * Tags for an instance, with their fingerprint.
