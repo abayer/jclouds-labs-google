@@ -32,6 +32,9 @@ import javax.ws.rs.core.MediaType;
 import org.jclouds.googlecomputeengine.domain.Instance;
 import org.jclouds.googlecomputeengine.domain.InstanceTemplate;
 import org.jclouds.googlecomputeengine.internal.BaseGoogleComputeEngineApiExpectTest;
+import org.jclouds.googlecomputeengine.options.AttachDiskOptions;
+import org.jclouds.googlecomputeengine.options.AttachDiskOptions.DiskMode;
+import org.jclouds.googlecomputeengine.options.AttachDiskOptions.DiskType;
 import org.jclouds.googlecomputeengine.parse.ParseInstanceListTest;
 import org.jclouds.googlecomputeengine.parse.ParseInstanceSerialOutputTest;
 import org.jclouds.googlecomputeengine.parse.ParseInstanceTest;
@@ -320,5 +323,93 @@ public class InstanceApiExpectTest extends BaseGoogleComputeEngineApiExpectTest 
       assertNull(api.resetInZone("us-central1-a", "test-1"));
    }
 
+   public void testAttachDiskResponseIs2xx() {
+      HttpRequest attach = HttpRequest
+              .builder()
+              .method("POST")
+              .endpoint("https://www.googleapis" +
+                      ".com/compute/v1beta15/projects/myproject/zones/us-central1-a/instances/test-1/attachDisk")
+              .addHeader("Accept", "application/json")
+              .addHeader("Authorization", "Bearer " + TOKEN)
+              .payload(payloadFromResourceWithContentType("/instance_attach_disk.json", MediaType.APPLICATION_JSON))
+              .build();
+
+      HttpResponse attachResponse = HttpResponse.builder().statusCode(200)
+              .payload(payloadFromResource("/zone_operation.json")).build();
+
+      InstanceApi api = requestsSendResponses(requestForScopes(COMPUTE_SCOPE),
+              TOKEN_RESPONSE, attach, attachResponse).getInstanceApiForProject("myproject");
+
+      assertEquals(api.attachDiskInZone("us-central1-a", "test-1",
+              new AttachDiskOptions()
+                      .mode(DiskMode.READ_ONLY)
+                      .source(URI.create("https://www.googleapis.com/compute/v1beta15/projects/myproject/zones/us-central1-a/disks/testimage1"))
+                      .type(DiskType.PERSISTENT)),
+              new ParseOperationTest().expected());
+   }
+
+   public void testAttachDiskResponseIs4xx() {
+      HttpRequest attach = HttpRequest
+              .builder()
+              .method("POST")
+              .endpoint("https://www.googleapis" +
+                      ".com/compute/v1beta15/projects/myproject/zones/us-central1-a/instances/test-1/attachDisk")
+              .addHeader("Accept", "application/json")
+              .addHeader("Authorization", "Bearer " + TOKEN)
+              .payload(payloadFromResourceWithContentType("/instance_attach_disk.json", MediaType.APPLICATION_JSON))
+              .build();
+
+      HttpResponse attachResponse = HttpResponse.builder().statusCode(404).build();
+
+      InstanceApi api = requestsSendResponses(requestForScopes(COMPUTE_SCOPE),
+              TOKEN_RESPONSE, attach, attachResponse).getInstanceApiForProject("myproject");
+
+      assertNull(api.attachDiskInZone("us-central1-a", "test-1",
+              new AttachDiskOptions()
+                      .mode(DiskMode.READ_ONLY)
+                      .source(URI.create("https://www.googleapis.com/compute/v1beta15/projects/myproject/zones/us-central1-a/disks/testimage1"))
+                      .type(DiskType.PERSISTENT)));
+
+   }
+
+   public void testDetachDiskResponseIs2xx() {
+      HttpRequest detach = HttpRequest
+              .builder()
+              .method("POST")
+              .endpoint("https://www.googleapis" +
+                      ".com/compute/v1beta15/projects/myproject/zones/us-central1-a/instances/test-1/detachDisk" +
+                      "?deviceName=test-disk-1")
+              .addHeader("Accept", "application/json")
+              .addHeader("Authorization", "Bearer " + TOKEN)
+              .build();
+
+      HttpResponse detachResponse = HttpResponse.builder().statusCode(200)
+              .payload(payloadFromResource("/zone_operation.json")).build();
+
+      InstanceApi api = requestsSendResponses(requestForScopes(COMPUTE_SCOPE),
+              TOKEN_RESPONSE, detach, detachResponse).getInstanceApiForProject("myproject");
+
+      assertEquals(api.detachDiskInZone("us-central1-a", "test-1", "test-disk-1"),
+              new ParseOperationTest().expected());
+   }
+
+   public void testDetachDiskResponseIs4xx() {
+      HttpRequest detach = HttpRequest
+              .builder()
+              .method("POST")
+              .endpoint("https://www.googleapis" +
+                      ".com/compute/v1beta15/projects/myproject/zones/us-central1-a/instances/test-1/detachDisk" +
+                      "?deviceName=test-disk-1")
+              .addHeader("Accept", "application/json")
+              .addHeader("Authorization", "Bearer " + TOKEN)
+              .build();
+
+      HttpResponse detachResponse = HttpResponse.builder().statusCode(404).build();
+
+      InstanceApi api = requestsSendResponses(requestForScopes(COMPUTE_SCOPE),
+              TOKEN_RESPONSE, detach, detachResponse).getInstanceApiForProject("myproject");
+
+      assertNull(api.detachDiskInZone("us-central1-a", "test-1", "test-disk-1"));
+   }
 
 }

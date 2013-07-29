@@ -279,7 +279,7 @@ public interface InstanceApi {
                          @PathParam("instance") String instanceName);
 
    /**
-    * TODO add live and expect tests for attachDisk
+    * TODO add live tests for attachDisk
     * Attaches a disk to an instance
     *
     * @param zone The zone the instance is in.
@@ -302,7 +302,7 @@ public interface InstanceApi {
                               @BinderParam(BindToJsonPayload.class) AttachDiskOptions attachDiskOptions);
 
    /**
-    * TODO add live and expect tests for detachDisk
+    * TODO add live tests for detachDisk
     * Detaches an attached disk from an instance
     *
     * @param zone The zone the instance is in.
