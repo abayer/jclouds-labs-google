@@ -260,7 +260,6 @@ public interface InstanceApi {
                                                        @PathParam("instance") String instanceName);
 
    /**
-    * TODO add live tests for reset
     * Hard-resets the instance.
     *
     * @param zone         the zone the instance is in
@@ -279,7 +278,6 @@ public interface InstanceApi {
                          @PathParam("instance") String instanceName);
 
    /**
-    * TODO add live tests for attachDisk
     * Attaches a disk to an instance
     *
     * @param zone The zone the instance is in.
@@ -302,7 +300,6 @@ public interface InstanceApi {
                               @BinderParam(BindToJsonPayload.class) AttachDiskOptions attachDiskOptions);
 
    /**
-    * TODO add live tests for detachDisk
     * Detaches an attached disk from an instance
     *
     * @param zone The zone the instance is in.
@@ -324,7 +321,6 @@ public interface InstanceApi {
                               @QueryParam("deviceName") String deviceName);
 
    /**
-    * TODO add live tests for setMetadata
     * Sets metadata for an instance using the data included in the request.
     * <p/>
     * NOTE: This *sets* metadata items on the project (vs *adding* items to metadata),
