@@ -47,9 +47,9 @@ public abstract class BaseWithRegionToPagedIterable<T, I extends BaseWithRegionT
       if (input.nextMarker() == null)
          return PagedIterables.of(input);
 
-      Optional<Object> project = tryFind(request.getCaller().get().getArgs(), instanceOf(String.class));
+      Optional <Object> project = tryFind(request.getCaller().get().getArgs(), instanceOf(String.class));
 
-      Optional<Object> region = tryFind(request.getCaller().get().getArgs(), instanceOf(String.class));
+      Optional<Object> region = tryFind(request.getInvocation().getArgs(), instanceOf(String.class));
 
       Optional<Object> listOptions = tryFind(request.getInvocation().getArgs(), instanceOf(ListOptions.class));
 

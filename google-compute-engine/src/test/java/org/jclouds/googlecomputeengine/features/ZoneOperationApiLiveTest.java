@@ -70,7 +70,7 @@ public class ZoneOperationApiLiveTest extends BaseGoogleComputeEngineApiLiveTest
    @Test(groups = "live", dependsOnMethods = "testCreateOperations")
    public void testListOperationsWithFiltersAndPagination() {
       PagedIterable<Operation> operations = api().listInZone(DEFAULT_ZONE_NAME, new ListOptions.Builder()
-              .filter("operationType eq setMetadata")
+//              .filter("operationType eq insert")
               .maxResults(1));
 
       // make sure that in spite of having only one result per page we get at least two results

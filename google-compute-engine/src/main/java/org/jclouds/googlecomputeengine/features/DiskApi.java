@@ -188,7 +188,6 @@ public interface DiskApi {
    PagedIterable<Disk> listInZone(@PathParam("zone") String zone, ListOptions options);
 
    /**
-    * TODO live tests for DiskApi#createSnapshot - probably in snapshot tests, though.
     * Create a snapshot of a given disk in a zone.
     *
     * @param zone the zone the disk is in.

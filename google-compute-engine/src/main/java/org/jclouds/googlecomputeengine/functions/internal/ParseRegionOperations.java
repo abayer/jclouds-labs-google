@@ -24,7 +24,6 @@ import org.jclouds.collect.IterableWithMarker;
 import org.jclouds.googlecomputeengine.GoogleComputeEngineApi;
 import org.jclouds.googlecomputeengine.domain.ListPage;
 import org.jclouds.googlecomputeengine.domain.Operation;
-import org.jclouds.googlecomputeengine.domain.SlashEncodedIds;
 import org.jclouds.googlecomputeengine.options.ListOptions;
 import org.jclouds.http.functions.ParseJson;
 import org.jclouds.json.Json;
@@ -43,7 +42,7 @@ public class ParseRegionOperations extends ParseJson<ListPage<Operation>> {
       });
    }
 
-   public static class ToPagedIterable extends BaseToPagedIterable<Operation, ToPagedIterable> {
+   public static class ToPagedIterable extends BaseWithRegionToPagedIterable<Operation, ToPagedIterable> {
 
       private final GoogleComputeEngineApi api;
 
@@ -53,15 +52,15 @@ public class ParseRegionOperations extends ParseJson<ListPage<Operation>> {
       }
 
       @Override
-      protected Function<Object, IterableWithMarker<Operation>> fetchNextPage(final String projectAndRegionName,
+      protected Function<Object, IterableWithMarker<Operation>> fetchNextPage(final String projectName,
+                                                                              final String regionName,
                                                                               final ListOptions options) {
-         final SlashEncodedIds slashEncodedIds = SlashEncodedIds.fromSlashEncoded(projectAndRegionName);
          return new Function<Object, IterableWithMarker<Operation>>() {
 
             @Override
             public IterableWithMarker<Operation> apply(Object input) {
-               return api.getRegionOperationApiForProject(slashEncodedIds.getFirstId())
-                       .listAtMarkerInRegion(slashEncodedIds.getSecondId(), input.toString(), options);
+               return api.getRegionOperationApiForProject(projectName)
+                       .listAtMarkerInRegion(regionName, input.toString(), options);
             }
          };
       }

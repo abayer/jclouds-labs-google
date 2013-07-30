@@ -16,8 +16,6 @@
  */
 package org.jclouds.googlecomputeengine.features;
 
-import static org.jclouds.googlecomputeengine.features.ProjectApiLiveTest.addItemToMetadata;
-import static org.jclouds.googlecomputeengine.features.ProjectApiLiveTest.deleteItemFromMetadata;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
@@ -28,6 +26,7 @@ import org.jclouds.collect.PagedIterable;
 import org.jclouds.googlecomputeengine.domain.Operation;
 import org.jclouds.googlecomputeengine.internal.BaseGoogleComputeEngineApiLiveTest;
 import org.jclouds.googlecomputeengine.options.ListOptions;
+import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
@@ -35,12 +34,11 @@ import com.google.common.collect.Iterables;
 /**
  * TODO actually get this working once we've added Address
  *
- * @author David Alves
+ * @author Andrew Bayer
  */
 public class RegionOperationApiLiveTest extends BaseGoogleComputeEngineApiLiveTest {
 
-   private static final String METADATA_ITEM_KEY = "regionOperationLiveTestTestProp";
-   private static final String METADATA_ITEM_VALUE = "regionOperationLiveTestTestValue";
+   private static final String ADDRESS_NAME = "region-operations-api-live-test-address";
    private Operation addOperation;
    private Operation deleteOperation;
 
@@ -48,31 +46,34 @@ public class RegionOperationApiLiveTest extends BaseGoogleComputeEngineApiLiveTe
       return api.getRegionOperationApiForProject(userProject.get());
    }
 
+   private AddressApi addressApi() {
+      return api.getAddressApiForProject(userProject.get());
+   }
 
-//   @Test(groups = "live")
+   @Test(groups = "live")
    public void testCreateOperations() {
       //create some operations by adding and deleting metadata items
       // this will make sure there is stuff to listFirstPage
-      addOperation = assertRegionOperationDoneSucessfully(addItemToMetadata(api.getProjectApi(),
-              userProject.get(), METADATA_ITEM_KEY, METADATA_ITEM_VALUE), 20);
-      deleteOperation = assertRegionOperationDoneSucessfully(deleteItemFromMetadata(api
-              .getProjectApi(), userProject.get(), METADATA_ITEM_KEY), 20);
+      addOperation = assertRegionOperationDoneSucessfully(addressApi().createInRegion(DEFAULT_REGION_NAME,
+              ADDRESS_NAME), 20);
+      deleteOperation = assertRegionOperationDoneSucessfully(addressApi().deleteInRegion(DEFAULT_REGION_NAME,
+              ADDRESS_NAME), 20);
 
       assertNotNull(addOperation);
       assertNotNull(deleteOperation);
    }
 
-//   @Test(groups = "live", dependsOnMethods = "testCreateOperations")
+   @Test(groups = "live", dependsOnMethods = "testCreateOperations")
    public void testGetOperation() {
       Operation operation = api().getInRegion(DEFAULT_REGION_NAME, addOperation.getName());
       assertNotNull(operation);
       assertOperationEquals(operation, this.addOperation);
    }
 
-//   @Test(groups = "live", dependsOnMethods = "testCreateOperations")
+   @Test(groups = "live", dependsOnMethods = "testCreateOperations")
    public void testListOperationsWithFiltersAndPagination() {
       PagedIterable<Operation> operations = api().listInRegion(DEFAULT_REGION_NAME, new ListOptions.Builder()
-              .filter("operationType eq setMetadata")
+//              .filter("operationType eq insert")
               .maxResults(1));
 
       // make sure that in spite of having only one result per page we get at least two results

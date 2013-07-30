@@ -54,6 +54,7 @@ public class RegionOperationDonePredicate implements Predicate<AtomicReference<O
    @Override
    public boolean apply(AtomicReference<Operation> input) {
       checkNotNull(input, "input");
+
       Operation current = api.getRegionOperationApiForProject(project.get())
               .getInRegion(regions.get().get(input.get().getRegion().get()).getName(),
               input.get().getName());
