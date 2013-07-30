@@ -89,7 +89,7 @@ public class AddressApiExpectTest extends BaseGoogleComputeEngineApiExpectTest {
               TOKEN_RESPONSE, insert,
               insertAddressResponse).getAddressApiForProject("myproject");
 
-      assertEquals(api.createInRegion("test-ip1", "us-central1"), new ParseOperationTest().expected());
+      assertEquals(api.createInRegion("us-central1", "test-ip1"), new ParseOperationTest().expected());
    }
 
    public void testDeleteAddressResponseIs2xx() {

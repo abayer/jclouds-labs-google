@@ -238,7 +238,10 @@ public class GoogleComputeEngineParserModule extends AbstractModule {
                builder.put(object.get("key").getAsString(), object.get("value").getAsString());
             }
          }
-         String fingerprint = metadata.getAsJsonPrimitive("fingerprint").getAsString();
+         String fingerprint = null;
+         if (metadata.getAsJsonPrimitive("fingerprint") != null) {
+            fingerprint = metadata.getAsJsonPrimitive("fingerprint").getAsString();
+         }
          return new Metadata(fingerprint, builder.build());
       }
 

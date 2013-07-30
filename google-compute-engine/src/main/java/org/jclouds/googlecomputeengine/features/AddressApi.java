@@ -52,7 +52,6 @@ import org.jclouds.rest.annotations.Transform;
 import org.jclouds.rest.binders.BindToJsonPayload;
 
 /**
- * TODO Live tests for Address.
  * Provides access to Addresses via their REST API.
  *
  * @author Andrew Bayer
@@ -81,8 +80,9 @@ public interface AddressApi {
    /**
     * Creates a address resource in the specified project specifying the size of the address.
     *
-    * @param addressName the name of address.
+    *
     * @param region     the name of the region where the address is to be created.
+    * @param addressName the name of address.
     * @return an Operation resource. To check on the status of an operation, poll the Operations resource returned to
     *         you, and look for the status field.
     */
@@ -93,8 +93,7 @@ public interface AddressApi {
    @Path("/regions/{region}/addresses")
    @OAuthScopes({COMPUTE_SCOPE})
    @MapBinder(BindToJsonPayload.class)
-   Operation createInRegion(@PayloadParam("name") String addressName,
-                          @PathParam("region") String region);
+   Operation createInRegion(@PathParam("region") String region, @PayloadParam("name") String addressName);
 
    /**
     * Deletes the specified address resource.
