@@ -57,6 +57,9 @@ public class BaseGoogleComputeEngineApiLiveTest extends BaseApiLiveTest<GoogleCo
    protected static final String MACHINE_TYPE_API_URL_SUFFIX = "/machineTypes/";
    protected static final String DEFAULT_MACHINE_TYPE_NAME = "n1-standard-1";
 
+   protected static final String GATEWAY_API_URL_SUFFIX = "/global/gateways/";
+   protected static final String DEFAULT_GATEWAY_NAME = "default-internet-gateway";
+
    protected static final String GOOGLE_PROJECT = "google";
 
    protected Supplier<String> userProject;
@@ -129,6 +132,10 @@ public class BaseGoogleComputeEngineApiLiveTest extends BaseApiLiveTest<GoogleCo
 
    protected URI getNetworkUrl(String project, String network) {
       return URI.create(API_URL_PREFIX + project + NETWORK_API_URL_SUFFIX + network);
+   }
+
+   protected URI getGatewayUrl(String project, String gateway) {
+      return URI.create(API_URL_PREFIX + project + GATEWAY_API_URL_SUFFIX + gateway);
    }
 
    protected URI getDefaultMachineTypeUrl(String project) {

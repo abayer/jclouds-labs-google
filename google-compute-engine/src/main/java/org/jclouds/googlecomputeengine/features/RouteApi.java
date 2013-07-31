@@ -54,7 +54,6 @@ import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.annotations.Transform;
 
 /**
- * TODO Live tests for all the Route stuff
  * Provides access to Routes via their REST API.
  *
  * @author Andrew Bayer
@@ -140,7 +139,7 @@ public interface RouteApi {
     */
    @Named("Routes:list")
    @GET
-   @Path("/routes")
+   @Path("/global/routes")
    @OAuthScopes(COMPUTE_READONLY_SCOPE)
    @ResponseParser(ParseRoutes.class)
    @Transform(ParseRoutes.ToPagedIterable.class)
